@@ -14,4 +14,6 @@ type Package struct {
 type Build struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	Spec BuildSpec `json:"spec"`
 }
