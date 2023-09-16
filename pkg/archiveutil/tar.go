@@ -58,7 +58,7 @@ func Untar(ctx context.Context, r io.Reader, path string) error {
 			log.V(5).Info("creating symbolic link", "target", target, "source", oldname)
 			if err := os.Symlink(oldname, target); err != nil {
 				if errors.Is(err, os.ErrExist) {
-					log.V(5).Error(err, "skipping symbolic link sync target file already exists")
+					log.V(5).Info("skipping symbolic link sync target file already exists")
 					continue
 				}
 				return err

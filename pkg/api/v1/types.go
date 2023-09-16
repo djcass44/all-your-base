@@ -14,6 +14,7 @@ type BuildSpec struct {
 	From         string                  `json:"from,omitempty"`
 	Packages     []Package               `json:"packages,omitempty"`
 	Repositories map[string][]Repository `json:"repositories,omitempty"`
+	Files        []File                  `json:"files,omitempty"`
 }
 
 type Repository struct {
@@ -24,6 +25,11 @@ type Package struct {
 	Type PackageType `json:"type"`
 	Name string      `json:"name,omitempty"`
 	URL  string      `json:"url,omitempty"`
+}
+
+type File struct {
+	URI  string `json:"uri"`
+	Path string `json:"path"`
 }
 
 type Build struct {

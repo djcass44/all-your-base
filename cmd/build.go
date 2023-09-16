@@ -9,10 +9,9 @@ import (
 	"github.com/djcass44/all-your-base/pkg/packages/alpine"
 	"github.com/go-logr/logr"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
+	"github.com/hashicorp/go-getter"
 	"github.com/spf13/cobra"
-	"io"
 	"k8s.io/apimachinery/pkg/util/yaml"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -89,6 +88,28 @@ func build(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
+	// download files
+	for _, file := range cfg.Spec.Files {
+		path := filepath.Clean(file.Path)
+		dst := filepath.Join(rootfs, path)
+		//if strings.HasSuffix(file.Path, "/") {
+		//	dst = filepath.Join(rootfs, path, filepath.Base(file.URI))
+		//}
+		log.Info("downloading file", "file", file.URI, "path", dst)
+		client := &getter.Client{
+			Ctx:             cmd.Context(),
+			Src:             file.URI,
+			Dst:             dst,
+			Mode:            getter.ClientModeFile,
+			DisableSymlinks: true,
+		}
+		if err := client.Get(); err != nil {
+			return err
+		}
+	}
+
+	// package everything up as our final container image
+
 	baseImage := os.ExpandEnv(cfg.Spec.From)
 	if baseImage == "" {
 		log.Info("using scratch base as nothing was provided")
@@ -125,19 +146,14 @@ func downloadFile(ctx context.Context, url string) (string, error) {
 	}
 	defer f.Close()
 
-	// get the data
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", err
+	client := &getter.Client{
+		Ctx:             ctx,
+		Src:             url,
+		Dst:             f.Name(),
+		Mode:            getter.ClientModeFile,
+		DisableSymlinks: true,
 	}
-	defer resp.Body.Close()
-
-	log.V(2).Info("http request completed", "code", resp.StatusCode)
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("unexpected response code: %d", resp.StatusCode)
-	}
-
-	if _, err := io.Copy(f, resp.Body); err != nil {
+	if err := client.Get(); err != nil {
 		return "", err
 	}
 	return f.Name(), nil
