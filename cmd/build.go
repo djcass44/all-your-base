@@ -65,7 +65,7 @@ func build(cmd *cobra.Command, _ []string) error {
 			return fmt.Errorf("unknown package extension: %s", ext)
 		}
 		// download the package
-		pkgPath, err := downloadFile(cmd.Context(), pkg.URL)
+		pkgPath, err := downloadFile(cmd.Context(), os.ExpandEnv(pkg.URL))
 		if err != nil {
 			return err
 		}
@@ -77,7 +77,7 @@ func build(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
-	baseImage := cfg.Spec.From
+	baseImage := os.ExpandEnv(cfg.Spec.From)
 	if baseImage == "" {
 		log.Info("using scratch base as nothing was provided")
 		baseImage = "scratch"
