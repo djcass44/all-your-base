@@ -4,5 +4,9 @@ metadata:
   name: alpine-scratch-single-package
 spec:
   from: scratch
+  repositories:
+    alpine:
+      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main
   packages:
-    - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/git-2.40.1-r0.apk
+    - name: git
+      type: Alpine

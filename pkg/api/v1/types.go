@@ -2,13 +2,28 @@ package v1
 
 import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+type PackageType string
+
+const (
+	PackageAlpine PackageType = "Alpine"
+	PackageDebian PackageType = "Debian"
+	PackageRPM    PackageType = "RPM"
+)
+
 type BuildSpec struct {
-	From     string    `json:"from,omitempty"`
-	Packages []Package `json:"packages,omitempty"`
+	From         string                  `json:"from,omitempty"`
+	Packages     []Package               `json:"packages,omitempty"`
+	Repositories map[string][]Repository `json:"repositories,omitempty"`
+}
+
+type Repository struct {
+	URL string `json:"url"`
 }
 
 type Package struct {
-	URL string `json:"url,omitempty"`
+	Type PackageType `json:"type"`
+	Name string      `json:"name,omitempty"`
+	URL  string      `json:"url,omitempty"`
 }
 
 type Build struct {

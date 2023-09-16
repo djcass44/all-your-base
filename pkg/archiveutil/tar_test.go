@@ -24,4 +24,5 @@ func TestUntar(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.FileExists(t, filepath.Join(out, "test.txt"))
+	assert.FileExists(t, filepath.Join(out, "test-symbolic.txt"))
 }

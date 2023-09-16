@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var buildCmd = &cobra.Command{
@@ -54,26 +55,37 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 	log.V(3).Info("prepared root filesystem", "path", rootfs)
 
+	alpineKeeper, err := alpine.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageAlpine))]))
+
 	// install packages
 	for _, pkg := range cfg.Spec.Packages {
 		var keeper packages.Package
 		ext := filepath.Ext(pkg.URL)
-		switch ext {
-		case ".apk":
-			keeper = &alpine.PackageKeeper{}
+		switch pkg.Type {
+		case aybv1.PackageAlpine:
+			keeper = alpineKeeper
 		default:
 			return fmt.Errorf("unknown package extension: %s", ext)
 		}
-		// download the package
-		pkgPath, err := downloadFile(cmd.Context(), os.ExpandEnv(pkg.URL))
+
+		packageList, err := keeper.Resolve(cmd.Context(), pkg.Name)
 		if err != nil {
 			return err
 		}
 
-		// unpack the package into the root
-		// filesystem
-		if err := keeper.Unpack(cmd.Context(), pkgPath, rootfs); err != nil {
-			return err
+		for _, p := range packageList {
+			// download the package
+			log.Info("installing package", "name", p)
+			pkgPath, err := downloadFile(cmd.Context(), os.ExpandEnv(p))
+			if err != nil {
+				return err
+			}
+
+			// unpack the package into the root
+			// filesystem
+			if err := keeper.Unpack(cmd.Context(), pkgPath, rootfs); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -90,10 +102,18 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	if localPath != "" {
-		return containerutil.Save(cmd.Context(), img, "latest", localPath)
+		return containerutil.Save(cmd.Context(), img, cfg.Name, localPath)
 	}
 
 	return nil
+}
+
+func repoURLs(p []aybv1.Repository) []string {
+	s := make([]string, len(p))
+	for i := range p {
+		s[i] = p[i].URL
+	}
+	return s
 }
 
 func downloadFile(ctx context.Context, url string) (string, error) {

@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"compress/gzip"
 	"context"
+	"errors"
 	"github.com/go-logr/logr"
 	"io"
 	"os"
@@ -47,6 +48,20 @@ func Untar(ctx context.Context, r io.Reader, path string) error {
 					log.Error(err, "failed to create directory", "target", target)
 					return err
 				}
+			}
+
+		case tar.TypeSymlink:
+			oldname := filepath.Join(filepath.Dir(target), header.Linkname)
+			if filepath.IsAbs(header.Linkname) {
+				oldname = filepath.Join(path, header.Linkname)
+			}
+			log.V(5).Info("creating symbolic link", "target", target, "source", oldname)
+			if err := os.Symlink(oldname, target); err != nil {
+				if errors.Is(err, os.ErrExist) {
+					log.V(5).Error(err, "skipping symbolic link sync target file already exists")
+					continue
+				}
+				return err
 			}
 		case tar.TypeReg:
 			log.V(5).Info("creating file", "target", target, "mode", header.Mode)
