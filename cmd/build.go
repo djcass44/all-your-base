@@ -27,6 +27,7 @@ func init() {
 	buildCmd.Flags().StringP(flagConfig, "c", "", "path to an image configuration file")
 
 	_ = buildCmd.MarkFlagRequired(flagConfig)
+	_ = buildCmd.MarkFlagFilename(flagConfig, ".yaml", ".yml")
 }
 
 func build(cmd *cobra.Command, _ []string) error {

@@ -1,7 +1,7 @@
 apiVersion: ayb.dcas.dev/v1
 kind: Build
 metadata:
-  name: alpine-scratch
+  name: alpine-scratch-single-package
 spec:
   from: scratch
   packages:
