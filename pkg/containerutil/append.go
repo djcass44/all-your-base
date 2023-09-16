@@ -7,6 +7,7 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/google/go-containerregistry/pkg/crane"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
+	"github.com/google/go-containerregistry/pkg/v1/empty"
 	"github.com/google/go-containerregistry/pkg/v1/mutate"
 )
 
@@ -14,9 +15,16 @@ func Append(ctx context.Context, appPath, baseRef string, platform *v1.Platform)
 	log := logr.FromContextOrDiscard(ctx)
 	// pull the base image
 	log.Info("pulling base image", "base", baseRef)
-	base, err := crane.Pull(baseRef, crane.WithContext(ctx), crane.WithAuthFromKeychain(ociutil.KeyChain(ociutil.Auth{})))
-	if err != nil {
-		return nil, fmt.Errorf("pulling %s: %w", baseRef, err)
+	var base v1.Image
+	var err error
+
+	if baseRef == "scratch" {
+		base = empty.Image
+	} else {
+		base, err = crane.Pull(baseRef, crane.WithContext(ctx), crane.WithAuthFromKeychain(ociutil.KeyChain(ociutil.Auth{})))
+		if err != nil {
+			return nil, fmt.Errorf("pulling %s: %w", baseRef, err)
+		}
 	}
 
 	// create our new layer
