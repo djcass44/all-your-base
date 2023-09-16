@@ -1,0 +1,8 @@
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: alpine-318-single-package
+spec:
+  from: harbor.dcas.dev/docker.io/library/alpine:3.18
+  packages:
+    - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/git-2.40.1-r0.apk

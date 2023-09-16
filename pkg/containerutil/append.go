@@ -4,22 +4,23 @@ import (
 	"context"
 	"fmt"
 	"github.com/djcass44/ci-tools/pkg/ociutil"
+	"github.com/go-logr/logr"
 	"github.com/google/go-containerregistry/pkg/crane"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/mutate"
-	"log"
 )
 
 func Append(ctx context.Context, appPath, baseRef string, platform *v1.Platform) (v1.Image, error) {
+	log := logr.FromContextOrDiscard(ctx)
 	// pull the base image
-	log.Printf("pulling base image: %s", baseRef)
+	log.Info("pulling base image", "base", baseRef)
 	base, err := crane.Pull(baseRef, crane.WithContext(ctx), crane.WithAuthFromKeychain(ociutil.KeyChain(ociutil.Auth{})))
 	if err != nil {
 		return nil, fmt.Errorf("pulling %s: %w", baseRef, err)
 	}
 
 	// create our new layer
-	log.Printf("containerising directory: %s", appPath)
+	log.Info("containerising directory", "path", appPath)
 	layer, err := NewLayer(appPath, platform)
 	if err != nil {
 		return nil, err

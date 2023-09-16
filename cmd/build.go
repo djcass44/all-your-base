@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
+	"github.com/djcass44/all-your-base/pkg/containerutil"
 	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/djcass44/all-your-base/pkg/packages/alpine"
 	"github.com/go-logr/logr"
+	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/spf13/cobra"
 	"io"
 	"k8s.io/apimachinery/pkg/util/yaml"
@@ -21,10 +23,14 @@ var buildCmd = &cobra.Command{
 	RunE:  build,
 }
 
-const flagConfig = "config"
+const (
+	flagConfig = "config"
+	flagSave   = "save"
+)
 
 func init() {
 	buildCmd.Flags().StringP(flagConfig, "c", "", "path to an image configuration file")
+	buildCmd.Flags().String(flagSave, "", "path to save the image as a tar archive")
 
 	_ = buildCmd.MarkFlagRequired(flagConfig)
 	_ = buildCmd.MarkFlagFilename(flagConfig, ".yaml", ".yml")
@@ -34,6 +40,7 @@ func build(cmd *cobra.Command, _ []string) error {
 	log := logr.FromContextOrDiscard(cmd.Context())
 
 	configPath, _ := cmd.Flags().GetString(flagConfig)
+	localPath, _ := cmd.Flags().GetString(flagSave)
 
 	// read the config file
 	cfg, err := readConfig(configPath)
@@ -68,6 +75,22 @@ func build(cmd *cobra.Command, _ []string) error {
 		if err := keeper.Unpack(cmd.Context(), pkgPath, rootfs); err != nil {
 			return err
 		}
+	}
+
+	baseImage := cfg.Spec.From
+	if baseImage == "" {
+		log.Info("using scratch base as nothing was provided")
+		baseImage = "scratch"
+	}
+
+	platform, _ := v1.ParsePlatform("linux/amd64")
+	img, err := containerutil.Append(cmd.Context(), rootfs, baseImage, platform)
+	if err != nil {
+		return err
+	}
+
+	if localPath != "" {
+		return containerutil.Save(cmd.Context(), img, "latest", localPath)
 	}
 
 	return nil
