@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/containerutil"
+	"github.com/djcass44/all-your-base/pkg/downloader"
 	"github.com/djcass44/all-your-base/pkg/linuxutil"
 	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/djcass44/all-your-base/pkg/packages/alpine"
@@ -30,6 +30,8 @@ const (
 
 	flagUsername = "username"
 	flagUid      = "uid"
+
+	flagCacheDir = "cache-dir"
 )
 
 func init() {
@@ -39,8 +41,11 @@ func init() {
 	buildCmd.Flags().String(flagUsername, "somebody", "name of the non-root user to create")
 	buildCmd.Flags().Int(flagUid, 1001, "uid of the non-root user to create")
 
+	buildCmd.Flags().String(flagCacheDir, "", "cache directory (defaults to user cache dir)")
+
 	_ = buildCmd.MarkFlagRequired(flagConfig)
 	_ = buildCmd.MarkFlagFilename(flagConfig, ".yaml", ".yml")
+	_ = buildCmd.MarkFlagDirname(flagCacheDir)
 }
 
 func build(cmd *cobra.Command, _ []string) error {
@@ -51,6 +56,12 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	username, _ := cmd.Flags().GetString(flagUsername)
 	uid, _ := cmd.Flags().GetInt(flagUid)
+
+	cacheDir, _ := cmd.Flags().GetString(flagCacheDir)
+	if cacheDir == "" {
+		cacheDir, _ = os.UserCacheDir()
+		cacheDir = filepath.Join(cacheDir, "ayb")
+	}
 
 	// read the config file
 	cfg, err := readConfig(configPath)
@@ -63,6 +74,11 @@ func build(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 	log.V(3).Info("prepared root filesystem", "path", rootfs)
+
+	dl, err := downloader.NewDownloader(cacheDir)
+	if err != nil {
+		return err
+	}
 
 	alpineKeeper, err := alpine.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageAlpine))]))
 
@@ -85,7 +101,7 @@ func build(cmd *cobra.Command, _ []string) error {
 		for _, p := range packageList {
 			// download the package
 			log.Info("installing package", "name", p)
-			pkgPath, err := downloadFile(cmd.Context(), os.ExpandEnv(p))
+			pkgPath, err := dl.Download(cmd.Context(), os.ExpandEnv(p))
 			if err != nil {
 				return err
 			}
@@ -154,28 +170,6 @@ func repoURLs(p []aybv1.Repository) []string {
 		s[i] = p[i].URL
 	}
 	return s
-}
-
-func downloadFile(ctx context.Context, url string) (string, error) {
-	log := logr.FromContextOrDiscard(ctx)
-	log.V(1).Info("downloading file", "url", url)
-	f, err := os.CreateTemp("", "*.apk")
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
-
-	client := &getter.Client{
-		Ctx:             ctx,
-		Src:             url,
-		Dst:             f.Name(),
-		Mode:            getter.ClientModeFile,
-		DisableSymlinks: true,
-	}
-	if err := client.Get(); err != nil {
-		return "", err
-	}
-	return f.Name(), nil
 }
 
 func readConfig(s string) (aybv1.Build, error) {
