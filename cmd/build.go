@@ -5,6 +5,7 @@ import (
 	"fmt"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/containerutil"
+	"github.com/djcass44/all-your-base/pkg/linuxutil"
 	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/djcass44/all-your-base/pkg/packages/alpine"
 	"github.com/go-logr/logr"
@@ -26,11 +27,17 @@ var buildCmd = &cobra.Command{
 const (
 	flagConfig = "config"
 	flagSave   = "save"
+
+	flagUsername = "username"
+	flagUid      = "uid"
 )
 
 func init() {
 	buildCmd.Flags().StringP(flagConfig, "c", "", "path to an image configuration file")
 	buildCmd.Flags().String(flagSave, "", "path to save the image as a tar archive")
+
+	buildCmd.Flags().String(flagUsername, "somebody", "name of the non-root user to create")
+	buildCmd.Flags().Int(flagUid, 1001, "uid of the non-root user to create")
 
 	_ = buildCmd.MarkFlagRequired(flagConfig)
 	_ = buildCmd.MarkFlagFilename(flagConfig, ".yaml", ".yml")
@@ -41,6 +48,9 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	configPath, _ := cmd.Flags().GetString(flagConfig)
 	localPath, _ := cmd.Flags().GetString(flagSave)
+
+	username, _ := cmd.Flags().GetString(flagUsername)
+	uid, _ := cmd.Flags().GetInt(flagUid)
 
 	// read the config file
 	cfg, err := readConfig(configPath)
@@ -88,6 +98,11 @@ func build(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
+	// create the non-root user
+	if err := linuxutil.NewUser(cmd.Context(), rootfs, username, uid); err != nil {
+		return err
+	}
+
 	// download files
 	for _, file := range cfg.Spec.Files {
 		path := filepath.Clean(file.Path)
@@ -106,6 +121,10 @@ func build(cmd *cobra.Command, _ []string) error {
 		if err := client.Get(); err != nil {
 			return err
 		}
+		if err := os.Chmod(dst, 0664); err != nil {
+			log.Error(err, "failed to update file permissions", "file", dst)
+			return err
+		}
 	}
 
 	// package everything up as our final container image
@@ -117,7 +136,7 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	platform, _ := v1.ParsePlatform("linux/amd64")
-	img, err := containerutil.Append(cmd.Context(), rootfs, baseImage, platform)
+	img, err := containerutil.Append(cmd.Context(), rootfs, baseImage, platform, username)
 	if err != nil {
 		return err
 	}

@@ -11,7 +11,7 @@ import (
 	"github.com/google/go-containerregistry/pkg/v1/mutate"
 )
 
-func Append(ctx context.Context, appPath, baseRef string, platform *v1.Platform) (v1.Image, error) {
+func Append(ctx context.Context, appPath, baseRef string, platform *v1.Platform, username string) (v1.Image, error) {
 	log := logr.FromContextOrDiscard(ctx)
 	// pull the base image
 	log.Info("pulling base image", "base", baseRef)
@@ -58,6 +58,7 @@ func Append(ctx context.Context, appPath, baseRef string, platform *v1.Platform)
 	cfg = cfg.DeepCopy()
 	cfg.Author = "github.com/djcass44/all-your-base"
 	cfg.Config.WorkingDir = "/"
+	cfg.Config.User = username
 	if cfg.Config.Labels == nil {
 		cfg.Config.Labels = map[string]string{}
 	}
