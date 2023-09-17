@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/chainguard-dev/go-apk/pkg/apk"
 	"github.com/djcass44/all-your-base/pkg/archiveutil"
+	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/go-logr/logr"
 	"os"
 )
@@ -79,7 +80,7 @@ func (*PackageKeeper) Unpack(ctx context.Context, pkg, rootfs string) error {
 	return nil
 }
 
-func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]string, error) {
+func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Package, error) {
 	resolver := apk.NewPkgResolver(ctx, p.indices)
 
 	// resolve the package
@@ -89,10 +90,18 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]string, erro
 	}
 
 	// collect the urls for each package
-	names := make([]string, len(repoPkgDeps)+1)
-	names[0] = repoPkg.Url()
+	names := make([]lockfile.Package, len(repoPkgDeps)+1)
+	names[0] = lockfile.Package{
+		Name:      repoPkg.Name,
+		Resolved:  repoPkg.Url(),
+		Integrity: repoPkg.ChecksumString(),
+	}
 	for i := range repoPkgDeps {
-		names[i+1] = repoPkgDeps[i].Url()
+		names[i+1] = lockfile.Package{
+			Name:      repoPkgDeps[i].Name,
+			Resolved:  repoPkgDeps[i].Url(),
+			Integrity: repoPkgDeps[i].ChecksumString(),
+		}
 	}
 
 	return names, nil

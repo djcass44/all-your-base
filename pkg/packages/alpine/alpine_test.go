@@ -12,7 +12,7 @@ import (
 )
 
 // interface guard
-var _ packages.Package = &PackageKeeper{}
+var _ packages.PackageManager = &PackageKeeper{}
 
 func TestPackageKeeper_Unpack(t *testing.T) {
 	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))

@@ -27,7 +27,7 @@ const flagLogLevel = "v"
 
 func init() {
 	command.PersistentFlags().Int(flagLogLevel, 0, "log level. Higher is more")
-	command.AddCommand(buildCmd)
+	command.AddCommand(buildCmd, lockCmd)
 }
 
 func Execute(version string) {

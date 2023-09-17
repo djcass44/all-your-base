@@ -16,6 +16,8 @@ func NewDownloader(cacheDir string) (*Downloader, error) {
 	return &Downloader{cacheDir: cacheDir}, nil
 }
 
+// Download retrieves a file from the given 'src' and stores
+// it in the cache directory.
 func (d *Downloader) Download(ctx context.Context, src string) (string, error) {
 	log := logr.FromContextOrDiscard(ctx)
 	log.Info("downloading file", "src", src)

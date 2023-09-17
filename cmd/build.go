@@ -6,6 +6,7 @@ import (
 	"github.com/djcass44/all-your-base/pkg/containerutil"
 	"github.com/djcass44/all-your-base/pkg/downloader"
 	"github.com/djcass44/all-your-base/pkg/linuxutil"
+	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/djcass44/all-your-base/pkg/packages/alpine"
 	"github.com/go-logr/logr"
@@ -58,13 +59,15 @@ func build(cmd *cobra.Command, _ []string) error {
 	uid, _ := cmd.Flags().GetInt(flagUid)
 
 	cacheDir, _ := cmd.Flags().GetString(flagCacheDir)
-	if cacheDir == "" {
-		cacheDir, _ = os.UserCacheDir()
-		cacheDir = filepath.Join(cacheDir, "ayb")
-	}
+	cacheDir = getCacheDir(cacheDir)
 
 	// read the config file
 	cfg, err := readConfig(configPath)
+	if err != nil {
+		return err
+	}
+
+	lockFile, err := lockfile.Read(cmd.Context(), configPath)
 	if err != nil {
 		return err
 	}
@@ -81,10 +84,13 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	alpineKeeper, err := alpine.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageAlpine))]))
+	if err != nil {
+		return err
+	}
 
 	// install packages
 	for _, pkg := range cfg.Spec.Packages {
-		var keeper packages.Package
+		var keeper packages.PackageManager
 		ext := filepath.Ext(pkg.URL)
 		switch pkg.Type {
 		case aybv1.PackageAlpine:
@@ -99,9 +105,21 @@ func build(cmd *cobra.Command, _ []string) error {
 		}
 
 		for _, p := range packageList {
+			log.Info("installing package", "name", p.Name)
+
+			// check that the package is in the lockfile
+			locked, ok := lockFile.Packages[p.Name]
+			if !ok {
+				return fmt.Errorf("package could not be located in lockfile: %s", p.Name)
+			}
+
+			log.V(4).Info("comparing package integrity against lockfile", "expected", locked.Integrity, "actual", p.Integrity)
+			if locked.Integrity != p.Integrity {
+				return fmt.Errorf("package integrity check failed (expected: '%s', got: '%s')", locked.Integrity, p.Integrity)
+			}
+
 			// download the package
-			log.Info("installing package", "name", p)
-			pkgPath, err := dl.Download(cmd.Context(), os.ExpandEnv(p))
+			pkgPath, err := dl.Download(cmd.Context(), p.Resolved)
 			if err != nil {
 				return err
 			}
@@ -162,6 +180,14 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	return nil
+}
+
+func getCacheDir(d string) string {
+	if d == "" {
+		d, _ = os.UserCacheDir()
+		d = filepath.Join(d, "ayb")
+	}
+	return d
 }
 
 func repoURLs(p []aybv1.Repository) []string {
