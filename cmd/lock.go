@@ -7,7 +7,9 @@ import (
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/djcass44/all-your-base/pkg/packages/alpine"
+	"github.com/djcass44/ci-tools/pkg/ociutil"
 	"github.com/go-logr/logr"
+	"github.com/google/go-containerregistry/pkg/crane"
 	"github.com/spf13/cobra"
 	"os"
 	"path/filepath"
@@ -48,6 +50,18 @@ func lock(cmd *cobra.Command, _ []string) error {
 		Name:            cfg.Name,
 		LockfileVersion: 1,
 		Packages:        map[string]lockfile.Package{},
+	}
+
+	// get the digest of the base image
+	baseDigest, err := crane.Digest(os.ExpandEnv(cfg.Spec.From), crane.WithAuthFromKeychain(ociutil.KeyChain(ociutil.Auth{})))
+	if err != nil {
+		return err
+	}
+
+	lockFile.Packages[""] = lockfile.Package{
+		Name:      cfg.Spec.From,
+		Resolved:  cfg.Spec.From + "@" + baseDigest,
+		Integrity: baseDigest,
 	}
 
 	alpineKeeper, err := alpine.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageAlpine))]))

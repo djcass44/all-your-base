@@ -9,7 +9,10 @@ import (
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/empty"
 	"github.com/google/go-containerregistry/pkg/v1/mutate"
+	"path/filepath"
 )
+
+const MagicImageScratch = "scratch"
 
 func Append(ctx context.Context, appPath, baseRef string, platform *v1.Platform, username string) (v1.Image, error) {
 	log := logr.FromContextOrDiscard(ctx)
@@ -18,7 +21,7 @@ func Append(ctx context.Context, appPath, baseRef string, platform *v1.Platform,
 	var base v1.Image
 	var err error
 
-	if baseRef == "scratch" {
+	if baseRef == MagicImageScratch {
 		base = empty.Image
 	} else {
 		base, err = crane.Pull(baseRef, crane.WithContext(ctx), crane.WithAuthFromKeychain(ociutil.KeyChain(ociutil.Auth{})))
@@ -57,7 +60,7 @@ func Append(ctx context.Context, appPath, baseRef string, platform *v1.Platform,
 	}
 	cfg = cfg.DeepCopy()
 	cfg.Author = "github.com/djcass44/all-your-base"
-	cfg.Config.WorkingDir = "/"
+	cfg.Config.WorkingDir = filepath.Join("home", username)
 	cfg.Config.User = username
 	if cfg.Config.Labels == nil {
 		cfg.Config.Labels = map[string]string{}

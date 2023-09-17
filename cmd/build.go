@@ -166,7 +166,9 @@ func build(cmd *cobra.Command, _ []string) error {
 	baseImage := os.ExpandEnv(cfg.Spec.From)
 	if baseImage == "" {
 		log.Info("using scratch base as nothing was provided")
-		baseImage = "scratch"
+		baseImage = containerutil.MagicImageScratch
+	} else {
+		baseImage = baseImage + "@" + lockFile.Packages[""].Integrity
 	}
 
 	platform, _ := v1.ParsePlatform("linux/amd64")

@@ -1,0 +1,20 @@
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: helm-install-image
+spec:
+  from: harbor.dcas.dev/docker.io/library/alpine:3.18
+  repositories:
+    alpine:
+      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main
+      - url: https://mirror.aarnet.edu.au/pub/alpine/edge/main
+      - url: https://mirror.aarnet.edu.au/pub/alpine/edge/community
+  packages:
+    - name: git
+      type: Alpine
+    - name: ca-certificates
+      type: Alpine
+    - name: kubectl
+      type: Alpine
+    - name: helm
+      type: Alpine
