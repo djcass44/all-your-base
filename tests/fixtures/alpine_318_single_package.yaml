@@ -8,5 +8,5 @@ spec:
     alpine:
       - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main
   packages:
-    - name: git
-      type: Alpine
+    - type: Alpine
+      names: ["git"]

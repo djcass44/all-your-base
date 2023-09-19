@@ -9,9 +9,8 @@ spec:
       - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main
       - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/community
   packages:
-    - name: git
-      type: Alpine
-    - name: git-lfs
-      type: Alpine
-    - name: build-base
-      type: Alpine
+    - type: Alpine
+      names:
+        - git
+        - git-lfs
+        - build-base

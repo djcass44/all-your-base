@@ -12,7 +12,6 @@ import (
 	"github.com/google/go-containerregistry/pkg/crane"
 	"github.com/spf13/cobra"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -72,24 +71,26 @@ func lock(cmd *cobra.Command, _ []string) error {
 	// install packages
 	for _, pkg := range cfg.Spec.Packages {
 		var keeper packages.PackageManager
-		ext := filepath.Ext(pkg.URL)
 		switch pkg.Type {
 		case aybv1.PackageAlpine:
 			keeper = alpineKeeper
 		default:
-			return fmt.Errorf("unknown package extension: %s", ext)
+			return fmt.Errorf("unknown package type: %s", pkg.Type)
 		}
 
-		packageList, err := keeper.Resolve(cmd.Context(), pkg.Name)
-		if err != nil {
-			return err
+		for _, name := range pkg.Names {
+			packageList, err := keeper.Resolve(cmd.Context(), name)
+			if err != nil {
+				return err
+			}
+
+			for _, p := range packageList {
+				log.Info("downloading package", "name", p.Name)
+
+				lockFile.Packages[p.Name] = p
+			}
 		}
 
-		for _, p := range packageList {
-			log.Info("downloading package", "name", p.Name)
-
-			lockFile.Packages[p.Name] = p
-		}
 	}
 
 	f, err := os.Create(lockfile.Name(configPath))

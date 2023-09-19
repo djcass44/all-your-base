@@ -23,9 +23,8 @@ type Repository struct {
 }
 
 type Package struct {
-	Type PackageType `json:"type"`
-	Name string      `json:"name,omitempty"`
-	URL  string      `json:"url,omitempty"`
+	Type  PackageType `json:"type"`
+	Names []string    `json:"names"`
 }
 
 type File struct {

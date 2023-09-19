@@ -10,11 +10,9 @@ spec:
       - url: https://mirror.aarnet.edu.au/pub/alpine/edge/main
       - url: https://mirror.aarnet.edu.au/pub/alpine/edge/community
   packages:
-    - name: git
-      type: Alpine
-    - name: ca-certificates
-      type: Alpine
-    - name: kubectl
-      type: Alpine
-    - name: helm
-      type: Alpine
+    - type: Alpine
+      names:
+        - git
+        - ca-certificates
+        - kubectl
+        - helm
