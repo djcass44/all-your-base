@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"context"
 	"errors"
+	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/go-logr/logr"
 	"io"
 	"os"
@@ -12,18 +13,18 @@ import (
 )
 
 // Guntar is the same as Untar, but it first decodes the gzipped archive.
-func Guntar(ctx context.Context, r io.Reader, path string) error {
+func Guntar(ctx context.Context, r io.Reader, rootfs fs.FullFS) error {
 	gzp, err := gzip.NewReader(r)
 	if err != nil {
 		return err
 	}
 	defer gzp.Close()
-	return Untar(ctx, gzp, path)
+	return Untar(ctx, gzp, rootfs)
 }
 
 // Untar expands a tar archive into the given path.
-func Untar(ctx context.Context, r io.Reader, path string) error {
-	log := logr.FromContextOrDiscard(ctx).WithValues("path", path)
+func Untar(ctx context.Context, r io.Reader, rootfs fs.FullFS) error {
+	log := logr.FromContextOrDiscard(ctx)
 	tr := tar.NewReader(r)
 
 	for {
@@ -38,13 +39,13 @@ func Untar(ctx context.Context, r io.Reader, path string) error {
 			continue
 		}
 
-		target := filepath.Join(path, header.Name)
+		target := filepath.Clean("/" + header.Name)
 
 		switch header.Typeflag {
 		case tar.TypeDir:
 			log.V(5).Info("creating directory", "target", target)
-			if _, err := os.Stat(target); err != nil {
-				if err := os.MkdirAll(target, 0755); err != nil {
+			if _, err := rootfs.Stat(target); err != nil {
+				if err := rootfs.MkdirAll(target, 0755); err != nil {
 					log.Error(err, "failed to create directory", "target", target)
 					return err
 				}
@@ -53,10 +54,10 @@ func Untar(ctx context.Context, r io.Reader, path string) error {
 		case tar.TypeSymlink:
 			oldname := filepath.Join(filepath.Dir(target), header.Linkname)
 			if filepath.IsAbs(header.Linkname) {
-				oldname = filepath.Join(path, header.Linkname)
+				oldname = header.Linkname
 			}
 			log.V(5).Info("creating symbolic link", "target", target, "source", oldname)
-			if err := os.Symlink(oldname, target); err != nil {
+			if err := rootfs.Symlink(oldname, target); err != nil {
 				if errors.Is(err, os.ErrExist) {
 					log.V(5).Info("skipping symbolic link sync target file already exists")
 					continue
@@ -65,7 +66,7 @@ func Untar(ctx context.Context, r io.Reader, path string) error {
 			}
 		case tar.TypeReg:
 			log.V(5).Info("creating file", "target", target, "mode", header.Mode)
-			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
+			f, err := rootfs.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
 			if err != nil {
 				log.Error(err, "failed to open file", "target", target)
 				return err

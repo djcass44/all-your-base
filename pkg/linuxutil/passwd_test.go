@@ -3,6 +3,7 @@ package linuxutil
 import (
 	"context"
 	_ "embed"
+	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/go-logr/logr"
 	"github.com/go-logr/logr/testr"
 	"github.com/stretchr/testify/assert"
@@ -22,15 +23,15 @@ var expectedEmpty string
 func TestNewUser(t *testing.T) {
 	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
 
-	setup := func(s string) string {
-		rootfs := t.TempDir()
-		require.NoError(t, os.MkdirAll(filepath.Join(rootfs, "etc"), 0755))
+	setup := func(s string) fs.FullFS {
+		rootfs := fs.NewMemFS()
+		require.NoError(t, rootfs.MkdirAll("/etc", 0755))
 
 		f, err := os.Open(s)
 		require.NoError(t, err)
 
-		path := filepath.Join(rootfs, "etc", "passwd")
-		out, err := os.Create(path)
+		path := filepath.Join("/etc", "passwd")
+		out, err := rootfs.Create(path)
 		require.NoError(t, err)
 
 		_, _ = io.Copy(out, f)
@@ -38,33 +39,33 @@ func TestNewUser(t *testing.T) {
 	}
 
 	t.Run("empty", func(t *testing.T) {
-		rootfs := t.TempDir()
+		rootfs := fs.NewMemFS()
 
 		err := NewUser(ctx, rootfs, "somebody", 1001)
 		assert.NoError(t, err)
 
-		data, err := os.ReadFile(filepath.Join(rootfs, "etc", "passwd"))
+		data, err := rootfs.ReadFile(filepath.Join("/etc", "passwd"))
 		require.NoError(t, err)
 		assert.EqualValues(t, expectedEmpty, string(data))
 	})
 
 	t.Run("normal", func(t *testing.T) {
-		path := setup("./testdata/normal")
+		rootfs := setup("./testdata/normal")
 
-		err := NewUser(ctx, path, "somebody", 1001)
+		err := NewUser(ctx, rootfs, "somebody", 1001)
 		assert.NoError(t, err)
 
-		data, err := os.ReadFile(filepath.Join(path, "etc", "passwd"))
+		data, err := rootfs.ReadFile(filepath.Join("/etc", "passwd"))
 		require.NoError(t, err)
 		assert.EqualValues(t, expected, string(data))
 	})
 	t.Run("existing", func(t *testing.T) {
-		path := setup("./testdata/existing")
+		rootfs := setup("./testdata/existing")
 
-		err := NewUser(ctx, path, "somebody", 1001)
+		err := NewUser(ctx, rootfs, "somebody", 1001)
 		assert.NoError(t, err)
 
-		data, err := os.ReadFile(filepath.Join(path, "etc", "passwd"))
+		data, err := rootfs.ReadFile(filepath.Join("/etc", "passwd"))
 		require.NoError(t, err)
 		assert.EqualValues(t, expected, string(data))
 	})

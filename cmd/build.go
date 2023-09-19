@@ -2,9 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/chainguard-dev/go-apk/pkg/fs"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/containerutil"
 	"github.com/djcass44/all-your-base/pkg/downloader"
+	"github.com/djcass44/all-your-base/pkg/fileutil"
 	"github.com/djcass44/all-your-base/pkg/linuxutil"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/djcass44/all-your-base/pkg/packages"
@@ -33,6 +35,7 @@ const (
 	flagUid      = "uid"
 
 	flagCacheDir = "cache-dir"
+	flagPlatform = "platform"
 )
 
 func init() {
@@ -40,9 +43,10 @@ func init() {
 	buildCmd.Flags().String(flagSave, "", "path to save the image as a tar archive")
 
 	buildCmd.Flags().String(flagUsername, "somebody", "name of the non-root user to create")
-	buildCmd.Flags().Int(flagUid, 1001, "uid of the non-root user to create")
+	buildCmd.Flags().Int(flagUid, os.Getuid(), "uid of the non-root user to create")
 
 	buildCmd.Flags().String(flagCacheDir, "", "cache directory (defaults to user cache dir)")
+	buildCmd.Flags().String(flagPlatform, "linux/amd64", "build platform")
 
 	_ = buildCmd.MarkFlagRequired(flagConfig)
 	_ = buildCmd.MarkFlagFilename(flagConfig, ".yaml", ".yml")
@@ -61,6 +65,8 @@ func build(cmd *cobra.Command, _ []string) error {
 	cacheDir, _ := cmd.Flags().GetString(flagCacheDir)
 	cacheDir = getCacheDir(cacheDir)
 
+	platform, _ := cmd.Flags().GetString(flagPlatform)
+
 	// read the config file
 	cfg, err := readConfig(configPath)
 	if err != nil {
@@ -72,11 +78,8 @@ func build(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	rootfs, err := os.MkdirTemp("", fmt.Sprintf("%s-*", cfg.Name))
-	if err != nil {
-		return err
-	}
-	log.V(3).Info("prepared root filesystem", "path", rootfs)
+	rootfs := fs.NewMemFS()
+	log.V(3).Info("prepared root filesystem")
 
 	dl, err := downloader.NewDownloader(cacheDir)
 	if err != nil {
@@ -140,23 +143,43 @@ func build(cmd *cobra.Command, _ []string) error {
 	// download files
 	for _, file := range cfg.Spec.Files {
 		path := filepath.Clean(file.Path)
-		dst := filepath.Join(rootfs, path)
-		//if strings.HasSuffix(file.Path, "/") {
-		//	dst = filepath.Join(rootfs, path, filepath.Base(file.URI))
-		//}
+		dst, err := os.MkdirTemp("", "file-download-*")
+		if err != nil {
+			log.Error(err, "failed to prepare download directory")
+			return err
+		}
 		log.Info("downloading file", "file", file.URI, "path", dst)
 		client := &getter.Client{
 			Ctx:             cmd.Context(),
 			Src:             file.URI,
 			Dst:             dst,
-			Mode:            getter.ClientModeFile,
 			DisableSymlinks: true,
+			Mode:            getter.ClientModeAny,
 		}
 		if err := client.Get(); err != nil {
+			log.Error(err, "failed to download file")
 			return err
 		}
-		if err := os.Chmod(dst, 0664); err != nil {
-			log.Error(err, "failed to update file permissions", "file", dst)
+		var permissions os.FileMode = 0644
+		if file.Executable {
+			permissions = 0755
+		}
+		copySrc := dst
+		if file.SubPath != "" || filepath.Ext(file.URI) == "" {
+			if file.SubPath != "" {
+				copySrc = filepath.Join(dst, file.SubPath)
+			}
+			if filepath.Ext(file.URI) == "" {
+				copySrc = filepath.Join(dst, filepath.Base(file.URI))
+			}
+			log.V(1).Info("updating file permissions", "file", copySrc, "permissions", permissions)
+			if err := os.Chmod(copySrc, permissions); err != nil {
+				log.Error(err, "failed to update file permissions", "file", copySrc)
+				return err
+			}
+		}
+		if err := fileutil.CopyDirectory(copySrc, path, rootfs); err != nil {
+			log.Error(err, "failed to copy directory")
 			return err
 		}
 	}
@@ -171,8 +194,12 @@ func build(cmd *cobra.Command, _ []string) error {
 		baseImage = baseImage + "@" + lockFile.Packages[""].Integrity
 	}
 
-	platform, _ := v1.ParsePlatform("linux/amd64")
-	img, err := containerutil.Append(cmd.Context(), rootfs, baseImage, platform, username)
+	imgPlatform, err := v1.ParsePlatform(platform)
+	if err != nil {
+		log.Error(err, "failed to parse platform")
+		return err
+	}
+	img, err := containerutil.Append(cmd.Context(), rootfs, baseImage, imgPlatform, username)
 	if err != nil {
 		return err
 	}

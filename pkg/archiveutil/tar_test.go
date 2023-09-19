@@ -2,27 +2,30 @@ package archiveutil
 
 import (
 	"context"
+	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/go-logr/logr"
 	"github.com/go-logr/logr/testr"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"os"
-	"path/filepath"
 	"testing"
 )
 
 func TestUntar(t *testing.T) {
 	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
 
-	out := t.TempDir()
+	rootfs := fs.NewMemFS()
 
 	f, err := os.Open("./testdata/test.tar")
 	require.NoError(t, err)
 	defer f.Close()
 
-	err = Untar(ctx, f, out)
+	err = Untar(ctx, f, rootfs)
 	assert.NoError(t, err)
 
-	assert.FileExists(t, filepath.Join(out, "test.txt"))
-	assert.FileExists(t, filepath.Join(out, "test-symbolic.txt"))
+	_, err = rootfs.Stat("test.txt")
+	assert.NotErrorIs(t, err, os.ErrNotExist)
+
+	_, err = rootfs.Stat("test-symbolic.txt")
+	assert.NotErrorIs(t, err, os.ErrNotExist)
 }

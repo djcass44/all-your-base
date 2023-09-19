@@ -2,6 +2,7 @@ package alpine
 
 import (
 	"context"
+	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/go-logr/logr"
 	"github.com/go-logr/logr/testr"
@@ -17,14 +18,15 @@ var _ packages.PackageManager = &PackageKeeper{}
 func TestPackageKeeper_Unpack(t *testing.T) {
 	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
 
-	out := t.TempDir()
+	tempDir := t.TempDir()
+	out := fs.DirFS(tempDir)
 
 	pkg := &PackageKeeper{}
 	err := pkg.Unpack(ctx, "./testdata/git-2.40.1-r0.apk", out)
 	assert.NoError(t, err)
 
-	assert.DirExists(t, filepath.Join(out, "var", "git"))
-	assert.FileExists(t, filepath.Join(out, "usr", "bin", "git"))
+	assert.DirExists(t, filepath.Join(tempDir, "var", "git"))
+	assert.FileExists(t, filepath.Join(tempDir, "usr", "bin", "git"))
 }
 
 func TestPackageKeeper_Resolve(t *testing.T) {

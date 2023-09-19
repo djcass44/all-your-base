@@ -3,6 +3,7 @@ package containerutil
 import (
 	"context"
 	"fmt"
+	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/ci-tools/pkg/ociutil"
 	"github.com/go-logr/logr"
 	"github.com/google/go-containerregistry/pkg/crane"
@@ -10,11 +11,13 @@ import (
 	"github.com/google/go-containerregistry/pkg/v1/empty"
 	"github.com/google/go-containerregistry/pkg/v1/mutate"
 	"path/filepath"
+	"strings"
 )
 
 const MagicImageScratch = "scratch"
+const DefaultPath = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/somebody/.local/bin"
 
-func Append(ctx context.Context, appPath, baseRef string, platform *v1.Platform, username string) (v1.Image, error) {
+func Append(ctx context.Context, fs fs.FullFS, baseRef string, platform *v1.Platform, username string) (v1.Image, error) {
 	log := logr.FromContextOrDiscard(ctx)
 	// pull the base image
 	log.Info("pulling base image", "base", baseRef)
@@ -31,8 +34,8 @@ func Append(ctx context.Context, appPath, baseRef string, platform *v1.Platform,
 	}
 
 	// create our new layer
-	log.Info("containerising directory", "path", appPath)
-	layer, err := NewLayer(appPath, platform)
+	log.Info("containerising filesystem")
+	layer, err := NewLayer(fs, platform)
 	if err != nil {
 		return nil, err
 	}
@@ -60,8 +63,19 @@ func Append(ctx context.Context, appPath, baseRef string, platform *v1.Platform,
 	}
 	cfg = cfg.DeepCopy()
 	cfg.Author = "github.com/djcass44/all-your-base"
-	cfg.Config.WorkingDir = filepath.Join("home", username)
+	cfg.Config.WorkingDir = filepath.Join("/home", username)
 	cfg.Config.User = username
+
+	var found bool
+	for i, e := range cfg.Config.Env {
+		if strings.HasPrefix(e, "PATH=") {
+			cfg.Config.Env[i] = cfg.Config.Env[i] + ":/home/somebody/.local/bin"
+			found = true
+		}
+	}
+	if !found {
+		cfg.Config.Env = append(cfg.Config.Env, "PATH="+DefaultPath)
+	}
 	if cfg.Config.Labels == nil {
 		cfg.Config.Labels = map[string]string{}
 	}

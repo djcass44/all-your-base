@@ -3,6 +3,7 @@ package alpine
 import (
 	"context"
 	"github.com/chainguard-dev/go-apk/pkg/apk"
+	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/all-your-base/pkg/archiveutil"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/go-logr/logr"
@@ -63,8 +64,8 @@ func NewPackageKeeper(ctx context.Context, repositories []string) (*PackageKeepe
 	}, nil
 }
 
-func (*PackageKeeper) Unpack(ctx context.Context, pkg, rootfs string) error {
-	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg, "rootfs", rootfs)
+func (*PackageKeeper) Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) error {
+	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg)
 	log.Info("unpacking apk")
 
 	f, err := os.Open(pkg)

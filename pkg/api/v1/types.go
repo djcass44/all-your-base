@@ -28,8 +28,10 @@ type Package struct {
 }
 
 type File struct {
-	URI  string `json:"uri"`
-	Path string `json:"path"`
+	URI        string `json:"uri"`
+	Path       string `json:"path"`
+	Executable bool   `json:"executable"`
+	SubPath    string `json:"subPath"`
 }
 
 type Build struct {

@@ -4,17 +4,18 @@ import (
 	"archive/tar"
 	"bytes"
 	"fmt"
+	fullfs "github.com/chainguard-dev/go-apk/pkg/fs"
+	"github.com/djcass44/all-your-base/pkg/fileutil"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/tarball"
 	"github.com/google/go-containerregistry/pkg/v1/types"
 	"io"
+	"io/fs"
 	"os"
-	"path"
-	"path/filepath"
 )
 
-func NewLayer(appPath string, platform *v1.Platform) (v1.Layer, error) {
-	layerBuf, err := tarDir(appPath, platform)
+func NewLayer(fs fullfs.FullFS, platform *v1.Platform) (v1.Layer, error) {
+	layerBuf, err := tarDir(fs, platform)
 	if err != nil {
 		return nil, fmt.Errorf("tarring data: %w", err)
 	}
@@ -24,12 +25,12 @@ func NewLayer(appPath string, platform *v1.Platform) (v1.Layer, error) {
 	}, tarball.WithCompressedCaching, tarball.WithMediaType(types.OCILayer))
 }
 
-func tarDir(appPath string, platform *v1.Platform) (*bytes.Buffer, error) {
+func tarDir(fs fullfs.FullFS, platform *v1.Platform) (*bytes.Buffer, error) {
 	buf := bytes.NewBuffer(nil)
 	tw := tar.NewWriter(buf)
 	defer tw.Close()
 
-	if err := walkRecursive(tw, appPath, "/", v1.Time{}, platform); err != nil {
+	if err := walkRecursive(fs, tw, "/", v1.Time{}, platform); err != nil {
 		return nil, err
 	}
 	return buf, nil
@@ -38,37 +39,43 @@ func tarDir(appPath string, platform *v1.Platform) (*bytes.Buffer, error) {
 // walkRecursive performs a filepath.Walk of the given root directory adding it
 // to the provided tar.Writer with root -> chroot.  All symlinks are dereferenced,
 // which is what leads to recursion when we encounter a directory symlink.
-func walkRecursive(tw *tar.Writer, root, chroot string, creationTime v1.Time, platform *v1.Platform) error {
-	return filepath.Walk(root, func(hostPath string, info os.FileInfo, err error) error {
+func walkRecursive(rootfs fullfs.FullFS, tw *tar.Writer, root string, creationTime v1.Time, platform *v1.Platform) error {
+	return fs.WalkDir(rootfs, root, func(hostPath string, d os.DirEntry, err error) error {
 		if hostPath == root {
 			return nil
 		}
 		if err != nil {
-			return fmt.Errorf("filepath.Walk(%q): %w", root, err)
+			return fmt.Errorf("fs.WalkDir(%q): %w", root, err)
 		}
 		// Skip other directories.
-		if info.Mode().IsDir() {
+		if d.IsDir() {
 			return nil
 		}
-		newPath := path.Join(chroot, filepath.ToSlash(hostPath[len(root):]))
 
-		evalPath, err := filepath.EvalSymlinks(hostPath)
+		evalPath := hostPath
+		ok, err := fileutil.IsSymbolicLink(rootfs, hostPath)
 		if err != nil {
-			return fmt.Errorf("filepath.EvalSymlinks(%q): %w", hostPath, err)
+			return fmt.Errorf("fileutil.IsSymbolicLink(%q): %w", hostPath, err)
+		}
+		if ok {
+			evalPath, err = rootfs.Readlink(hostPath)
+			if err != nil {
+				return fmt.Errorf("fs.Readlink(%q): %w", hostPath, err)
+			}
 		}
 
 		// Chase symlinks.
-		info, err = os.Stat(evalPath)
+		info, err := fs.Stat(rootfs, evalPath)
 		if err != nil {
-			return fmt.Errorf("os.Stat(%q): %w", evalPath, err)
+			return fmt.Errorf("fs.Stat(%q): %w", evalPath, err)
 		}
 		// Skip other directories.
 		if info.Mode().IsDir() {
-			return walkRecursive(tw, evalPath, newPath, creationTime, platform)
+			return walkRecursive(rootfs, tw, hostPath, creationTime, platform)
 		}
 
 		// Open the file to copy it into the tarball.
-		file, err := os.Open(evalPath)
+		file, err := rootfs.Open(evalPath)
 		if err != nil {
 			return fmt.Errorf("os.Open(%q): %w", evalPath, err)
 		}
@@ -76,17 +83,17 @@ func walkRecursive(tw *tar.Writer, root, chroot string, creationTime v1.Time, pl
 
 		// Copy the file into the image tarball.
 		header := &tar.Header{
-			Name:     newPath,
+			Name:     hostPath,
 			Size:     info.Size(),
 			Typeflag: tar.TypeReg,
 			Mode:     int64(info.Mode()),
 			ModTime:  creationTime.Time,
 		}
 		if err := tw.WriteHeader(header); err != nil {
-			return fmt.Errorf("tar.Writer.WriteHeader(%q): %w", newPath, err)
+			return fmt.Errorf("tar.Writer.WriteHeader(%q): %w", hostPath, err)
 		}
 		if _, err := io.Copy(tw, file); err != nil {
-			return fmt.Errorf("io.Copy(%q, %q): %w", newPath, evalPath, err)
+			return fmt.Errorf("io.Copy(%q, %q): %w", hostPath, evalPath, err)
 		}
 		return nil
 	})
