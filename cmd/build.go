@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/go-getter"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/util/yaml"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -160,11 +161,23 @@ func build(cmd *cobra.Command, _ []string) error {
 			log.Error(err, "failed to prepare download directory")
 			return err
 		}
-		log.Info("downloading file", "file", file.URI, "path", dst)
+		srcUri, err := url.Parse(os.ExpandEnv(file.URI))
+		if err != nil {
+			return err
+		}
+		checksum, ok := lockFile.Packages[file.URI]
+		if !ok {
+			return fmt.Errorf("failed to locate lock statement for package: %s\nYou may need to update the lock file with the 'lock' command", file.URI)
+		}
+		q := srcUri.Query()
+		q.Set("checksum", checksum.Integrity)
+		srcUri.RawQuery = q.Encode()
+
+		log.Info("downloading file", "file", srcUri.String(), "path", dst)
 		client := &getter.Client{
 			Ctx:             cmd.Context(),
 			Pwd:             wd,
-			Src:             os.ExpandEnv(file.URI),
+			Src:             srcUri.String(),
 			Dst:             dst,
 			DisableSymlinks: true,
 			Mode:            getter.ClientModeAny,
@@ -214,10 +227,12 @@ func build(cmd *cobra.Command, _ []string) error {
 	// package everything up as our final container image
 
 	baseImage := os.ExpandEnv(cfg.Spec.From)
-	if baseImage == "" {
+	switch baseImage {
+	case containerutil.MagicImageScratch:
+	case "":
 		log.Info("using scratch base as nothing was provided")
 		baseImage = containerutil.MagicImageScratch
-	} else {
+	default:
 		baseImage = baseImage + "@" + lockFile.Packages[""].Integrity
 	}
 

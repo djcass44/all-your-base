@@ -1,9 +1,0 @@
-apiVersion: ayb.dcas.dev/v1
-kind: Build
-metadata:
-  name: scratch-file-simple
-spec:
-  from: scratch
-  files:
-    - uri: https://ftp.gnu.org/gnu/hello/hello-2.12.tar.gz?checksum=sha256:deadbeef&archive=false
-      path: /hello-2.12.tar.gz

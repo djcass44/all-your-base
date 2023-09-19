@@ -26,6 +26,14 @@
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/git-2.40.1-r0.apk",
 			"integrity": "Q1zLlRzliw0tRhZDTrLXnMgdtg0OI="
 		},
+		"https://get.helm.sh/helm-v3.10.0-linux-amd64.tar.gz": {
+			"resolved": "https://get.helm.sh/helm-v3.10.0-linux-amd64.tar.gz?archive=false",
+			"integrity": "sha256:bf56beb418bb529b5e0d6d43d56654c5a03f89c98400b409d1013a33d9586474"
+		},
+		"https://storage.googleapis.com/kubernetes-release/release/v1.28.0/bin/linux/amd64/kubectl": {
+			"resolved": "https://storage.googleapis.com/kubernetes-release/release/v1.28.0/bin/linux/amd64/kubectl?archive=false",
+			"integrity": "sha256:4717660fd1466ec72d59000bb1d9f5cdc91fac31d491043ca62b34398e0799ce"
+		},
 		"libcrypto3": {
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libcrypto3-3.1.2-r0.apk",
 			"integrity": "Q1NsXXS8muNMooXArl1YhRLj5Rvno="

@@ -30,6 +30,10 @@
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/community/x86_64/git-lfs-3.3.0-r4.apk",
 			"integrity": "Q1txeeEiyKUQVRSDilAZqidJXA9no="
 		},
+		"https://services.gradle.org/distributions/gradle-7.2-bin.zip?checksum=file:https://services.gradle.org/distributions/gradle-7.2-bin.zip.sha256": {
+			"resolved": "https://services.gradle.org/distributions/gradle-7.2-bin.zip?archive=false\u0026checksum=file%3Ahttps%3A%2F%2Fservices.gradle.org%2Fdistributions%2Fgradle-7.2-bin.zip.sha256",
+			"integrity": "sha256:f581709a9c35e9cb92e16f585d2c4bc99b2b1a5f85d2badbd3dc6bff59e1e6dd"
+		},
 		"libcrypto3": {
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libcrypto3-3.1.2-r0.apk",
 			"integrity": "Q1NsXXS8muNMooXArl1YhRLj5Rvno="
