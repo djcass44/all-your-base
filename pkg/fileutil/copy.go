@@ -92,6 +92,9 @@ func Copy(srcFile, dstFile string, dstFS fs.FullFS) error {
 	if err := dstFS.Chmod(dstFile, info.Mode()); err != nil {
 		return err
 	}
+	if err := dstFS.Chown(dstFile, 1001, 0); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -15,6 +15,7 @@ type BuildSpec struct {
 	Packages     []Package               `json:"packages,omitempty"`
 	Repositories map[string][]Repository `json:"repositories,omitempty"`
 	Files        []File                  `json:"files,omitempty"`
+	Links        []Link                  `json:"links,omitempty"`
 }
 
 type Repository struct {
@@ -32,6 +33,11 @@ type File struct {
 	Path       string `json:"path"`
 	Executable bool   `json:"executable"`
 	SubPath    string `json:"subPath"`
+}
+
+type Link struct {
+	Source string `json:"source"`
+	Target string `json:"target"`
 }
 
 type Build struct {

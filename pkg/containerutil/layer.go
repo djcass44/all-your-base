@@ -12,6 +12,7 @@ import (
 	"io"
 	"io/fs"
 	"os"
+	"strings"
 )
 
 func NewLayer(fs fullfs.FullFS, platform *v1.Platform) (v1.Layer, error) {
@@ -47,8 +48,17 @@ func walkRecursive(rootfs fullfs.FullFS, tw *tar.Writer, root string, creationTi
 		if err != nil {
 			return fmt.Errorf("fs.WalkDir(%q): %w", root, err)
 		}
-		// Skip other directories.
+		// create directory shells
 		if d.IsDir() {
+			header := &tar.Header{
+				Name:     hostPath,
+				Typeflag: tar.TypeDir,
+				Mode:     0755,
+				ModTime:  creationTime.Time,
+			}
+			if err := tw.WriteHeader(header); err != nil {
+				return fmt.Errorf("tar.Writer.WriteHeader(%q): %w", hostPath, err)
+			}
 			return nil
 		}
 
@@ -81,11 +91,19 @@ func walkRecursive(rootfs fullfs.FullFS, tw *tar.Writer, root string, creationTi
 		}
 		defer file.Close()
 
+		// hacky method of setting the uid...
+		uid := 0
+		if strings.HasPrefix(hostPath, "/home/somebody") {
+			uid = 1001
+		}
+
 		// Copy the file into the image tarball.
 		header := &tar.Header{
 			Name:     hostPath,
 			Size:     info.Size(),
 			Typeflag: tar.TypeReg,
+			Uid:      uid,
+			Gid:      0,
 			Mode:     int64(info.Mode()),
 			ModTime:  creationTime.Time,
 		}

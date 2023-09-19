@@ -31,19 +31,22 @@ const (
 	flagConfig = "config"
 	flagSave   = "save"
 
-	flagUsername = "username"
-	flagUid      = "uid"
+	flagUid = "uid"
 
 	flagCacheDir = "cache-dir"
 	flagPlatform = "platform"
+)
+
+const (
+	defaultUsername = "somebody"
+	defaultUid      = 1001
 )
 
 func init() {
 	buildCmd.Flags().StringP(flagConfig, "c", "", "path to an image configuration file")
 	buildCmd.Flags().String(flagSave, "", "path to save the image as a tar archive")
 
-	buildCmd.Flags().String(flagUsername, "somebody", "name of the non-root user to create")
-	buildCmd.Flags().Int(flagUid, os.Getuid(), "uid of the non-root user to create")
+	buildCmd.Flags().Int(flagUid, 1001, "uid of the non-root user to create")
 
 	buildCmd.Flags().String(flagCacheDir, "", "cache directory (defaults to user cache dir)")
 	buildCmd.Flags().String(flagPlatform, "linux/amd64", "build platform")
@@ -58,9 +61,6 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	configPath, _ := cmd.Flags().GetString(flagConfig)
 	localPath, _ := cmd.Flags().GetString(flagSave)
-
-	username, _ := cmd.Flags().GetString(flagUsername)
-	uid, _ := cmd.Flags().GetInt(flagUid)
 
 	cacheDir, _ := cmd.Flags().GetString(flagCacheDir)
 	cacheDir = getCacheDir(cacheDir)
@@ -136,7 +136,7 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	// create the non-root user
-	if err := linuxutil.NewUser(cmd.Context(), rootfs, username, uid); err != nil {
+	if err := linuxutil.NewUser(cmd.Context(), rootfs, defaultUsername, defaultUid); err != nil {
 		return err
 	}
 
@@ -184,6 +184,18 @@ func build(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
+	// create links
+	for _, link := range cfg.Spec.Links {
+		srcPath := filepath.Clean(link.Source)
+		dstPath := filepath.Clean(link.Target)
+
+		log.Info("creating link", "src", srcPath, "dst", dstPath)
+		if err := rootfs.Symlink(srcPath, dstPath); err != nil {
+			log.Error(err, "failed to create link")
+			return err
+		}
+	}
+
 	// package everything up as our final container image
 
 	baseImage := os.ExpandEnv(cfg.Spec.From)
@@ -199,7 +211,7 @@ func build(cmd *cobra.Command, _ []string) error {
 		log.Error(err, "failed to parse platform")
 		return err
 	}
-	img, err := containerutil.Append(cmd.Context(), rootfs, baseImage, imgPlatform, username)
+	img, err := containerutil.Append(cmd.Context(), rootfs, baseImage, imgPlatform, defaultUsername)
 	if err != nil {
 		return err
 	}

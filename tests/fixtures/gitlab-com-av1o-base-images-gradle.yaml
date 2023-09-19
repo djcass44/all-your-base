@@ -1,0 +1,25 @@
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: gitlab-com-av1o-base-images-gradle
+spec:
+  from: harbor.dcas.dev/docker.io/adoptopenjdk/openjdk16:alpine
+  repositories:
+    alpine:
+      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main
+      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/community
+  packages:
+    - name: git
+      type: Alpine
+    - name: git-lfs
+      type: Alpine
+    - name: wget
+      type: Alpine
+    - name: openssh-client
+      type: Alpine
+  files:
+    - uri: https://services.gradle.org/distributions/gradle-7.2-bin.zip?checksum=file:https://services.gradle.org/distributions/gradle-7.2-bin.zip.sha256
+      path: /opt/
+  links:
+    - source: /opt/gradle-7.2/bin/gradle
+      target: /usr/bin/gradle

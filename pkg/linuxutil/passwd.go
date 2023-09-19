@@ -46,8 +46,13 @@ func NewUser(ctx context.Context, rootfs fs.FullFS, username string, uid int) er
 
 	// create the home directory.
 	// hopefully the permission bits are correct - https://superuser.com/a/165465
+	log.Info("creating user home directory")
 	if err := rootfs.MkdirAll(filepath.Join("/home", username, ".local", "bin"), 0775); err != nil {
 		log.Error(err, "failed to create home directory")
+		return err
+	}
+	if err := rootfs.Chown(filepath.Join("/home", username), uid, 0); err != nil {
+		log.Error(err, "failed to set home directory ownership")
 		return err
 	}
 
