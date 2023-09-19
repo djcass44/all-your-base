@@ -78,6 +78,17 @@ func build(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
+	configPath, err = filepath.Abs(configPath)
+	if err != nil {
+		return err
+	}
+
+	// set our working directory to the directory containing the
+	// configuration file
+	wd := filepath.Dir(configPath)
+	_ = os.Chdir(wd)
+	log.Info("updating working directory", "dir", wd)
+
 	rootfs := fs.NewMemFS()
 	log.V(3).Info("prepared root filesystem")
 
@@ -152,10 +163,12 @@ func build(cmd *cobra.Command, _ []string) error {
 		log.Info("downloading file", "file", file.URI, "path", dst)
 		client := &getter.Client{
 			Ctx:             cmd.Context(),
-			Src:             file.URI,
+			Pwd:             wd,
+			Src:             os.ExpandEnv(file.URI),
 			Dst:             dst,
 			DisableSymlinks: true,
 			Mode:            getter.ClientModeAny,
+			Getters:         getters,
 		}
 		if err := client.Get(); err != nil {
 			log.Error(err, "failed to download file")
@@ -179,6 +192,7 @@ func build(cmd *cobra.Command, _ []string) error {
 				return err
 			}
 		}
+		log.V(2).Info("copying file or directory", "src", copySrc, "dst", path)
 		if err := fileutil.CopyDirectory(copySrc, path, rootfs); err != nil {
 			log.Error(err, "failed to copy directory")
 			return err
@@ -222,6 +236,15 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	return nil
+}
+
+var getters = map[string]getter.Getter{
+	"file":  &getter.FileGetter{Copy: true},
+	"https": &getter.HttpGetter{XTerraformGetDisabled: true, Netrc: true},
+	"s3":    &getter.S3Getter{},
+	"git":   &getter.GitGetter{},
+	"gcs":   &getter.GCSGetter{},
+	"hg":    &getter.HgGetter{},
 }
 
 func getCacheDir(d string) string {

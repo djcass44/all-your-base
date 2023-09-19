@@ -64,6 +64,9 @@ func CopyDirectory(srcDir, dest string, destFS fs.FullFS) error {
 }
 
 func Copy(srcFile, dstFile string, dstFS fs.FullFS) error {
+	if err := CreateIfNotExists(dstFS, filepath.Dir(dstFile), 0755); err != nil {
+		return err
+	}
 	out, err := dstFS.Create(dstFile)
 	if err != nil {
 		return err

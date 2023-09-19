@@ -1,0 +1,19 @@
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: gitlab-com-av1o-base-images-node
+spec:
+  from: harbor.dcas.dev/docker.io/library/node:18-alpine
+  repositories:
+    alpine:
+      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main
+      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/community
+  packages:
+    - type: Alpine
+      names:
+        - git
+        - git-lfs
+        - openssh-client
+  files:
+    - uri: .npmrc
+      path: /home/somebody/
