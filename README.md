@@ -20,10 +20,16 @@ spec:
 We can build this with ayb from any environment:
 
 ```shell
-ayb build tests/fixtures/apline_318_full.yaml --save ayb-alpine.tar
+ayb build tests/fixtures/alpine_318_full.yaml --save ayb-alpine.tar
 ```
 You can then load the generated tar image into an OCI environment:
 
 ```shell
 docker load < ayb-alpine.tar
+```
+
+You can also publish the image directly to a registry:
+
+```shell
+ayb build tests/fixtures/alpine_318_full.yaml --image myrepo/alpine318 -t test
 ```
