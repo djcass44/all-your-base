@@ -51,6 +51,14 @@ func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, ro
 		if err != nil {
 			return fmt.Errorf("fs.WalkDir(%q): %w", root, err)
 		}
+
+		// hacky method of setting the uid...
+		uid := 0
+		if hostPath == "/home/somebody" || strings.HasPrefix(hostPath, "/home/somebody") {
+			log.V(4).Info("adding user owned file")
+			uid = 1001
+		}
+
 		// create directory shells
 		if d.IsDir() {
 			log.V(4).Info("adding directory to tar")
@@ -59,6 +67,7 @@ func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, ro
 				Typeflag: tar.TypeDir,
 				Mode:     0755,
 				ModTime:  creationTime.Time,
+				Uid:      uid,
 			}
 			if err := tw.WriteHeader(header); err != nil {
 				return fmt.Errorf("tar.Writer.WriteHeader(%q): %w", hostPath, err)
@@ -83,6 +92,7 @@ func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, ro
 				Typeflag: tar.TypeSymlink,
 				Linkname: evalPath,
 				ModTime:  creationTime.Time,
+				Uid:      uid,
 			}
 			if err := tw.WriteHeader(header); err != nil {
 				return fmt.Errorf("tar.Writer.WriteHeader(%q): %w", hostPath, err)
@@ -108,12 +118,6 @@ func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, ro
 			return fmt.Errorf("os.Open(%q): %w", evalPath, err)
 		}
 		defer file.Close()
-
-		// hacky method of setting the uid...
-		uid := 0
-		if strings.HasPrefix(hostPath, "/home/somebody") {
-			uid = 1001
-		}
 
 		// Copy the file into the image tarball.
 		header := &tar.Header{

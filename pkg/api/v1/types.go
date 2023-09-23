@@ -18,6 +18,7 @@ type BuildSpec struct {
 	Repositories map[string][]Repository `json:"repositories,omitempty"`
 	Files        []File                  `json:"files,omitempty"`
 	Links        []Link                  `json:"links,omitempty"`
+	Env          []EnvVar                `json:"env,omitempty"`
 }
 
 type Repository struct {
@@ -39,6 +40,11 @@ type File struct {
 type Link struct {
 	Source string `json:"source"`
 	Target string `json:"target"`
+}
+
+type EnvVar struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
 type Build struct {

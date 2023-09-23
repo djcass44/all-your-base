@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/chainguard-dev/go-apk/pkg/fs"
-	"github.com/djcass44/ci-tools/pkg/ociutil"
 	"github.com/go-logr/logr"
-	"github.com/google/go-containerregistry/pkg/crane"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/empty"
 	"github.com/google/go-containerregistry/pkg/v1/mutate"
@@ -16,22 +14,52 @@ import (
 
 const MagicImageScratch = "scratch"
 const DefaultPath = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/somebody/.local/bin"
+const DefaultUsername = "somebody"
 
-func Append(ctx context.Context, fs fs.FullFS, baseRef string, platform *v1.Platform, username string) (v1.Image, error) {
-	log := logr.FromContextOrDiscard(ctx)
-	// pull the base image
-	log.Info("pulling base image", "base", baseRef)
-	var base v1.Image
-	var err error
+type Image struct {
+	author    string
+	username  string
+	env       []string
+	baseImage v1.Image
+}
 
-	if baseRef == MagicImageScratch {
-		base = empty.Image
-	} else {
-		base, err = crane.Pull(baseRef, crane.WithContext(ctx), crane.WithAuthFromKeychain(ociutil.KeyChain(ociutil.Auth{})))
-		if err != nil {
-			return nil, fmt.Errorf("pulling %s: %w", baseRef, err)
-		}
+func NewImage(opts ...ImageOption) *Image {
+	img := &Image{
+		author:    "github.com/djcass44/all-your-base",
+		env:       nil,
+		baseImage: empty.Image,
+		username:  DefaultUsername,
 	}
+
+	for _, opt := range opts {
+		opt(img)
+	}
+
+	return img
+}
+
+type ImageOption func(image *Image)
+
+func WithBaseImage(img v1.Image) ImageOption {
+	return func(image *Image) {
+		image.baseImage = img
+	}
+}
+
+func WithEnv(env ...string) ImageOption {
+	return func(image *Image) {
+		image.env = env
+	}
+}
+
+func WithUsername(s string) ImageOption {
+	return func(image *Image) {
+		image.username = s
+	}
+}
+
+func (ib *Image) Append(ctx context.Context, fs fs.FullFS, platform *v1.Platform) (v1.Image, error) {
+	log := logr.FromContextOrDiscard(ctx)
 
 	// create our new layer
 	log.Info("containerising filesystem")
@@ -51,7 +79,7 @@ func Append(ctx context.Context, fs fs.FullFS, baseRef string, platform *v1.Plat
 			},
 		},
 	}
-	withData, err := mutate.Append(base, layers...)
+	withData, err := mutate.Append(ib.baseImage, layers...)
 	if err != nil {
 		return nil, fmt.Errorf("appending layers: %w", err)
 	}
@@ -62,14 +90,16 @@ func Append(ctx context.Context, fs fs.FullFS, baseRef string, platform *v1.Plat
 		return nil, err
 	}
 	cfg = cfg.DeepCopy()
-	cfg.Author = "github.com/djcass44/all-your-base"
-	cfg.Config.WorkingDir = filepath.Join("/home", username)
-	cfg.Config.User = username
+	cfg.Author = ib.author
+	cfg.Config.WorkingDir = filepath.Join("/home", ib.username)
+	cfg.Config.User = ib.username
+
+	cfg.Config.Env = ib.env
 
 	var found bool
 	for i, e := range cfg.Config.Env {
 		if strings.HasPrefix(e, "PATH=") {
-			cfg.Config.Env[i] = cfg.Config.Env[i] + ":/home/somebody/.local/bin"
+			cfg.Config.Env[i] = cfg.Config.Env[i] + fmt.Sprintf(":/home/%s/.local/bin", ib.username)
 			found = true
 		}
 	}

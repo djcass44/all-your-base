@@ -1,0 +1,12 @@
+{
+	"name": "gitlab-com-av1o-base-images-ubuntu",
+	"lockfileVersion": 1,
+	"packages": {
+		"": {
+			"type": "OCI",
+			"version": "",
+			"resolved": "harbor.dcas.dev/docker.io/library/ubuntu:rolling@sha256:f1090cfa89ab321a6d670e79652f61593502591f2fc7452fb0b7c6da575729c4",
+			"integrity": "sha256:f1090cfa89ab321a6d670e79652f61593502591f2fc7452fb0b7c6da575729c4"
+		}
+	}
+}

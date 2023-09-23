@@ -137,9 +137,37 @@ func build(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
+	baseImage := os.ExpandEnv(cfg.Spec.From)
+	switch baseImage {
+	case containerutil.MagicImageScratch:
+	case "":
+		log.Info("using scratch base as nothing was provided")
+		baseImage = containerutil.MagicImageScratch
+	default:
+		baseImage = baseImage + "@" + lockFile.Packages[""].Integrity
+	}
+
+	// pull the base image
+	baseImg, err := containerutil.Pull(cmd.Context(), baseImage)
+	if err != nil {
+		return err
+	}
+	imgCfg, err := baseImg.ConfigFile()
+	if err != nil {
+		return err
+	}
+
+	// sort out environment variables
+	expandedEnv := append(imgCfg.Config.Env, "HOME=/home/somebody")
+	for _, vars := range cfg.Spec.Env {
+		log.Info("exporting environment variable", "key", vars.Name)
+		expandedEnv = append(expandedEnv, fmt.Sprintf("%s=%s", vars.Name, os.Expand(vars.Value, expandList(expandedEnv))))
+	}
+
 	// download files
 	for _, file := range cfg.Spec.Files {
-		path := filepath.Clean(file.Path)
+		// expand paths using environment variables
+		path := filepath.Clean(os.Expand(file.Path, expandList(expandedEnv)))
 		dst, err := os.MkdirTemp("", "file-download-*")
 		if err != nil {
 			log.Error(err, "failed to prepare download directory")
@@ -210,22 +238,17 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	// package everything up as our final container image
 
-	baseImage := os.ExpandEnv(cfg.Spec.From)
-	switch baseImage {
-	case containerutil.MagicImageScratch:
-	case "":
-		log.Info("using scratch base as nothing was provided")
-		baseImage = containerutil.MagicImageScratch
-	default:
-		baseImage = baseImage + "@" + lockFile.Packages[""].Integrity
-	}
-
 	imgPlatform, err := v1.ParsePlatform(platform)
 	if err != nil {
 		log.Error(err, "failed to parse platform")
 		return err
 	}
-	img, err := containerutil.Append(cmd.Context(), rootfs, baseImage, imgPlatform, defaultUsername)
+
+	imageBuilder := containerutil.NewImage(
+		containerutil.WithBaseImage(baseImg),
+		containerutil.WithEnv(expandedEnv...),
+	)
+	img, err := imageBuilder.Append(cmd.Context(), rootfs, imgPlatform)
 	if err != nil {
 		return err
 	}
@@ -235,6 +258,18 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	return nil
+}
+
+func expandList(vs []string) func(s string) string {
+	return func(s string) string {
+		for _, e := range vs {
+			k, v, _ := strings.Cut(e, "=")
+			if k == s {
+				return v
+			}
+		}
+		return ""
+	}
 }
 
 var getters = map[string]getter.Getter{

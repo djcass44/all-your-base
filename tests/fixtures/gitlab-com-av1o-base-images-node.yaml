@@ -16,4 +16,11 @@ spec:
         - openssh-client
   files:
     - uri: .npmrc
-      path: /home/somebody/
+      path: $HOME/
+  env:
+    - name: NPM_PACKAGES
+      value: $HOME/.npm-packages
+    - name: NODE_PATH
+      value: $HOME/.npm-packages/lib/node_modules
+    - name: PATH
+      value: $HOME/.npm-packages/bin:$PATH
