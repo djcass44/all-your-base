@@ -3,9 +3,11 @@ package containerutil
 import (
 	"archive/tar"
 	"bytes"
+	"context"
 	"fmt"
 	fullfs "github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/all-your-base/pkg/fileutil"
+	"github.com/go-logr/logr"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/tarball"
 	"github.com/google/go-containerregistry/pkg/v1/types"
@@ -15,8 +17,8 @@ import (
 	"strings"
 )
 
-func NewLayer(fs fullfs.FullFS, platform *v1.Platform) (v1.Layer, error) {
-	layerBuf, err := tarDir(fs, platform)
+func NewLayer(ctx context.Context, fs fullfs.FullFS, platform *v1.Platform) (v1.Layer, error) {
+	layerBuf, err := tarDir(ctx, fs, platform)
 	if err != nil {
 		return nil, fmt.Errorf("tarring data: %w", err)
 	}
@@ -26,12 +28,12 @@ func NewLayer(fs fullfs.FullFS, platform *v1.Platform) (v1.Layer, error) {
 	}, tarball.WithCompressedCaching, tarball.WithMediaType(types.OCILayer))
 }
 
-func tarDir(fs fullfs.FullFS, platform *v1.Platform) (*bytes.Buffer, error) {
+func tarDir(ctx context.Context, fs fullfs.FullFS, platform *v1.Platform) (*bytes.Buffer, error) {
 	buf := bytes.NewBuffer(nil)
 	tw := tar.NewWriter(buf)
 	defer tw.Close()
 
-	if err := walkRecursive(fs, tw, "/", v1.Time{}, platform); err != nil {
+	if err := walkRecursive(ctx, fs, tw, "/", v1.Time{}, platform); err != nil {
 		return nil, err
 	}
 	return buf, nil
@@ -40,8 +42,9 @@ func tarDir(fs fullfs.FullFS, platform *v1.Platform) (*bytes.Buffer, error) {
 // walkRecursive performs a filepath.Walk of the given root directory adding it
 // to the provided tar.Writer with root -> chroot.  All symlinks are dereferenced,
 // which is what leads to recursion when we encounter a directory symlink.
-func walkRecursive(rootfs fullfs.FullFS, tw *tar.Writer, root string, creationTime v1.Time, platform *v1.Platform) error {
+func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, root string, creationTime v1.Time, platform *v1.Platform) error {
 	return fs.WalkDir(rootfs, root, func(hostPath string, d os.DirEntry, err error) error {
+		log := logr.FromContextOrDiscard(ctx).WithValues("path", hostPath)
 		if hostPath == root {
 			return nil
 		}
@@ -50,6 +53,7 @@ func walkRecursive(rootfs fullfs.FullFS, tw *tar.Writer, root string, creationTi
 		}
 		// create directory shells
 		if d.IsDir() {
+			log.V(4).Info("adding directory to tar")
 			header := &tar.Header{
 				Name:     hostPath,
 				Typeflag: tar.TypeDir,
@@ -68,10 +72,22 @@ func walkRecursive(rootfs fullfs.FullFS, tw *tar.Writer, root string, creationTi
 			return fmt.Errorf("fileutil.IsSymbolicLink(%q): %w", hostPath, err)
 		}
 		if ok {
+			log.V(5).Info("expanding symbolic link")
 			evalPath, err = rootfs.Readlink(hostPath)
 			if err != nil {
 				return fmt.Errorf("fs.Readlink(%q): %w", hostPath, err)
 			}
+			log.V(4).Info("adding symbolic link to tar")
+			header := &tar.Header{
+				Name:     hostPath,
+				Typeflag: tar.TypeSymlink,
+				Linkname: evalPath,
+				ModTime:  creationTime.Time,
+			}
+			if err := tw.WriteHeader(header); err != nil {
+				return fmt.Errorf("tar.Writer.WriteHeader(%q): %w", hostPath, err)
+			}
+			return nil
 		}
 
 		// Chase symlinks.
@@ -79,12 +95,14 @@ func walkRecursive(rootfs fullfs.FullFS, tw *tar.Writer, root string, creationTi
 		if err != nil {
 			return fmt.Errorf("fs.Stat(%q): %w", evalPath, err)
 		}
+
 		// Skip other directories.
 		if info.Mode().IsDir() {
-			return walkRecursive(rootfs, tw, hostPath, creationTime, platform)
+			return walkRecursive(ctx, rootfs, tw, hostPath, creationTime, platform)
 		}
 
 		// Open the file to copy it into the tarball.
+		log.V(4).Info("adding file to tar")
 		file, err := rootfs.Open(evalPath)
 		if err != nil {
 			return fmt.Errorf("os.Open(%q): %w", evalPath, err)

@@ -8,6 +8,7 @@ type Lock struct {
 
 type Package struct {
 	Name      string `json:"-"`
+	Version   string `json:"version"`
 	Resolved  string `json:"resolved"`
 	Integrity string `json:"integrity"`
 }

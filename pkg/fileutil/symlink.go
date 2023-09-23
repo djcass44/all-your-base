@@ -2,16 +2,12 @@ package fileutil
 
 import (
 	fullfs "github.com/chainguard-dev/go-apk/pkg/fs"
-	"os"
 )
 
 func IsSymbolicLink(rootfs fullfs.FullFS, path string) (bool, error) {
-	info, err := rootfs.Lstat(path)
+	_, err := rootfs.Readlink(path)
 	if err != nil {
-		return false, err
+		return false, nil
 	}
-	if info.Mode()&os.ModeSymlink != 0 {
-		return true, nil
-	}
-	return false, nil
+	return true, nil
 }

@@ -114,23 +114,27 @@ func build(cmd *cobra.Command, _ []string) error {
 		}
 
 		for _, name := range pkg.Names {
-			packageList, err := keeper.Resolve(cmd.Context(), name)
+			locked, ok := lockFile.Packages[name]
+			if !ok {
+				return fmt.Errorf("package could not be located in lockfile: %s", name)
+			}
+			packageList, err := keeper.Resolve(cmd.Context(), fmt.Sprintf("%s=%s", name, locked.Version))
 			if err != nil {
 				return err
 			}
 
 			for _, p := range packageList {
-				log.Info("installing package", "name", p.Name)
+				log.Info("installing package", "name", p.Name, "version", p.Version)
 
 				// check that the package is in the lockfile
-				locked, ok := lockFile.Packages[p.Name]
+				locked, ok = lockFile.Packages[p.Name]
 				if !ok {
 					return fmt.Errorf("package could not be located in lockfile: %s", p.Name)
 				}
 
 				log.V(4).Info("comparing package integrity against lockfile", "expected", locked.Integrity, "actual", p.Integrity)
 				if locked.Integrity != p.Integrity {
-					return fmt.Errorf("package integrity check failed (expected: '%s', got: '%s')", locked.Integrity, p.Integrity)
+					return fmt.Errorf("package %s integrity check failed (expected: '%s', got: '%s')", p.Name, locked.Integrity, p.Integrity)
 				}
 
 				// download the package

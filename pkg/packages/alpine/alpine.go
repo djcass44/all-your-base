@@ -96,12 +96,14 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 		Name:      repoPkg.Name,
 		Resolved:  repoPkg.Url(),
 		Integrity: repoPkg.ChecksumString(),
+		Version:   repoPkg.Version,
 	}
 	for i := range repoPkgDeps {
 		names[i+1] = lockfile.Package{
 			Name:      repoPkgDeps[i].Name,
 			Resolved:  repoPkgDeps[i].Url(),
 			Integrity: repoPkgDeps[i].ChecksumString(),
+			Version:   repoPkgDeps[i].Version,
 		}
 	}
 

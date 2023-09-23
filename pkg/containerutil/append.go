@@ -35,7 +35,7 @@ func Append(ctx context.Context, fs fs.FullFS, baseRef string, platform *v1.Plat
 
 	// create our new layer
 	log.Info("containerising filesystem")
-	layer, err := NewLayer(fs, platform)
+	layer, err := NewLayer(ctx, fs, platform)
 	if err != nil {
 		return nil, err
 	}

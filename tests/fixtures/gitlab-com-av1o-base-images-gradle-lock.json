@@ -3,106 +3,132 @@
 	"lockfileVersion": 1,
 	"packages": {
 		"": {
-			"resolved": "harbor.dcas.dev/docker.io/adoptopenjdk/openjdk16:alpine@sha256:9918b62ef8efc73a4f0315c5c57b9b91b06fe2c15adc4e68783bacf3ef3938f0",
-			"integrity": "sha256:9918b62ef8efc73a4f0315c5c57b9b91b06fe2c15adc4e68783bacf3ef3938f0"
+			"version": "",
+			"resolved": "harbor.dcas.dev/docker.io/adoptopenjdk/openjdk16:alpine@sha256:367797173ded43f46f220fe88141358329710a35c8ecee12356dfefe02d51668",
+			"integrity": "sha256:367797173ded43f46f220fe88141358329710a35c8ecee12356dfefe02d51668"
 		},
 		"brotli-libs": {
+			"version": "1.0.9-r14",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/brotli-libs-1.0.9-r14.apk",
 			"integrity": "Q1SLIAbTXN3oSaGPfK2/rxfJJzEw8="
 		},
 		"busybox": {
+			"version": "1.36.1-r2",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/busybox-1.36.1-r2.apk",
 			"integrity": "Q1gQ/L3UBnSjgkFWEHQaUkUDubqdI="
 		},
 		"busybox-binsh": {
+			"version": "1.36.1-r2",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/busybox-binsh-1.36.1-r2.apk",
 			"integrity": "Q1ng9K4zeuARW5It8leWhwxor0cRQ="
 		},
 		"ca-certificates": {
+			"version": "20230506-r0",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/ca-certificates-20230506-r0.apk",
 			"integrity": "Q1FG8M+7w+dkjV9Vy0mGFWW2t4+Do="
 		},
 		"git": {
+			"version": "2.40.1-r0",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/git-2.40.1-r0.apk",
 			"integrity": "Q1zLlRzliw0tRhZDTrLXnMgdtg0OI="
 		},
 		"git-lfs": {
+			"version": "3.3.0-r4",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/community/x86_64/git-lfs-3.3.0-r4.apk",
 			"integrity": "Q1txeeEiyKUQVRSDilAZqidJXA9no="
 		},
 		"https://services.gradle.org/distributions/gradle-7.2-bin.zip?checksum=file:https://services.gradle.org/distributions/gradle-7.2-bin.zip.sha256": {
+			"version": "",
 			"resolved": "https://services.gradle.org/distributions/gradle-7.2-bin.zip?archive=false\u0026checksum=file%3Ahttps%3A%2F%2Fservices.gradle.org%2Fdistributions%2Fgradle-7.2-bin.zip.sha256",
 			"integrity": "sha256:f581709a9c35e9cb92e16f585d2c4bc99b2b1a5f85d2badbd3dc6bff59e1e6dd"
 		},
 		"libcrypto3": {
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libcrypto3-3.1.2-r0.apk",
-			"integrity": "Q1NsXXS8muNMooXArl1YhRLj5Rvno="
+			"version": "3.1.3-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libcrypto3-3.1.3-r0.apk",
+			"integrity": "Q1+hLHhXUQEYytDHHiaVNhV0493Ts="
 		},
 		"libcurl": {
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libcurl-8.2.1-r0.apk",
-			"integrity": "Q1aw5RQku0HVvKTJqLFxehFQ2FuQ8="
+			"version": "8.3.0-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libcurl-8.3.0-r0.apk",
+			"integrity": "Q1VcTCkQ94LGvMG1j8EhwQhBk7Fck="
 		},
 		"libedit": {
+			"version": "20221030.3.1-r1",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libedit-20221030.3.1-r1.apk",
 			"integrity": "Q15PBvyyEwd5KjwG3lTYwXuEw/+Hw="
 		},
 		"libexpat": {
+			"version": "2.5.0-r1",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libexpat-2.5.0-r1.apk",
 			"integrity": "Q1HckygN+FaPOKMnPm/G6nsK7Ddvw="
 		},
 		"libidn2": {
+			"version": "2.3.4-r1",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libidn2-2.3.4-r1.apk",
 			"integrity": "Q1e8PNgko4hneETI5udcz1NEz0L28="
 		},
 		"libncursesw": {
+			"version": "6.4_p20230506-r0",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libncursesw-6.4_p20230506-r0.apk",
 			"integrity": "Q1dD0p75kd/SeiqiNdbcrVT0ZTiOY="
 		},
 		"libssl3": {
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libssl3-3.1.2-r0.apk",
-			"integrity": "Q16d3kU5nHnWY7SeXMWOWZGiQjKcg="
+			"version": "3.1.3-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libssl3-3.1.3-r0.apk",
+			"integrity": "Q1zrNyIdDwInJ5HULlg7lSAxvLeVc="
 		},
 		"libunistring": {
+			"version": "1.1-r1",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libunistring-1.1-r1.apk",
 			"integrity": "Q1FM6LSxIv3TOssRzH8QaqBWHCGaE="
 		},
 		"musl": {
+			"version": "1.2.4-r1",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/musl-1.2.4-r1.apk",
 			"integrity": "Q12qHLEadu7QpBuz8kHB5EDF3mKB4="
 		},
 		"ncurses-terminfo-base": {
+			"version": "6.4_p20230506-r0",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/ncurses-terminfo-base-6.4_p20230506-r0.apk",
 			"integrity": "Q10a6n6U74hqvF5n9KAe2AjnhuN9g="
 		},
 		"nghttp2-libs": {
+			"version": "1.55.1-r0",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/nghttp2-libs-1.55.1-r0.apk",
 			"integrity": "Q11v9e1mzPbfY7PrJH8roan9CLkP8="
 		},
 		"openssh-client-common": {
+			"version": "9.3_p2-r0",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/openssh-client-common-9.3_p2-r0.apk",
 			"integrity": "Q1JSo11AfT15NbLB0hpXCUlUuD3kY="
 		},
 		"openssh-client-default": {
+			"version": "9.3_p2-r0",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/openssh-client-default-9.3_p2-r0.apk",
 			"integrity": "Q14FaITAH6/oWwVE/G+9Uxymec4z4="
 		},
 		"openssh-keygen": {
+			"version": "9.3_p2-r0",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/openssh-keygen-9.3_p2-r0.apk",
 			"integrity": "Q18HKD+gemWeNLp/t5rGmx94P+gLY="
 		},
 		"pcre2": {
+			"version": "10.42-r1",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/pcre2-10.42-r1.apk",
 			"integrity": "Q1GVvOXp8moLoU9GDN9SGWx+OH8oI="
 		},
 		"ssl_client": {
+			"version": "1.36.1-r2",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/ssl_client-1.36.1-r2.apk",
 			"integrity": "Q1j6LHWpavmnFtpYjzQkH7apSIVOc="
 		},
 		"wget": {
+			"version": "1.21.4-r0",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/wget-1.21.4-r0.apk",
 			"integrity": "Q1EFpcakeqkAY5nagBNX6tyB8mWqM="
 		},
 		"zlib": {
+			"version": "1.2.13-r1",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/zlib-1.2.13-r1.apk",
 			"integrity": "Q1JlboSJkrN4qkDcokr4zenpcWEXQ="
 		}
