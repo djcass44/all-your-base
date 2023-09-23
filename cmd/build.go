@@ -19,7 +19,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 )
 
@@ -115,14 +114,13 @@ func build(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	// sort the keys so that we can
-	// install packages in the same
-	// order every time
-	pkgKeys := make([]string, 0)
-	for k := range lockFile.Packages {
-		pkgKeys = append(pkgKeys, k)
+	// validate that the configuration file lines up
+	// with what we expect from the lockfile
+	if err := lockFile.Validate(cfg.Spec); err != nil {
+		return err
 	}
-	sort.Strings(pkgKeys)
+
+	pkgKeys := lockFile.SortedKeys()
 
 	// install packages
 	for _, name := range pkgKeys {
