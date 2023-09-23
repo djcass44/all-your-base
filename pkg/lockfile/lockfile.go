@@ -45,17 +45,6 @@ func (l *Lock) Validate(cfg v1.BuildSpec) error {
 			}
 			continue
 		}
-		// check that the lock packages are all in the manifest
-		for _, p := range cfg.Packages {
-			for _, n := range p.Names {
-				if n == k {
-					found = true
-				}
-			}
-		}
-		if !found {
-			return fmt.Errorf("package found in lock, but not manifest: %s", k)
-		}
 	}
 
 	return nil

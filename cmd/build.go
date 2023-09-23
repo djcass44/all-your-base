@@ -267,6 +267,7 @@ func build(cmd *cobra.Command, _ []string) error {
 	imageBuilder := containerutil.NewImage(
 		containerutil.WithBaseImage(baseImg),
 		containerutil.WithEnv(expandedEnv...),
+		containerutil.WithEntrypoint(cfg.Spec.Entrypoint, cfg.Spec.Command),
 	)
 	img, err := imageBuilder.Append(cmd.Context(), rootfs, imgPlatform)
 	if err != nil {

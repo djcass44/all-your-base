@@ -1,0 +1,90 @@
+{
+	"name": "apko-eg-nginx",
+	"lockfileVersion": 1,
+	"packages": {
+		"apk-tools": {
+			"type": "Alpine",
+			"version": "2.14.0-r0",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/apk-tools-2.14.0-r0.apk",
+			"integrity": "Q15lEO4JohyDLUB0MMSqVgQor2Ug8="
+		},
+		"busybox": {
+			"type": "Alpine",
+			"version": "1.36.1-r2",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/busybox-1.36.1-r2.apk",
+			"integrity": "Q1d2kYe9D3/7EJ+b9C6YkKqlSsU/M="
+		},
+		"ca-certificates-bundle": {
+			"type": "Alpine",
+			"version": "20230506-r0",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/ca-certificates-bundle-20230506-r0.apk",
+			"integrity": "Q1/YGo3iUSdyF2/rk3tKR6MhtUEzg="
+		},
+		"glibc": {
+			"type": "Alpine",
+			"version": "2.38-r2",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/glibc-2.38-r2.apk",
+			"integrity": "Q1k9e5NAH0GBM6W9/GARLSIDa3HV4="
+		},
+		"glibc-locale-posix": {
+			"type": "Alpine",
+			"version": "2.38-r2",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/glibc-locale-posix-2.38-r2.apk",
+			"integrity": "Q1GyMxw4Su1WqAaaHhO6I7/sxSMAA="
+		},
+		"ld-linux": {
+			"type": "Alpine",
+			"version": "2.38-r2",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/ld-linux-2.38-r2.apk",
+			"integrity": "Q14GpGTlRyZY+iYYxqnOvshsrGf8Q="
+		},
+		"libcrypt1": {
+			"type": "Alpine",
+			"version": "2.38-r2",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/libcrypt1-2.38-r2.apk",
+			"integrity": "Q1lGWn9fktWmEmNdyqaXC0B1j7NIc="
+		},
+		"libcrypto3": {
+			"type": "Alpine",
+			"version": "3.1.3-r0",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/libcrypto3-3.1.3-r0.apk",
+			"integrity": "Q16MModYE7dAtOLG3kDnIa/Jxbn7o="
+		},
+		"libssl3": {
+			"type": "Alpine",
+			"version": "3.1.3-r0",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/libssl3-3.1.3-r0.apk",
+			"integrity": "Q1Iy4/pjMZ4WLOJ4BLVG3Pa3SJxY8="
+		},
+		"openssl-config": {
+			"type": "Alpine",
+			"version": "3.1.3-r0",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/openssl-config-3.1.3-r0.apk",
+			"integrity": "Q1Hf1wTsCSVZNpng1bU87e+L17oXg="
+		},
+		"wolfi-base": {
+			"type": "Alpine",
+			"version": "1-r3",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/wolfi-base-1-r3.apk",
+			"integrity": "Q1LrzTxq5MubwvQY3xCuDnXVIGJek="
+		},
+		"wolfi-baselayout": {
+			"type": "Alpine",
+			"version": "20230201-r6",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/wolfi-baselayout-20230201-r6.apk",
+			"integrity": "Q17VhAhkjHFu8hi9j6VPHxlOX95sc="
+		},
+		"wolfi-keys": {
+			"type": "Alpine",
+			"version": "1-r5",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/wolfi-keys-1-r5.apk",
+			"integrity": "Q10fpy9hX9x84izBkTlUFtNXLEeqk="
+		},
+		"zlib": {
+			"type": "Alpine",
+			"version": "1.3-r0",
+			"resolved": "https://packages.wolfi.dev/os/x86_64/zlib-1.3-r0.apk",
+			"integrity": "Q12c/3NY/o7FDtGM4k93d8nDACYWk="
+		}
+	}
+}

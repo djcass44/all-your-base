@@ -13,7 +13,7 @@ spec:
       names:
         - git
         - git-lfs
-        - openssh-client
+        - openssh
   files:
     - uri: .npmrc
       path: $HOME/
@@ -24,3 +24,5 @@ spec:
       value: $HOME/.npm-packages/lib/node_modules
     - name: PATH
       value: $HOME/.npm-packages/bin:$PATH
+  entrypoint:
+    - /bin/sh

@@ -14,6 +14,8 @@ const (
 
 type BuildSpec struct {
 	From         string                  `json:"from,omitempty"`
+	Entrypoint   []string                `json:"entrypoint,omitempty"`
+	Command      []string                `json:"command,omitempty"`
 	Packages     []Package               `json:"packages,omitempty"`
 	Repositories map[string][]Repository `json:"repositories,omitempty"`
 	Files        []File                  `json:"files,omitempty"`

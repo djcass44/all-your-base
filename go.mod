@@ -2,8 +2,10 @@ module github.com/djcass44/all-your-base
 
 go 1.21
 
+replace github.com/chainguard-dev/go-apk => github.com/djcass44/go-apk v0.0.0-20230923070740-2370fdd5131b
+
 require (
-	github.com/chainguard-dev/go-apk v0.0.0-20230906161245-0728258ab917
+	github.com/chainguard-dev/go-apk v0.0.0-20230916230430-4fe65c7320b6
 	github.com/djcass44/ci-tools v1.6.2
 	github.com/djcass44/go-utils/logging v0.2.3
 	github.com/go-logr/logr v1.2.4
@@ -11,7 +13,7 @@ require (
 	github.com/hashicorp/go-getter v1.7.2
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
-	go.uber.org/zap v1.24.0
+	go.uber.org/zap v1.26.0
 	k8s.io/apimachinery v0.28.2
 )
 
@@ -81,7 +83,6 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
-	github.com/kr/text v0.2.0 // indirect
 	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
@@ -103,8 +104,7 @@ require (
 	go.opentelemetry.io/otel v1.17.0 // indirect
 	go.opentelemetry.io/otel/metric v1.17.0 // indirect
 	go.opentelemetry.io/otel/trace v1.17.0 // indirect
-	go.uber.org/atomic v1.10.0 // indirect
-	go.uber.org/multierr v1.9.0 // indirect
+	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/build v0.0.0-20220928220451-9294235e16f5 // indirect
 	golang.org/x/crypto v0.11.0 // indirect
 	golang.org/x/net v0.13.0 // indirect

@@ -116,6 +116,12 @@
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/nghttp2-libs-1.55.1-r0.apk",
 			"integrity": "Q11v9e1mzPbfY7PrJH8roan9CLkP8="
 		},
+		"openssh": {
+			"type": "Alpine",
+			"version": "9.3_p2-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/openssh-9.3_p2-r0.apk",
+			"integrity": "Q1Lwfxw5Oq5LBNXrbMJu3EHW+VQ+k="
+		},
 		"openssh-client-common": {
 			"type": "Alpine",
 			"version": "9.3_p2-r0",
@@ -133,6 +139,24 @@
 			"version": "9.3_p2-r0",
 			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/openssh-keygen-9.3_p2-r0.apk",
 			"integrity": "Q18HKD+gemWeNLp/t5rGmx94P+gLY="
+		},
+		"openssh-server": {
+			"type": "Alpine",
+			"version": "9.3_p2-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/openssh-server-9.3_p2-r0.apk",
+			"integrity": "Q1bIRg9D8BLZyETSYR4878NZ1Jta4="
+		},
+		"openssh-server-common": {
+			"type": "Alpine",
+			"version": "9.3_p2-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/openssh-server-common-9.3_p2-r0.apk",
+			"integrity": "Q1CHAO/mDZrnSkfFjO7WyckK20dB4="
+		},
+		"openssh-sftp-server": {
+			"type": "Alpine",
+			"version": "9.3_p2-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/openssh-sftp-server-9.3_p2-r0.apk",
+			"integrity": "Q1dmqpX0Wavqwfyq+43N5r1o/poYM="
 		},
 		"pcre2": {
 			"type": "Alpine",

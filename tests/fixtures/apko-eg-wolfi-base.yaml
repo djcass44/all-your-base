@@ -1,0 +1,13 @@
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: apko-eg-nginx
+spec:
+  from: scratch
+  repositories:
+    alpine:
+      - url: https://packages.wolfi.dev/os
+  packages:
+    - type: Alpine
+      names:
+        - wolfi-base

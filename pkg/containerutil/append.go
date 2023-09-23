@@ -17,10 +17,12 @@ const DefaultPath = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bi
 const DefaultUsername = "somebody"
 
 type Image struct {
-	author    string
-	username  string
-	env       []string
-	baseImage v1.Image
+	author     string
+	username   string
+	env        []string
+	baseImage  v1.Image
+	entrypoint []string
+	cmd        []string
 }
 
 func NewImage(opts ...ImageOption) *Image {
@@ -55,6 +57,13 @@ func WithEnv(env ...string) ImageOption {
 func WithUsername(s string) ImageOption {
 	return func(image *Image) {
 		image.username = s
+	}
+}
+
+func WithEntrypoint(ep, cmd []string) ImageOption {
+	return func(image *Image) {
+		image.entrypoint = ep
+		image.cmd = cmd
 	}
 }
 
@@ -93,6 +102,13 @@ func (ib *Image) Append(ctx context.Context, fs fs.FullFS, platform *v1.Platform
 	cfg.Author = ib.author
 	cfg.Config.WorkingDir = filepath.Join("/home", ib.username)
 	cfg.Config.User = ib.username
+
+	if ib.entrypoint != nil {
+		cfg.Config.Entrypoint = ib.entrypoint
+	}
+	if ib.cmd != nil {
+		cfg.Config.Cmd = ib.cmd
+	}
 
 	cfg.Config.Env = ib.env
 

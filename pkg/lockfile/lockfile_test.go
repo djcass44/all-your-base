@@ -42,7 +42,7 @@ func TestLock_Validate(t *testing.T) {
 					},
 				},
 			},
-			ok: false,
+			ok: true,
 		},
 		{
 			name: "extra file",
