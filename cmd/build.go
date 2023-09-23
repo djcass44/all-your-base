@@ -104,51 +104,27 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	// install packages
-	for _, pkg := range cfg.Spec.Packages {
+	for name, p := range lockFile.Packages {
 		var keeper packages.PackageManager
-		switch pkg.Type {
+		switch p.Type {
 		case aybv1.PackageAlpine:
 			keeper = alpineKeeper
 		default:
-			return fmt.Errorf("unknown package type: %s", pkg.Type)
+			return fmt.Errorf("unknown package type: %s", p.Type)
 		}
 
-		for _, name := range pkg.Names {
-			locked, ok := lockFile.Packages[name]
-			if !ok {
-				return fmt.Errorf("package could not be located in lockfile: %s", name)
-			}
-			packageList, err := keeper.Resolve(cmd.Context(), fmt.Sprintf("%s=%s", name, locked.Version))
-			if err != nil {
-				return err
-			}
+		log.Info("installing package", "name", name, "version", p.Version)
 
-			for _, p := range packageList {
-				log.Info("installing package", "name", p.Name, "version", p.Version)
+		// download the package
+		pkgPath, err := dl.Download(cmd.Context(), p.Resolved)
+		if err != nil {
+			return err
+		}
 
-				// check that the package is in the lockfile
-				locked, ok = lockFile.Packages[p.Name]
-				if !ok {
-					return fmt.Errorf("package could not be located in lockfile: %s", p.Name)
-				}
-
-				log.V(4).Info("comparing package integrity against lockfile", "expected", locked.Integrity, "actual", p.Integrity)
-				if locked.Integrity != p.Integrity {
-					return fmt.Errorf("package %s integrity check failed (expected: '%s', got: '%s')", p.Name, locked.Integrity, p.Integrity)
-				}
-
-				// download the package
-				pkgPath, err := dl.Download(cmd.Context(), p.Resolved)
-				if err != nil {
-					return err
-				}
-
-				// unpack the package into the root
-				// filesystem
-				if err := keeper.Unpack(cmd.Context(), pkgPath, rootfs); err != nil {
-					return err
-				}
-			}
+		// unpack the package into the root
+		// filesystem
+		if err := keeper.Unpack(cmd.Context(), pkgPath, rootfs); err != nil {
+			return err
 		}
 	}
 

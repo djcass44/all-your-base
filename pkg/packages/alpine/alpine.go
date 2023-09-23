@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/chainguard-dev/go-apk/pkg/apk"
 	"github.com/chainguard-dev/go-apk/pkg/fs"
+	v1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/archiveutil"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/go-logr/logr"
@@ -97,6 +98,7 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 		Resolved:  repoPkg.Url(),
 		Integrity: repoPkg.ChecksumString(),
 		Version:   repoPkg.Version,
+		Type:      v1.PackageAlpine,
 	}
 	for i := range repoPkgDeps {
 		names[i+1] = lockfile.Package{
@@ -104,6 +106,7 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 			Resolved:  repoPkgDeps[i].Url(),
 			Integrity: repoPkgDeps[i].ChecksumString(),
 			Version:   repoPkgDeps[i].Version,
+			Type:      v1.PackageAlpine,
 		}
 	}
 
