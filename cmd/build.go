@@ -31,7 +31,10 @@ var buildCmd = &cobra.Command{
 
 const (
 	flagConfig = "config"
-	flagSave   = "save"
+
+	flagSave  = "save"
+	flagImage = "image"
+	flagTag   = "tag"
 
 	flagUid = "uid"
 
@@ -46,7 +49,10 @@ const (
 
 func init() {
 	buildCmd.Flags().StringP(flagConfig, "c", "", "path to an image configuration file")
+
 	buildCmd.Flags().String(flagSave, "", "path to save the image as a tar archive")
+	buildCmd.Flags().String(flagImage, "", "oci image path (without tag) to push the image")
+	buildCmd.Flags().StringArrayP(flagTag, "t", nil, "tags to push")
 
 	buildCmd.Flags().Int(flagUid, 1001, "uid of the non-root user to create")
 
@@ -56,6 +62,9 @@ func init() {
 	_ = buildCmd.MarkFlagRequired(flagConfig)
 	_ = buildCmd.MarkFlagFilename(flagConfig, ".yaml", ".yml")
 	_ = buildCmd.MarkFlagDirname(flagCacheDir)
+
+	buildCmd.MarkFlagsMutuallyExclusive(flagSave, flagImage)
+	buildCmd.MarkFlagsRequiredTogether(flagImage, flagTag)
 }
 
 func build(cmd *cobra.Command, _ []string) error {
@@ -63,6 +72,8 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	configPath, _ := cmd.Flags().GetString(flagConfig)
 	localPath, _ := cmd.Flags().GetString(flagSave)
+	ociPath, _ := cmd.Flags().GetString(flagImage)
+	tags, _ := cmd.Flags().GetStringArray(flagTag)
 
 	cacheDir, _ := cmd.Flags().GetString(flagCacheDir)
 	cacheDir = getCacheDir(cacheDir)
@@ -266,6 +277,12 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	if localPath != "" {
 		return containerutil.Save(cmd.Context(), img, cfg.Name, localPath)
+	}
+	// push all tags
+	for _, t := range tags {
+		if err := containerutil.Push(cmd.Context(), img, fmt.Sprintf("%s:%s", ociPath, t)); err != nil {
+			return err
+		}
 	}
 
 	return nil

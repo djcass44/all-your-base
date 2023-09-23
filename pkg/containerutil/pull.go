@@ -11,13 +11,13 @@ import (
 )
 
 func Pull(ctx context.Context, ref string) (v1.Image, error) {
-	log := logr.FromContextOrDiscard(ctx)
-	// pull the image
-	log.Info("pulling image", "ref", ref)
+	log := logr.FromContextOrDiscard(ctx).WithValues("ref", ref)
+	log.Info("pulling image")
 
 	if ref == MagicImageScratch {
 		return empty.Image, nil
 	}
+	// pull the image
 	img, err := crane.Pull(ref, crane.WithContext(ctx), crane.WithAuthFromKeychain(ociutil.KeyChain(ociutil.Auth{})))
 	if err != nil {
 		return nil, fmt.Errorf("pulling %s: %w", ref, err)
