@@ -77,6 +77,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 			Name:      cfg.Spec.From,
 			Resolved:  cfg.Spec.From + "@" + baseDigest,
 			Integrity: baseDigest,
+			Type:      aybv1.PackageOCI,
 		}
 	}
 
@@ -149,6 +150,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 			Name:      file.URI,
 			Resolved:  srcUri.String(),
 			Integrity: "sha256:" + integrity,
+			Type:      aybv1.PackageFile,
 		}
 	}
 

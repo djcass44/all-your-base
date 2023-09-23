@@ -8,6 +8,8 @@ const (
 	PackageAlpine PackageType = "Alpine"
 	PackageDebian PackageType = "Debian"
 	PackageRPM    PackageType = "RPM"
+	PackageFile   PackageType = "File"
+	PackageOCI    PackageType = "OCI"
 )
 
 type BuildSpec struct {

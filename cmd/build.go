@@ -109,6 +109,10 @@ func build(cmd *cobra.Command, _ []string) error {
 		switch p.Type {
 		case aybv1.PackageAlpine:
 			keeper = alpineKeeper
+		case aybv1.PackageOCI:
+			fallthrough
+		case aybv1.PackageFile:
+			continue
 		default:
 			return fmt.Errorf("unknown package type: %s", p.Type)
 		}
