@@ -1,0 +1,15 @@
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: apko-eg-nginx
+spec:
+  from: scratch
+  repositories:
+    alpine:
+      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main
+  packages:
+    - type: Alpine
+      names:
+        - alpine-baselayout
+        - nginx
+        - coreutils

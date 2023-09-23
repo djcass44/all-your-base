@@ -1,6 +1,11 @@
 # all-your-base: OCI image builder
 
-*All your base* images builds secure and verifiable base images.
+*All your base* images are secure and verifiable.
+
+ayb has the following key features:
+* **Fully reproducible by default.** Run ayb twice and you will get the exact same image.
+* **Small.** ayb generates images only contain what you tell it to contain.
+* **Secure by default.** ayb configures images to run as a non-root user. ayb also requires no privileges to run.
 
 ## Quickstart
 
@@ -13,14 +18,22 @@ metadata:
   name: my-base-image
 spec:
   from: alpine:3.18
+  repositories:
+    alpine:
+      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main
   packages:
-    - git
+    - type: Alpine
+      names:
+        - git
 ```
 
 We can build this with ayb from any environment:
 
 ```shell
-ayb build tests/fixtures/alpine_318_full.yaml --save ayb-alpine.tar
+# generate or update the lockfile
+ayb lock  --config tests/fixtures/alpine_318_full.yaml
+# build the image
+ayb build --config tests/fixtures/alpine_318_full.yaml --save ayb-alpine.tar
 ```
 You can then load the generated tar image into an OCI environment:
 
@@ -31,5 +44,5 @@ docker load < ayb-alpine.tar
 You can also publish the image directly to a registry:
 
 ```shell
-ayb build tests/fixtures/alpine_318_full.yaml --image myrepo/alpine318 -t test
+ayb build --config tests/fixtures/alpine_318_full.yaml --image myrepo/alpine318 --tag test --tag latest
 ```
