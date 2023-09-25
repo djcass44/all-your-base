@@ -104,9 +104,11 @@ func (ib *Image) Append(ctx context.Context, fs fs.FullFS, platform *v1.Platform
 	cfg.Config.User = ib.username
 
 	if ib.entrypoint != nil {
+		log.Info("overriding entrypoint", "before", cfg.Config.Entrypoint, "after", ib.entrypoint)
 		cfg.Config.Entrypoint = ib.entrypoint
 	}
 	if ib.cmd != nil {
+		log.Info("overriding command", "before", cfg.Config.Cmd, "after", ib.cmd)
 		cfg.Config.Cmd = ib.cmd
 	}
 
