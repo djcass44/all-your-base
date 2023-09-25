@@ -27,10 +27,12 @@ type Image struct {
 
 func NewImage(opts ...ImageOption) *Image {
 	img := &Image{
-		author:    "github.com/djcass44/all-your-base",
-		env:       nil,
-		baseImage: empty.Image,
-		username:  DefaultUsername,
+		author:     "github.com/djcass44/all-your-base",
+		env:        nil,
+		baseImage:  empty.Image,
+		username:   DefaultUsername,
+		entrypoint: []string{"/bin/sh"},
+		cmd:        nil,
 	}
 
 	for _, opt := range opts {
@@ -62,8 +64,12 @@ func WithUsername(s string) ImageOption {
 
 func WithEntrypoint(ep, cmd []string) ImageOption {
 	return func(image *Image) {
-		image.entrypoint = ep
-		image.cmd = cmd
+		if ep != nil {
+			image.entrypoint = ep
+		}
+		if cmd != nil {
+			image.cmd = cmd
+		}
 	}
 }
 
@@ -103,14 +109,10 @@ func (ib *Image) Append(ctx context.Context, fs fs.FullFS, platform *v1.Platform
 	cfg.Config.WorkingDir = filepath.Join("/home", ib.username)
 	cfg.Config.User = ib.username
 
-	if ib.entrypoint != nil {
-		log.Info("overriding entrypoint", "before", cfg.Config.Entrypoint, "after", ib.entrypoint)
-		cfg.Config.Entrypoint = ib.entrypoint
-	}
-	if ib.cmd != nil {
-		log.Info("overriding command", "before", cfg.Config.Cmd, "after", ib.cmd)
-		cfg.Config.Cmd = ib.cmd
-	}
+	log.Info("overriding entrypoint", "before", cfg.Config.Entrypoint, "after", ib.entrypoint)
+	cfg.Config.Entrypoint = ib.entrypoint
+	log.Info("overriding command", "before", cfg.Config.Cmd, "after", ib.cmd)
+	cfg.Config.Cmd = ib.cmd
 
 	cfg.Config.Env = ib.env
 
