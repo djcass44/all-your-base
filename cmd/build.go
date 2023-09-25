@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/chainguard-dev/go-apk/pkg/fs"
+	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/containerutil"
 	"github.com/djcass44/all-your-base/pkg/downloader"
@@ -157,7 +158,7 @@ func build(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	baseImage := os.ExpandEnv(cfg.Spec.From)
+	baseImage := airutil.ExpandEnv(cfg.Spec.From)
 	switch baseImage {
 	case containerutil.MagicImageScratch:
 	case "":
@@ -193,7 +194,7 @@ func build(cmd *cobra.Command, _ []string) error {
 			log.Error(err, "failed to prepare download directory")
 			return err
 		}
-		srcUri, err := url.Parse(os.ExpandEnv(file.URI))
+		srcUri, err := url.Parse(airutil.ExpandEnv(file.URI))
 		if err != nil {
 			return err
 		}
@@ -319,7 +320,7 @@ func getCacheDir(d string) string {
 func repoURLs(p []aybv1.Repository) []string {
 	s := make([]string, len(p))
 	for i := range p {
-		s[i] = p[i].URL
+		s[i] = airutil.ExpandEnv(p[i].URL)
 	}
 	return s
 }

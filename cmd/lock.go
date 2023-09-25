@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/containerutil"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
@@ -68,7 +69,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 
 	// get the digest of the base image
 	if cfg.Spec.From != containerutil.MagicImageScratch {
-		baseDigest, err := crane.Digest(os.ExpandEnv(cfg.Spec.From), crane.WithAuthFromKeychain(ociutil.KeyChain(ociutil.Auth{})))
+		baseDigest, err := crane.Digest(airutil.ExpandEnv(cfg.Spec.From), crane.WithAuthFromKeychain(ociutil.KeyChain(ociutil.Auth{})))
 		if err != nil {
 			return err
 		}
@@ -119,7 +120,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 			return err
 		}
 		_ = dst.Close()
-		srcUri, err := url.Parse(os.ExpandEnv(file.URI))
+		srcUri, err := url.Parse(airutil.ExpandEnv(file.URI))
 		if err != nil {
 			return err
 		}

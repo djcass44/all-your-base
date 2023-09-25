@@ -8,6 +8,7 @@ require (
 	github.com/chainguard-dev/go-apk v0.0.0-20230916230430-4fe65c7320b6
 	github.com/djcass44/ci-tools v1.6.2
 	github.com/djcass44/go-utils/logging v0.2.3
+	github.com/drone/envsubst v1.0.3
 	github.com/go-logr/logr v1.2.4
 	github.com/google/go-containerregistry v0.16.1
 	github.com/hashicorp/go-getter v1.7.2

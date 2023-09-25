@@ -1,0 +1,22 @@
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: scratch-airgap-test
+spec:
+  from: scratch
+  repositories:
+    alpine:
+      - url: "${ALPINE_MIRROR:-https://mirror.aarnet.edu.au/pub/alpine}/v3.18/main"
+  packages:
+    - type: Alpine
+      names:
+        - alpine-base
+        - util-linux
+        - coreutils
+        - binutils
+        - findutils
+        - grep
+        - iproute2
+  files:
+    - uri: "${GITHUB_MIRROR:-https://raw.githubusercontent.com}/djcass44/all-your-base/main/README.md"
+      path: /README.md
