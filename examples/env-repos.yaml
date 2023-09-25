@@ -1,0 +1,18 @@
+## This file is a standard image that
+# installs a single package.
+#
+# It parameterizes the repository URL so that
+# a different one can be used at build time
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: my-base-image
+spec:
+  from: alpine:3.18
+  repositories:
+    alpine:
+      - url: https://$ALPINE_MIRROR/v3.18/main
+  packages:
+    - type: Alpine
+      names:
+        - git

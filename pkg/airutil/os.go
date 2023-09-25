@@ -1,8 +1,13 @@
 package airutil
 
-import "github.com/drone/envsubst"
+import (
+	"github.com/drone/envsubst"
+)
 
 func ExpandEnv(s string) string {
-	val, _ := envsubst.EvalEnv(s)
+	val, err := envsubst.EvalEnv(s)
+	if err != nil {
+		return s
+	}
 	return val
 }

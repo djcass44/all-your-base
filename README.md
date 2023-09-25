@@ -6,6 +6,7 @@ ayb has the following key features:
 * **Fully reproducible by default.** Run ayb twice and you will get the exact same image.
 * **Small.** ayb generates images only contain what you tell it to contain.
 * **Secure by default.** ayb configures images to run as a non-root user. ayb also requires no privileges to run.
+* **Portable**. ayb has been designed to work in multiple environments, even those without internet.
 
 ## Quickstart
 
@@ -26,6 +27,8 @@ spec:
       names:
         - git
 ```
+
+Have a look through the [`examples`](examples) directory for more.
 
 We can build this with ayb from any environment:
 
