@@ -141,7 +141,7 @@ func build(cmd *cobra.Command, _ []string) error {
 		log.Info("installing package", "name", name, "version", p.Version)
 
 		// download the package
-		pkgPath, err := dl.Download(cmd.Context(), p.Resolved)
+		pkgPath, err := dl.Download(cmd.Context(), airutil.ExpandEnv(p.Resolved))
 		if err != nil {
 			return err
 		}

@@ -82,6 +82,21 @@ func lock(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
+	type expandedRepo struct {
+		URL      string
+		Original string
+	}
+
+	var repoList []expandedRepo
+	for _, v := range cfg.Spec.Repositories {
+		for _, vv := range v {
+			repoList = append(repoList, expandedRepo{
+				URL:      airutil.ExpandEnv(vv.URL),
+				Original: vv.URL,
+			})
+		}
+	}
+
 	alpineKeeper, err := alpine.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageAlpine))]))
 	if err != nil {
 		return err
@@ -106,6 +121,14 @@ func lock(cmd *cobra.Command, _ []string) error {
 			for _, p := range packageList {
 				log.Info("downloading package", "name", p.Name)
 
+				packageUrl := p.Resolved
+				for _, r := range repoList {
+					if strings.HasPrefix(p.Resolved, r.URL) {
+						packageUrl = strings.ReplaceAll(p.Resolved, r.URL, r.Original)
+					}
+				}
+
+				p.Resolved = packageUrl
 				lockFile.Packages[p.Name] = p
 			}
 		}
