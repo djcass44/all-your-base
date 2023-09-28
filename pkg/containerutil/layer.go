@@ -65,7 +65,7 @@ func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, ro
 			header := &tar.Header{
 				Name:     hostPath,
 				Typeflag: tar.TypeDir,
-				Mode:     0755,
+				Mode:     0775,
 				ModTime:  creationTime.Time,
 				Uid:      uid,
 			}
