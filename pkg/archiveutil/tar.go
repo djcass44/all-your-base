@@ -42,6 +42,8 @@ func Untar(ctx context.Context, r io.Reader, rootfs fs.FullFS) error {
 		target := filepath.Clean("/" + header.Name)
 
 		switch header.Typeflag {
+		default:
+			log.V(4).Info("unexpected header type", "target", target, "type", header.Typeflag)
 		case tar.TypeDir:
 			log.V(5).Info("creating directory", "target", target)
 			if _, err := rootfs.Stat(target); err != nil {
@@ -50,7 +52,15 @@ func Untar(ctx context.Context, r io.Reader, rootfs fs.FullFS) error {
 					return err
 				}
 			}
-
+		case tar.TypeLink:
+			log.V(5).Info("creating hard link", "target", target, "source", header.Linkname)
+			if err := rootfs.Link(header.Linkname, target); err != nil {
+				if errors.Is(err, os.ErrExist) {
+					log.V(5).Info("skipping hard link as target file already exists")
+					continue
+				}
+				return err
+			}
 		case tar.TypeSymlink:
 			oldname := filepath.Join(filepath.Dir(target), header.Linkname)
 			if filepath.IsAbs(header.Linkname) {
@@ -59,7 +69,7 @@ func Untar(ctx context.Context, r io.Reader, rootfs fs.FullFS) error {
 			log.V(5).Info("creating symbolic link", "target", target, "source", oldname)
 			if err := rootfs.Symlink(oldname, target); err != nil {
 				if errors.Is(err, os.ErrExist) {
-					log.V(5).Info("skipping symbolic link sync target file already exists")
+					log.V(5).Info("skipping symbolic link as target file already exists")
 					continue
 				}
 				return err
