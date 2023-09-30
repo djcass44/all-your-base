@@ -28,6 +28,7 @@ func NewIndex(ctx context.Context, repository, release, component, arch string) 
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		log.Info("failed to locate Packages.gz file", "url", target)
 		return nil, fmt.Errorf("http response failed with code: %d", resp.StatusCode)
 	}
 	log.V(1).Info("successfully downloaded index", "code", resp.StatusCode)

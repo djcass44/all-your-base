@@ -7,6 +7,210 @@
 			"version": "",
 			"resolved": "harbor.dcas.dev/docker.io/library/ubuntu:rolling@sha256:f1090cfa89ab321a6d670e79652f61593502591f2fc7452fb0b7c6da575729c4",
 			"integrity": "sha256:f1090cfa89ab321a6d670e79652f61593502591f2fc7452fb0b7c6da575729c4"
+		},
+		"curl": {
+			"type": "Debian",
+			"version": "7.88.1-8ubuntu1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/c/curl/curl_7.88.1-8ubuntu1_amd64.deb",
+			"integrity": "d8f6223628834ebdbd8099f2aeb0be483f361d2aa04aa64e01633ae73f958018"
+		},
+		"debconf": {
+			"type": "Debian",
+			"version": "1.5.82",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/d/debconf/debconf_1.5.82_all.deb",
+			"integrity": "737d5a8ba2bfe2984617d7817d6a5deece4e07faf509b00c08a277dbf9d6b0be"
+		},
+		"gcc-13-base": {
+			"type": "Debian",
+			"version": "13-20230320-1ubuntu1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/g/gcc-13/gcc-13-base_13-20230320-1ubuntu1_amd64.deb",
+			"integrity": "b778da2669daea9b2a6846eaff1fa85ca245e72248494901ebd777990221a9b5"
+		},
+		"libbrotli1": {
+			"type": "Debian",
+			"version": "1.0.9-2build8",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/b/brotli/libbrotli1_1.0.9-2build8_amd64.deb",
+			"integrity": "2872ad22d0fd603ff5af4d8fab06f7c28296ad5564d29d9e1fb6110c9eae60aa"
+		},
+		"libc6": {
+			"type": "Debian",
+			"version": "2.37-0ubuntu2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/g/glibc/libc6_2.37-0ubuntu2_amd64.deb",
+			"integrity": "f5a98389a7e33881a9e4b95439377389ff95b40ae9aa7f951a07848c6394dc76"
+		},
+		"libcom-err2": {
+			"type": "Debian",
+			"version": "1.47.0-1ubuntu1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/e/e2fsprogs/libcom-err2_1.47.0-1ubuntu1_amd64.deb",
+			"integrity": "b4da3e841576423b7c8e82af784f0143df3db441caffa8fac5c91fd54b3abc27"
+		},
+		"libcrypt1": {
+			"type": "Debian",
+			"version": "1:4.4.33-2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/libx/libxcrypt/libcrypt1_4.4.33-2_amd64.deb",
+			"integrity": "9a9aee10c7804ff678719fb2887fa4758d5d94c7cb03c1b50fbccb0c4ee43dcc"
+		},
+		"libcurl4": {
+			"type": "Debian",
+			"version": "7.88.1-8ubuntu1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/c/curl/libcurl4_7.88.1-8ubuntu1_amd64.deb",
+			"integrity": "49b9f83227170016f0f7a6696ab747e3a70fe94ac716c73beff3c81ae1257c28"
+		},
+		"libdb5.3": {
+			"type": "Debian",
+			"version": "5.3.28+dfsg2-1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/d/db5.3/libdb5.3_5.3.28+dfsg2-1_amd64.deb",
+			"integrity": "da650e262c5e958000d63d4d04be7440fba0db7825f5f37b6637edcf9999dc81"
+		},
+		"libffi8": {
+			"type": "Debian",
+			"version": "3.4.4-1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/libf/libffi/libffi8_3.4.4-1_amd64.deb",
+			"integrity": "c663761805c7527d60a7dc8f2ad31af6b8ee4d7ba5d005aa62609a3566142814"
+		},
+		"libgcc-s1": {
+			"type": "Debian",
+			"version": "13-20230320-1ubuntu1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/g/gcc-13/libgcc-s1_13-20230320-1ubuntu1_amd64.deb",
+			"integrity": "b9d086fc42d26ca763a2f8026db74bef01cbecaf6f8ea41d63ca66f63be12da4"
+		},
+		"libgmp10": {
+			"type": "Debian",
+			"version": "2:6.2.1+dfsg1-1.1ubuntu1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/g/gmp/libgmp10_6.2.1+dfsg1-1.1ubuntu1_amd64.deb",
+			"integrity": "6d4c1fa8ed42f99e2bbaf6cdb57760a1d5fdd221e12c7d3ead7d6a03e21db563"
+		},
+		"libgnutls30": {
+			"type": "Debian",
+			"version": "3.7.8-5ubuntu1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/g/gnutls28/libgnutls30_3.7.8-5ubuntu1_amd64.deb",
+			"integrity": "c133890d7555a1468c5c323f58f9b7887ba55fa14d3cb60a185e2da48a4bf49e"
+		},
+		"libgssapi-krb5-2": {
+			"type": "Debian",
+			"version": "1.20.1-1build1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/k/krb5/libgssapi-krb5-2_1.20.1-1build1_amd64.deb",
+			"integrity": "e45174580f8a42db91a4781a25b7cff39c2de55321078d2b016f329f3f7e58dd"
+		},
+		"libhogweed6": {
+			"type": "Debian",
+			"version": "3.8.1-2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/n/nettle/libhogweed6_3.8.1-2_amd64.deb",
+			"integrity": "6a52aaec393f3f3af84309c2942a62df7c718265be321e2cba42fe900c6d713c"
+		},
+		"libidn2-0": {
+			"type": "Debian",
+			"version": "2.3.3-1build1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/libi/libidn2/libidn2-0_2.3.3-1build1_amd64.deb",
+			"integrity": "a62bd99c536dc3fc30fe2250832d9ef19730dd8b237ff8b0d4b53642a5baf449"
+		},
+		"libk5crypto3": {
+			"type": "Debian",
+			"version": "1.20.1-1build1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/k/krb5/libk5crypto3_1.20.1-1build1_amd64.deb",
+			"integrity": "3d2aa25482b2fb503920fd4516cd06e145090b1f8c8b9986b3d68b71aa1cdb8a"
+		},
+		"libkeyutils1": {
+			"type": "Debian",
+			"version": "1.6.3-2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/k/keyutils/libkeyutils1_1.6.3-2_amd64.deb",
+			"integrity": "6b017e60df393628d073abd80a6ec8d260bb533657476278877672a929bf45c3"
+		},
+		"libkrb5-3": {
+			"type": "Debian",
+			"version": "1.20.1-1build1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/k/krb5/libkrb5-3_1.20.1-1build1_amd64.deb",
+			"integrity": "a2804baa286ee9f19d393c9cbf43dcad7a0e43957ae1e8fefdb2fc101e1ac3b6"
+		},
+		"libkrb5support0": {
+			"type": "Debian",
+			"version": "1.20.1-1build1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/k/krb5/libkrb5support0_1.20.1-1build1_amd64.deb",
+			"integrity": "87520c48921f13094d0ebc0328ff9afb7f4b467e1a675ca090bdaac3dace9b03"
+		},
+		"libldap2": {
+			"type": "Debian",
+			"version": "2.6.3+dfsg-1~exp1ubuntu2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/o/openldap/libldap2_2.6.3+dfsg-1~exp1ubuntu2_amd64.deb",
+			"integrity": "5c7591cad1572d0c009fed1496d5e59fd8a9caaa7ca4fd3785a3599ce8fd70a1"
+		},
+		"libnettle8": {
+			"type": "Debian",
+			"version": "3.8.1-2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/n/nettle/libnettle8_3.8.1-2_amd64.deb",
+			"integrity": "a36bbb22d593dd8f7ecb3517764a140c24c1a94af8472b718a3b93b3abd00887"
+		},
+		"libnghttp2-14": {
+			"type": "Debian",
+			"version": "1.52.0-1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/n/nghttp2/libnghttp2-14_1.52.0-1_amd64.deb",
+			"integrity": "9c4ce3756771d605f051d86387af57bee4b36a08088fb0f28b2434ac423ac2e9"
+		},
+		"libp11-kit0": {
+			"type": "Debian",
+			"version": "0.24.1-2ubuntu1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/p/p11-kit/libp11-kit0_0.24.1-2ubuntu1_amd64.deb",
+			"integrity": "ce8cec4f799ffd935e4519c81bed7bd0b7fd5435f6d59a6d656628da0e5685ae"
+		},
+		"libpsl5": {
+			"type": "Debian",
+			"version": "0.21.2-1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/libp/libpsl/libpsl5_0.21.2-1_amd64.deb",
+			"integrity": "affc50e912b17e88b6a002c0140a25b495b7adff881b6845462067eb8dae4035"
+		},
+		"librtmp1": {
+			"type": "Debian",
+			"version": "2.4+20151223.gitfa8646d.1-2build4",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/r/rtmpdump/librtmp1_2.4+20151223.gitfa8646d.1-2build4_amd64.deb",
+			"integrity": "c8bdaa1e777d08888914e922f8f76441c26ee36438d3aa59161ecccc2421f77e"
+		},
+		"libsasl2-2": {
+			"type": "Debian",
+			"version": "2.1.28+dfsg-10",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/c/cyrus-sasl2/libsasl2-2_2.1.28+dfsg-10_amd64.deb",
+			"integrity": "d190a3abbbcb36dfb1526eb20ee957629317c8175867113ccbfe0b6bf2cb2b89"
+		},
+		"libsasl2-modules-db": {
+			"type": "Debian",
+			"version": "2.1.28+dfsg-10",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/c/cyrus-sasl2/libsasl2-modules-db_2.1.28+dfsg-10_amd64.deb",
+			"integrity": "e7e67111441e8d7f87cbef58fb911b88324d1d057290727b146660badc699928"
+		},
+		"libssh-4": {
+			"type": "Debian",
+			"version": "0.10.4-2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/libs/libssh/libssh-4_0.10.4-2_amd64.deb",
+			"integrity": "c85a4ded377d0015dfc7a68d973adb2101a295256ed19efd745d2602c394ac7f"
+		},
+		"libssl3": {
+			"type": "Debian",
+			"version": "3.0.8-1ubuntu1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/o/openssl/libssl3_3.0.8-1ubuntu1_amd64.deb",
+			"integrity": "cabe9cc6714bda5ca5048b5f3f93d8bb990cd9da93e7abc0cf7433505ee2b32a"
+		},
+		"libtasn1-6": {
+			"type": "Debian",
+			"version": "4.19.0-2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/libt/libtasn1-6/libtasn1-6_4.19.0-2_amd64.deb",
+			"integrity": "4dd3ddb19d11830d13320bf2b0dacc0cdf6b552fe167e21a8fc43cf4e1a0eb7b"
+		},
+		"libunistring2": {
+			"type": "Debian",
+			"version": "1.0-2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/libu/libunistring/libunistring2_1.0-2_amd64.deb",
+			"integrity": "a681e5d28e3635af1046dfc94808e42ebb2d9e6539f1a336a888889149ff5608"
+		},
+		"libzstd1": {
+			"type": "Debian",
+			"version": "1.5.4+dfsg2-4",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/libz/libzstd/libzstd1_1.5.4+dfsg2-4_amd64.deb",
+			"integrity": "0e5d621346e0f4a9de7f216b6e4279844bec57906959d1552218b88ec6808243"
+		},
+		"zlib1g": {
+			"type": "Debian",
+			"version": "1:1.2.13.dfsg-1ubuntu4",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/z/zlib/zlib1g_1.2.13.dfsg-1ubuntu4_amd64.deb",
+			"integrity": "6962be4748fb4a36837353fdacdfd4199057eb70b893896fbb8b85e4ce9c7d94"
 		}
 	}
 }

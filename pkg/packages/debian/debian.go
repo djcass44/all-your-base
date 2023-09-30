@@ -2,6 +2,7 @@ package debian
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/chainguard-dev/go-apk/pkg/fs"
 	v1 "github.com/djcass44/all-your-base/pkg/api/v1"
@@ -38,7 +39,7 @@ func NewPackageKeeper(ctx context.Context, repositories []string) (*PackageKeepe
 	}, nil
 }
 
-func (*PackageKeeper) Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) error {
+func (p *PackageKeeper) Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) error {
 	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg)
 	log.Info("unpacking deb")
 
@@ -57,15 +58,44 @@ func (*PackageKeeper) Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) 
 		return err
 	}
 
-	// then we need to untar the 'data.tar.gz' file
+	// then we need to unpack the 'data.tar.X' file
 	// that contains the filesystem
 
-	dataF, err := tmpFs.Open("/data.tar.xz")
+	if _, err := tmpFs.Stat(dataXZ); err == nil {
+		return p.unpackXZ(ctx, tmpFs, rootfs)
+	}
+	if _, err := tmpFs.Stat(dataZstd); err == nil {
+		return p.unpackZstd(ctx, tmpFs, rootfs)
+	}
+
+	return errors.New("unknown or unsupported data archive")
+}
+
+const (
+	dataXZ   = "/data.tar.xz"
+	dataZstd = "/data.tar.zst"
+)
+
+func (*PackageKeeper) unpackZstd(ctx context.Context, src fs.FullFS, dst fs.FullFS) error {
+	log := logr.FromContextOrDiscard(ctx)
+	log.V(1).Info("unpacking zstandard data archive")
+	f, err := src.Open(dataZstd)
 	if err != nil {
-		log.Error(err, "failed to open data.tar.gz file")
+		log.Error(err, "failed to open data.tar.xz file")
 		return err
 	}
-	return archiveutil.XZuntar(ctx, dataF, rootfs)
+	return archiveutil.Zuntar(ctx, f, dst)
+}
+
+func (*PackageKeeper) unpackXZ(ctx context.Context, src fs.FullFS, dst fs.FullFS) error {
+	log := logr.FromContextOrDiscard(ctx)
+	log.V(1).Info("unpacking xz data archive")
+	f, err := src.Open(dataXZ)
+	if err != nil {
+		log.Error(err, "failed to open data.tar.xz file")
+		return err
+	}
+	return archiveutil.XZuntar(ctx, f, dst)
 }
 
 func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Package, error) {
@@ -75,6 +105,9 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 		})
 		if err != nil {
 			return nil, err
+		}
+		if len(out) == 0 {
+			continue
 		}
 		names := make([]lockfile.Package, len(out))
 		for i := range out {

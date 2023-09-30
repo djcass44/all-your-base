@@ -7,6 +7,7 @@ import (
 	"errors"
 	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/go-logr/logr"
+	"github.com/klauspost/compress/zstd"
 	"github.com/ulikunitz/xz"
 	"io"
 	"os"
@@ -24,12 +25,23 @@ func Guntar(ctx context.Context, r io.Reader, rootfs fs.FullFS) error {
 	return Untar(ctx, gzp, rootfs)
 }
 
+// XZuntar is the same as Untar, but it first decodes the XZ archive
 func XZuntar(ctx context.Context, r io.Reader, rootfs fs.FullFS) error {
 	xzp, err := xz.NewReader(r)
 	if err != nil {
 		return err
 	}
 	return Untar(ctx, xzp, rootfs)
+}
+
+// Zuntar is the same as Untar, but it first decodes the Zstandard archive
+func Zuntar(ctx context.Context, r io.Reader, rootfs fs.FullFS) error {
+	zp, err := zstd.NewReader(r)
+	if err != nil {
+		return err
+	}
+	defer zp.Close()
+	return Untar(ctx, zp, rootfs)
 }
 
 // Untar expands a tar archive into the given path.
