@@ -1,0 +1,17 @@
+## This file is a standard image that
+# installs a single Debian package.
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: my-base-image
+spec:
+  from: debian:bullseye
+  repositories:
+    debian:
+      - url: https://mirror.aarnet.edu.au/pub/debian bullseye main
+  packages:
+    - type: Debian
+      names:
+        - git
+  entrypoint:
+    - /bin/bash

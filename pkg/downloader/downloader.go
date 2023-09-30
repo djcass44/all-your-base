@@ -20,11 +20,10 @@ func NewDownloader(cacheDir string) (*Downloader, error) {
 // it in the cache directory.
 func (d *Downloader) Download(ctx context.Context, src string) (string, error) {
 	log := logr.FromContextOrDiscard(ctx)
-	log.Info("downloading file", "src", src)
 
 	uri, err := url.Parse(src)
 	if err != nil {
-		log.Error(err, "failed to parse url")
+		log.Error(err, "failed to parse url", "src", src)
 		return "", err
 	}
 
@@ -32,6 +31,8 @@ func (d *Downloader) Download(ctx context.Context, src string) (string, error) {
 	// we can avoid repeated downloads
 	dst := filepath.Join(d.cacheDir, filepath.Base(uri.Path))
 	log.V(1).Info("preparing to download file", "dst", dst)
+
+	log.Info("downloading file", "src", src, "dst", dst)
 
 	client := &getter.Client{
 		Ctx:             ctx,

@@ -9,6 +9,7 @@ import (
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/djcass44/all-your-base/pkg/packages/alpine"
+	"github.com/djcass44/all-your-base/pkg/packages/debian"
 	"github.com/djcass44/ci-tools/pkg/ociutil"
 	"github.com/go-logr/logr"
 	"github.com/google/go-containerregistry/pkg/crane"
@@ -101,6 +102,10 @@ func lock(cmd *cobra.Command, _ []string) error {
 	if err != nil {
 		return err
 	}
+	debianKeeper, err := debian.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageDebian))]))
+	if err != nil {
+		return err
+	}
 
 	// get package integrity
 	for _, pkg := range cfg.Spec.Packages {
@@ -108,6 +113,8 @@ func lock(cmd *cobra.Command, _ []string) error {
 		switch pkg.Type {
 		case aybv1.PackageAlpine:
 			keeper = alpineKeeper
+		case aybv1.PackageDebian:
+			keeper = debianKeeper
 		default:
 			return fmt.Errorf("unknown package type: %s", pkg.Type)
 		}

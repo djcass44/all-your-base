@@ -3,6 +3,7 @@ module github.com/djcass44/all-your-base
 go 1.21
 
 require (
+	github.com/blakesmith/ar v0.0.0-20190502131153-809d4375e1fb
 	github.com/chainguard-dev/go-apk v0.0.0-20230926193726-bc62936dddb4
 	github.com/djcass44/ci-tools v1.6.2
 	github.com/djcass44/go-utils/logging v0.2.3
@@ -10,10 +11,13 @@ require (
 	github.com/go-logr/logr v1.2.4
 	github.com/google/go-containerregistry v0.16.1
 	github.com/hashicorp/go-getter v1.7.2
+	github.com/knqyf263/go-deb-version v0.0.0-20230223133812-3ed183d23422
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
+	github.com/ulikunitz/xz v0.5.11
 	go.uber.org/zap v1.26.0
 	k8s.io/apimachinery v0.28.2
+	pault.ag/go/debian v0.15.0
 )
 
 require (
@@ -94,7 +98,6 @@ require (
 	github.com/psanford/memfs v0.0.0-20230130182539-4dbf7e3e865e // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/ulikunitz/xz v0.5.11 // indirect
 	github.com/vbatts/tar-split v0.11.3 // indirect
 	gitlab.alpinelinux.org/alpine/go v0.8.0 // indirect
 	gitlab.com/av1o/cap10 v0.4.0 // indirect
@@ -123,6 +126,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/klog/v2 v2.100.1 // indirect
 	k8s.io/utils v0.0.0-20230406110748-d93618cff8a2 // indirect
+	pault.ag/go/topsort v0.1.1 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect

@@ -7,9 +7,11 @@ import (
 	"errors"
 	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/go-logr/logr"
+	"github.com/ulikunitz/xz"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // Guntar is the same as Untar, but it first decodes the gzipped archive.
@@ -20,6 +22,14 @@ func Guntar(ctx context.Context, r io.Reader, rootfs fs.FullFS) error {
 	}
 	defer gzp.Close()
 	return Untar(ctx, gzp, rootfs)
+}
+
+func XZuntar(ctx context.Context, r io.Reader, rootfs fs.FullFS) error {
+	xzp, err := xz.NewReader(r)
+	if err != nil {
+		return err
+	}
+	return Untar(ctx, xzp, rootfs)
 }
 
 // Untar expands a tar archive into the given path.
@@ -53,8 +63,9 @@ func Untar(ctx context.Context, r io.Reader, rootfs fs.FullFS) error {
 				}
 			}
 		case tar.TypeLink:
-			log.V(5).Info("creating hard link", "target", target, "source", header.Linkname)
-			if err := rootfs.Link(header.Linkname, target); err != nil {
+			safeSrc := strings.TrimPrefix(header.Linkname, ".")
+			log.V(5).Info("creating hard link", "target", target, "source", safeSrc)
+			if err := rootfs.Link(safeSrc, target); err != nil {
 				if errors.Is(err, os.ErrExist) {
 					log.V(5).Info("skipping hard link as target file already exists")
 					continue
