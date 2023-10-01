@@ -1,0 +1,7 @@
+schemaVersion: 2.2.0
+components:
+  - name: tooling-container
+    attributes:
+      gl/inject-editor: true
+    container:
+      image: registry.dcas.dev/infra/workspaces/go:main
