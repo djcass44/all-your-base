@@ -5,6 +5,7 @@ import (
 	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
+	ca_certificates "github.com/djcass44/all-your-base/pkg/ca-certificates"
 	"github.com/djcass44/all-your-base/pkg/containerutil"
 	"github.com/djcass44/all-your-base/pkg/downloader"
 	"github.com/djcass44/all-your-base/pkg/fileutil"
@@ -262,6 +263,11 @@ func build(cmd *cobra.Command, _ []string) error {
 			log.Error(err, "failed to create link")
 			return err
 		}
+	}
+
+	// update ca certificates
+	if err := ca_certificates.UpdateCertificates(cmd.Context(), rootfs); err != nil {
+		return err
 	}
 
 	// package everything up as our final container image

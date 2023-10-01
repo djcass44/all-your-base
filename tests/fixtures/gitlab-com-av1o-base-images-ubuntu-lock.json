@@ -8,6 +8,12 @@
 			"resolved": "harbor.dcas.dev/docker.io/library/ubuntu:rolling@sha256:f1090cfa89ab321a6d670e79652f61593502591f2fc7452fb0b7c6da575729c4",
 			"integrity": "sha256:f1090cfa89ab321a6d670e79652f61593502591f2fc7452fb0b7c6da575729c4"
 		},
+		"ca-certificates": {
+			"type": "Debian",
+			"version": "20230311",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/c/ca-certificates/ca-certificates_20230311_all.deb",
+			"integrity": "9dfcf7dcc7c847feed24f39c39749ef3f96fa336c6f0019cd3f53c30ddd40e9c"
+		},
 		"curl": {
 			"type": "Debian",
 			"version": "7.88.1-8ubuntu1",
@@ -205,6 +211,12 @@
 			"version": "1.5.4+dfsg2-4",
 			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/libz/libzstd/libzstd1_1.5.4+dfsg2-4_amd64.deb",
 			"integrity": "0e5d621346e0f4a9de7f216b6e4279844bec57906959d1552218b88ec6808243"
+		},
+		"openssl": {
+			"type": "Debian",
+			"version": "3.0.8-1ubuntu1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/ubuntu/archive/pool/main/o/openssl/openssl_3.0.8-1ubuntu1_amd64.deb",
+			"integrity": "9f28d31747f21ccae49208971bec233b87bbfaf834f84f83a17256c9b2c318bd"
 		},
 		"zlib1g": {
 			"type": "Debian",

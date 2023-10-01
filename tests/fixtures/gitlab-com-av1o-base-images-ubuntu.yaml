@@ -11,5 +11,6 @@ spec:
     - type: Debian
       names:
         - curl
+        - ca-certificates
   entrypoint:
     - /bin/bash
