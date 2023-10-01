@@ -4,4 +4,4 @@ components:
     attributes:
       gl/inject-editor: true
     container:
-      image: registry.dcas.dev/infra/workspaces/go:main
+      image: registry.dcas.dev/infra/workspaces/go:master
