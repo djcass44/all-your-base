@@ -42,6 +42,8 @@ const (
 
 	flagCacheDir = "cache-dir"
 	flagPlatform = "platform"
+
+	flagSkipCACerts = "skip-ca-certificates"
 )
 
 const (
@@ -60,6 +62,8 @@ func init() {
 
 	buildCmd.Flags().String(flagCacheDir, "", "cache directory (defaults to user cache dir)")
 	buildCmd.Flags().String(flagPlatform, "linux/amd64", "build platform")
+
+	buildCmd.Flags().Bool(flagSkipCACerts, false, "skip running update-ca-certificates")
 
 	_ = buildCmd.MarkFlagRequired(flagConfig)
 	_ = buildCmd.MarkFlagFilename(flagConfig, ".yaml", ".yml")
@@ -81,6 +85,7 @@ func build(cmd *cobra.Command, _ []string) error {
 	cacheDir = getCacheDir(cacheDir)
 
 	platform, _ := cmd.Flags().GetString(flagPlatform)
+	skipCaCerts, _ := cmd.Flags().GetBool(flagSkipCACerts)
 
 	// read the config file
 	cfg, err := readConfig(configPath)
@@ -266,8 +271,10 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	// update ca certificates
-	if err := ca_certificates.UpdateCertificates(cmd.Context(), rootfs); err != nil {
-		return err
+	if !skipCaCerts {
+		if err := ca_certificates.UpdateCertificates(cmd.Context(), rootfs); err != nil {
+			return err
+		}
 	}
 
 	// package everything up as our final container image
