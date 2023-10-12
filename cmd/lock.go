@@ -170,7 +170,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 			Getters:         getters,
 		}
 		if err := client.Get(); err != nil {
-			log.Error(err, "failed to download file")
+			log.Error(err, "failed to download file", "src", srcUri.String())
 			return err
 		}
 		integrity, err := lockfile.Sha256(dst.Name())

@@ -8,6 +8,7 @@ import (
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/empty"
 	"github.com/google/go-containerregistry/pkg/v1/mutate"
+	"github.com/google/go-containerregistry/pkg/v1/types"
 	"path/filepath"
 	"strings"
 )
@@ -83,10 +84,17 @@ func (ib *Image) Append(ctx context.Context, fs fs.FullFS, platform *v1.Platform
 		return nil, err
 	}
 
+	// convert the base image to OCI format
+	if mt, err := ib.baseImage.MediaType(); err == nil {
+		log.V(1).Info("detected base image media type", "mediaType", mt)
+	}
+	baseImage := mutate.MediaType(ib.baseImage, types.OCIManifestSchema1)
+
 	// append our layer
 	layers := []mutate.Addendum{
 		{
-			Layer: layer,
+			MediaType: types.OCILayer,
+			Layer:     layer,
 			History: v1.History{
 				Author:    "all-your-base",
 				CreatedBy: "all-your-base build",
@@ -94,7 +102,7 @@ func (ib *Image) Append(ctx context.Context, fs fs.FullFS, platform *v1.Platform
 			},
 		},
 	}
-	withData, err := mutate.Append(ib.baseImage, layers...)
+	withData, err := mutate.Append(baseImage, layers...)
 	if err != nil {
 		return nil, fmt.Errorf("appending layers: %w", err)
 	}

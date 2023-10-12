@@ -42,7 +42,7 @@ func (d *Downloader) Download(ctx context.Context, src string) (string, error) {
 		DisableSymlinks: true,
 	}
 	if err := client.Get(); err != nil {
-		log.Error(err, "failed to download file")
+		log.Error(err, "failed to download file", "src", src)
 		return "", err
 	}
 	// we need to chmod the files so that the root group

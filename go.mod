@@ -4,13 +4,13 @@ go 1.21
 
 require (
 	github.com/blakesmith/ar v0.0.0-20190502131153-809d4375e1fb
-	github.com/chainguard-dev/go-apk v0.0.0-20230926193726-bc62936dddb4
+	github.com/chainguard-dev/go-apk v0.0.0-20231011214341-9fd940f239fa
 	github.com/djcass44/ci-tools v1.6.2
 	github.com/djcass44/go-utils/logging v0.2.3
 	github.com/drone/envsubst v1.0.3
 	github.com/go-logr/logr v1.2.4
 	github.com/google/go-containerregistry v0.16.1
-	github.com/hashicorp/go-getter v1.7.2
+	github.com/hashicorp/go-getter v1.7.3
 	github.com/klauspost/compress v1.17.0
 	github.com/knqyf263/go-deb-version v0.0.0-20230223133812-3ed183d23422
 	github.com/spf13/cobra v1.7.0
@@ -103,16 +103,16 @@ require (
 	gitlab.com/av1o/cap10 v0.4.0 // indirect
 	go.lsp.dev/uri v0.3.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	go.opentelemetry.io/otel v1.18.0 // indirect
-	go.opentelemetry.io/otel/metric v1.18.0 // indirect
-	go.opentelemetry.io/otel/trace v1.18.0 // indirect
+	go.opentelemetry.io/otel v1.19.0 // indirect
+	go.opentelemetry.io/otel/metric v1.19.0 // indirect
+	go.opentelemetry.io/otel/trace v1.19.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/build v0.0.0-20220928220451-9294235e16f5 // indirect
 	golang.org/x/crypto v0.11.0 // indirect
 	golang.org/x/net v0.13.0 // indirect
 	golang.org/x/oauth2 v0.8.0 // indirect
-	golang.org/x/sync v0.3.0 // indirect
-	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/sync v0.4.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.12.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/api v0.122.0 // indirect

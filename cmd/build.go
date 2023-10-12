@@ -230,7 +230,7 @@ func build(cmd *cobra.Command, _ []string) error {
 			Getters:         getters,
 		}
 		if err := client.Get(); err != nil {
-			log.Error(err, "failed to download file")
+			log.Error(err, "failed to download file", "src", srcUri.String())
 			return err
 		}
 		var permissions os.FileMode = 0644
