@@ -2,6 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
@@ -19,10 +24,6 @@ import (
 	"github.com/hashicorp/go-getter"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/util/yaml"
-	"net/url"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 var buildCmd = &cobra.Command{
@@ -164,6 +165,13 @@ func build(cmd *cobra.Command, _ []string) error {
 		if err := keeper.Unpack(cmd.Context(), pkgPath, rootfs); err != nil {
 			return err
 		}
+
+		// record installation of the package
+		if p.Direct {
+			if err := keeper.Record(cmd.Context(), name, rootfs); err != nil {
+				return err
+			}
+		}
 	}
 
 	// create the non-root user
@@ -251,6 +259,7 @@ func build(cmd *cobra.Command, _ []string) error {
 				return err
 			}
 		}
+		// todo update file permissions for file types that don't match the above
 		log.V(2).Info("copying file or directory", "src", copySrc, "dst", path)
 		if err := fileutil.CopyDirectory(copySrc, path, rootfs); err != nil {
 			log.Error(err, "failed to copy directory")

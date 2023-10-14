@@ -5,3 +5,6 @@ components:
       gl/inject-editor: true
     container:
       image: registry.dcas.dev/infra/workspaces/go:master
+      env:
+        - name: GOPROXY
+          value: "https://prism.v2.dcas.dev/api/go"

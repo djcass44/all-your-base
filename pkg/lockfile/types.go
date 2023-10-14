@@ -14,4 +14,5 @@ type Package struct {
 	Version   string         `json:"version"`
 	Resolved  string         `json:"resolved"`
 	Integrity string         `json:"integrity"`
+	Direct    bool           `json:"direct"`
 }

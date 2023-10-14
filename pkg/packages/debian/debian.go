@@ -4,14 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/chainguard-dev/go-apk/pkg/fs"
 	v1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/archiveutil"
 	"github.com/djcass44/all-your-base/pkg/debian"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/go-logr/logr"
-	"os"
-	"strings"
 )
 
 type PackageKeeper struct {
@@ -98,6 +99,10 @@ func (*PackageKeeper) unpackXZ(ctx context.Context, src fs.FullFS, dst fs.FullFS
 	return archiveutil.XZuntar(ctx, f, dst)
 }
 
+func (p *PackageKeeper) Record(ctx context.Context, pkg string, rootfs fs.FullFS) error {
+	return nil
+}
+
 func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Package, error) {
 	for _, idx := range p.indices {
 		out, err := idx.GetPackageWithDependencies(ctx, map[string]debian.Package{}, &debian.PackageVersion{
@@ -117,6 +122,7 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 				Integrity: out[i].Sha256,
 				Version:   out[i].Version,
 				Type:      v1.PackageDebian,
+				Direct:    out[i].Package == pkg,
 			}
 		}
 		return names, nil

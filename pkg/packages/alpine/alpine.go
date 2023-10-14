@@ -1,15 +1,22 @@
 package alpine
 
 import (
+	"bufio"
+	"bytes"
 	"context"
+	"errors"
+	"os"
+	"path/filepath"
+
 	"github.com/chainguard-dev/go-apk/pkg/apk"
 	"github.com/chainguard-dev/go-apk/pkg/fs"
 	v1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/archiveutil"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/go-logr/logr"
-	"os"
 )
+
+var worldFile = filepath.Join("etc", "apk", "world")
 
 type PackageKeeper struct {
 	indices []apk.NamedIndex
@@ -49,6 +56,52 @@ func (*PackageKeeper) Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) 
 	return nil
 }
 
+func (p *PackageKeeper) Record(ctx context.Context, pkg string, rootfs fs.FullFS) error {
+	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg)
+
+	world, err := rootfs.ReadFile(worldFile)
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		log.Error(err, "failed to open world file")
+		return err
+	}
+
+	// check if the package is already in the world file
+	scanner := bufio.NewScanner(bytes.NewReader(world))
+	for scanner.Scan() {
+		line := scanner.Text()
+		if line == pkg {
+			log.V(2).Info("located package in world file")
+			return nil
+		}
+
+	}
+	if err := scanner.Err(); err != nil {
+		log.Error(err, "failed to read world file")
+		return err
+	}
+
+	// otherwise, append and write
+	if err := rootfs.MkdirAll(filepath.Dir(worldFile), 0755); err != nil {
+		log.Error(err, "failed to create world directory")
+		return err
+	}
+
+	log.V(1).Info("appending to the world file")
+	f, err := rootfs.OpenFile(worldFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Error(err, "failed to open world file for writing")
+		return err
+	}
+	defer f.Close()
+
+	if _, err = f.Write([]byte(pkg + "\n")); err != nil {
+		log.Error(err, "failed to write to world file")
+		return err
+	}
+
+	return nil
+}
+
 func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Package, error) {
 	resolver := apk.NewPkgResolver(ctx, p.indices)
 
@@ -66,6 +119,7 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 		Integrity: repoPkg.ChecksumString(),
 		Version:   repoPkg.Version,
 		Type:      v1.PackageAlpine,
+		Direct:    true,
 	}
 	for i := range repoPkgDeps {
 		names[i+1] = lockfile.Package{
