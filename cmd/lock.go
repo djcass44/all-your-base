@@ -83,6 +83,9 @@ func lock(cmd *cobra.Command, _ []string) error {
 			Type:      aybv1.PackageOCI,
 		}
 	}
+	if skipImageLocking {
+		log.Info("warning: this build may not be reproducible - image locking is disabled")
+	}
 
 	type expandedRepo struct {
 		URL      string
