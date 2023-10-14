@@ -3,6 +3,11 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/containerutil"
@@ -15,10 +20,6 @@ import (
 	"github.com/google/go-containerregistry/pkg/crane"
 	"github.com/hashicorp/go-getter"
 	"github.com/spf13/cobra"
-	"net/url"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 var lockCmd = &cobra.Command{
@@ -27,10 +28,12 @@ var lockCmd = &cobra.Command{
 	RunE:  lock,
 }
 
+const flagSkipImageLocking = "skip-image-locking"
+
 func init() {
 	lockCmd.Flags().StringP(flagConfig, "c", "", "path to an image configuration file")
 
-	lockCmd.Flags().String(flagCacheDir, "", "cache directory (defaults to user cache dir)")
+	lockCmd.Flags().Bool(flagSkipImageLocking, false, "skip locking of the base image")
 
 	_ = lockCmd.MarkFlagRequired(flagConfig)
 	_ = lockCmd.MarkFlagFilename(flagConfig, ".yaml", ".yml")
@@ -41,9 +44,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 	log := logr.FromContextOrDiscard(cmd.Context())
 
 	configPath, _ := cmd.Flags().GetString(flagConfig)
-
-	cacheDir, _ := cmd.Flags().GetString(flagCacheDir)
-	cacheDir = getCacheDir(cacheDir)
+	skipImageLocking, _ := cmd.Flags().GetBool(flagSkipImageLocking)
 
 	// read the config file
 	cfg, err := readConfig(configPath)
@@ -69,7 +70,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 	}
 
 	// get the digest of the base image
-	if cfg.Spec.From != containerutil.MagicImageScratch {
+	if !skipImageLocking && cfg.Spec.From != containerutil.MagicImageScratch {
 		baseDigest, err := crane.Digest(airutil.ExpandEnv(cfg.Spec.From), crane.WithAuthFromKeychain(ociutil.KeyChain(ociutil.Auth{})))
 		if err != nil {
 			return err
