@@ -190,7 +190,7 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	// pull the base image
-	baseImg, err := containerutil.Pull(cmd.Context(), baseImage)
+	baseImg, err := containerutil.Get(cmd.Context(), baseImage)
 	if err != nil {
 		return err
 	}

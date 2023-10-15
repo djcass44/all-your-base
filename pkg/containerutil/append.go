@@ -3,14 +3,15 @@ package containerutil
 import (
 	"context"
 	"fmt"
+	"path/filepath"
+	"strings"
+
 	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/go-logr/logr"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/empty"
 	"github.com/google/go-containerregistry/pkg/v1/mutate"
 	"github.com/google/go-containerregistry/pkg/v1/types"
-	"path/filepath"
-	"strings"
 )
 
 const MagicImageScratch = "scratch"
@@ -88,7 +89,7 @@ func (ib *Image) Append(ctx context.Context, fs fs.FullFS, platform *v1.Platform
 	if mt, err := ib.baseImage.MediaType(); err == nil {
 		log.V(1).Info("detected base image media type", "mediaType", mt)
 	}
-	baseImage := mutate.MediaType(ib.baseImage, types.OCIManifestSchema1)
+	baseImage := ib.baseImage
 
 	// append our layer
 	layers := []mutate.Addendum{
