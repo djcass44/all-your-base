@@ -70,21 +70,25 @@ func lock(cmd *cobra.Command, _ []string) error {
 	}
 
 	// get the digest of the base image
-	if !skipImageLocking && cfg.Spec.From != containerutil.MagicImageScratch {
+	if cfg.Spec.From != containerutil.MagicImageScratch {
 		baseDigest, err := crane.Digest(airutil.ExpandEnv(cfg.Spec.From), crane.WithAuthFromKeychain(ociutil.KeyChain(ociutil.Auth{})))
 		if err != nil {
 			return err
 		}
 
+		resolved := cfg.Spec.From
+		if !skipImageLocking {
+			resolved = cfg.Spec.From + "@" + baseDigest
+		} else {
+			log.Info("warning: this build may not be reproducible - image locking is disabled")
+		}
+
 		lockFile.Packages[""] = lockfile.Package{
 			Name:      cfg.Spec.From,
-			Resolved:  cfg.Spec.From + "@" + baseDigest,
+			Resolved:  resolved,
 			Integrity: baseDigest,
 			Type:      aybv1.PackageOCI,
 		}
-	}
-	if skipImageLocking {
-		log.Info("warning: this build may not be reproducible - image locking is disabled")
 	}
 
 	type expandedRepo struct {
