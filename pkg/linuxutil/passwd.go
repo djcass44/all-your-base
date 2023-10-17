@@ -13,6 +13,8 @@ import (
 	"strings"
 )
 
+const DefaultShell = "/bin/sh"
+
 // NewUser adds an entry to the /etc/passwd file to create a new Linux
 // user.
 func NewUser(ctx context.Context, rootfs fs.FullFS, username string, uid int) error {
@@ -39,7 +41,7 @@ func NewUser(ctx context.Context, rootfs fs.FullFS, username string, uid int) er
 		log.Error(err, "failed to open passwd file")
 		return err
 	}
-	if _, err := file.Write([]byte(fmt.Sprintf("%s:x:%d:0:Linux User,,,:/home/%s:/sbin/nologin\n", username, uid, username))); err != nil {
+	if _, err := file.Write([]byte(fmt.Sprintf("%s:x:%d:0:Linux User,,,:/home/%s:%s\n", username, uid, username, DefaultShell))); err != nil {
 		log.Error(err, "failed to write to passwd file")
 		return err
 	}
