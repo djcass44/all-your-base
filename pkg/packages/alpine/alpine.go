@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/chainguard-dev/go-apk/pkg/apk"
 	"github.com/chainguard-dev/go-apk/pkg/fs"
@@ -14,15 +15,17 @@ import (
 	"github.com/djcass44/all-your-base/pkg/archiveutil"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/go-logr/logr"
+	"gitlab.alpinelinux.org/alpine/go/repository"
 )
 
-var worldFile = filepath.Join("etc", "apk", "world")
+var installedFile = filepath.Join("/lib", "apk", "db", "installed")
 
 type PackageKeeper struct {
+	rootfs fs.FullFS
 	indices []apk.NamedIndex
 }
 
-func NewPackageKeeper(ctx context.Context, repositories []string) (*PackageKeeper, error) {
+func NewPackageKeeper(ctx context.Context, repositories []string, rootfs fs.FullFS) (*PackageKeeper, error) {
 	log := logr.FromContextOrDiscard(ctx)
 	indices, err := apk.GetRepositoryIndexes(ctx, repositories, map[string][]byte{}, "x86_64", apk.WithIgnoreSignatures(true))
 	if err != nil {
@@ -36,6 +39,7 @@ func NewPackageKeeper(ctx context.Context, repositories []string) (*PackageKeepe
 
 	return &PackageKeeper{
 		indices: indices,
+		rootfs: rootfs,
 	}, nil
 }
 
@@ -56,12 +60,13 @@ func (*PackageKeeper) Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) 
 	return nil
 }
 
-func (p *PackageKeeper) Record(ctx context.Context, pkg string, rootfs fs.FullFS) error {
-	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg)
+func (p *PackageKeeper) Record(ctx context.Context, pkg *repository.RepositoryPackage, rootfs fs.FullFS) error {
+	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg.Name)
+	log.V(2).Info("recording package")
 
-	world, err := rootfs.ReadFile(worldFile)
+	world, err := rootfs.ReadFile(installedFile)
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
-		log.Error(err, "failed to open world file")
+		log.Error(err, "failed to open installed file")
 		return err
 	}
 
@@ -69,8 +74,8 @@ func (p *PackageKeeper) Record(ctx context.Context, pkg string, rootfs fs.FullFS
 	scanner := bufio.NewScanner(bytes.NewReader(world))
 	for scanner.Scan() {
 		line := scanner.Text()
-		if line == pkg {
-			log.V(2).Info("located package in world file")
+		if line == "P:" + pkg.Name {
+			log.V(2).Info("located package in installed file")
 			return nil
 		}
 
@@ -81,21 +86,23 @@ func (p *PackageKeeper) Record(ctx context.Context, pkg string, rootfs fs.FullFS
 	}
 
 	// otherwise, append and write
-	if err := rootfs.MkdirAll(filepath.Dir(worldFile), 0755); err != nil {
+	if err := rootfs.MkdirAll(filepath.Dir(installedFile), 0755); err != nil {
 		log.Error(err, "failed to create world directory")
 		return err
 	}
 
-	log.V(1).Info("appending to the world file")
-	f, err := rootfs.OpenFile(worldFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	log.V(1).Info("appending to the installed file")
+	f, err := rootfs.OpenFile(installedFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Error(err, "failed to open world file for writing")
+		log.Error(err, "failed to open installed file for writing")
 		return err
 	}
 	defer f.Close()
 
-	if _, err = f.Write([]byte(pkg + "\n")); err != nil {
-		log.Error(err, "failed to write to world file")
+	out := apk.PackageToIndex(pkg.Package)
+
+	if _, err = f.Write([]byte(strings.Join(out, "\n") + "\n")); err != nil {
+		log.Error(err, "failed to write to installed file")
 		return err
 	}
 
@@ -111,6 +118,10 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 		return nil, err
 	}
 
+	if err := p.Record(ctx, repoPkg, p.rootfs); err != nil {
+		return nil, err
+	}
+
 	// collect the urls for each package
 	names := make([]lockfile.Package, len(repoPkgDeps)+1)
 	names[0] = lockfile.Package{
@@ -122,6 +133,9 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 		Direct:    true,
 	}
 	for i := range repoPkgDeps {
+		if err := p.Record(ctx, repoPkgDeps[i], p.rootfs); err != nil {
+			return nil, err
+		}
 		names[i+1] = lockfile.Package{
 			Name:      repoPkgDeps[i].Name,
 			Resolved:  repoPkgDeps[i].Url(),

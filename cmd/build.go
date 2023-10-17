@@ -118,7 +118,7 @@ func build(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	alpineKeeper, err := alpine.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageAlpine))]))
+	alpineKeeper, err := alpine.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageAlpine))]), rootfs)
 	if err != nil {
 		return err
 	}
@@ -164,13 +164,6 @@ func build(cmd *cobra.Command, _ []string) error {
 		// filesystem
 		if err := keeper.Unpack(cmd.Context(), pkgPath, rootfs); err != nil {
 			return err
-		}
-
-		// record installation of the package
-		if p.Direct {
-			if err := keeper.Record(cmd.Context(), name, rootfs); err != nil {
-				return err
-			}
 		}
 	}
 

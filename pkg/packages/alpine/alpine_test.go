@@ -30,11 +30,18 @@ func TestPackageKeeper_Unpack(t *testing.T) {
 }
 
 func TestPackageKeeper_Resolve(t *testing.T) {
+	testfs := fs.NewMemFS()
+
 	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
-	pkg, err := NewPackageKeeper(ctx, []string{"https://mirror.aarnet.edu.au/pub/alpine/v3.18/main"})
+	pkg, err := NewPackageKeeper(ctx, []string{"https://mirror.aarnet.edu.au/pub/alpine/v3.18/main"}, testfs)
 	require.NoError(t, err)
 
 	packageNames, err := pkg.Resolve(ctx, "git")
 	assert.NoError(t, err)
 	t.Logf("%+v", packageNames)
+
+	out, err := testfs.ReadFile(installedFile)
+	require.NoError(t, err)
+
+	t.Logf("%+v", string(out))
 }
