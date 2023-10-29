@@ -172,14 +172,17 @@ func build(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	baseImage := airutil.ExpandEnv(cfg.Spec.From)
+	baseImage := airutil.ExpandEnv(lockFile.Packages[""].Resolved)
 	switch baseImage {
 	case containerutil.MagicImageScratch:
 	case "":
 		log.Info("using scratch base as nothing was provided")
 		baseImage = containerutil.MagicImageScratch
 	default:
-		baseImage = baseImage + "@" + lockFile.Packages[""].Integrity
+		// if we have nothing, use the "FROM" value
+		if baseImage == "" {
+			baseImage = airutil.ExpandEnv(cfg.Spec.From)
+		}
 	}
 
 	// pull the base image

@@ -16,6 +16,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
 	github.com/ulikunitz/xz v0.5.11
+	gitlab.alpinelinux.org/alpine/go v0.8.0
 	go.uber.org/zap v1.26.0
 	k8s.io/apimachinery v0.28.2
 	pault.ag/go/debian v0.15.0
@@ -99,7 +100,6 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/vbatts/tar-split v0.11.3 // indirect
-	gitlab.alpinelinux.org/alpine/go v0.8.0 // indirect
 	gitlab.com/av1o/cap10 v0.4.0 // indirect
 	go.lsp.dev/uri v0.3.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
