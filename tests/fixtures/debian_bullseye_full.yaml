@@ -6,7 +6,7 @@ spec:
   from: harbor.dcas.dev/docker.io/library/debian:bullseye
   repositories:
     debian:
-      - url: https://mirror.aarnet.edu.au/pub/debian bullseye main
+      - url: ${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian} bullseye main
   packages:
     - type: Debian
       names:

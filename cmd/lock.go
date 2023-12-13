@@ -139,8 +139,12 @@ func lock(cmd *cobra.Command, _ []string) error {
 
 				packageUrl := p.Resolved
 				for _, r := range repoList {
-					if strings.HasPrefix(p.Resolved, r.URL) {
-						packageUrl = strings.ReplaceAll(p.Resolved, r.URL, r.Original)
+					// we need to chop the repo if it has a space as everything
+					// after that is not useful (e.g. debian repo data)
+					repoName, _, _ := strings.Cut(r.URL, " ")
+					originalRepoName, _, _ := strings.Cut(r.Original, " ")
+					if strings.HasPrefix(p.Resolved, repoName) {
+						packageUrl = strings.ReplaceAll(p.Resolved, repoName, originalRepoName)
 					}
 				}
 
