@@ -114,6 +114,15 @@ func (ib *Image) Append(ctx context.Context, fs fs.FullFS, platform *v1.Platform
 		return nil, err
 	}
 	cfg = cfg.DeepCopy()
+
+	// copy platform metadata
+	cfg.OS = platform.OS
+	cfg.Architecture = platform.Architecture
+	cfg.OSVersion = platform.OSVersion
+	cfg.Variant = platform.Variant
+	cfg.OSFeatures = platform.OSFeatures
+
+	// setup other config bits
 	cfg.Author = ib.author
 	cfg.Config.WorkingDir = filepath.Join("/home", ib.username)
 	cfg.Config.User = ib.username

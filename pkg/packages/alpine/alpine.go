@@ -21,7 +21,7 @@ import (
 var installedFile = filepath.Join("/lib", "apk", "db", "installed")
 
 type PackageKeeper struct {
-	rootfs fs.FullFS
+	rootfs  fs.FullFS
 	indices []apk.NamedIndex
 }
 
@@ -39,7 +39,7 @@ func NewPackageKeeper(ctx context.Context, repositories []string, rootfs fs.Full
 
 	return &PackageKeeper{
 		indices: indices,
-		rootfs: rootfs,
+		rootfs:  rootfs,
 	}, nil
 }
 
@@ -74,7 +74,7 @@ func (p *PackageKeeper) Record(ctx context.Context, pkg *repository.RepositoryPa
 	scanner := bufio.NewScanner(bytes.NewReader(world))
 	for scanner.Scan() {
 		line := scanner.Text()
-		if line == "P:" + pkg.Name {
+		if line == "P:"+pkg.Name {
 			log.V(2).Info("located package in installed file")
 			return nil
 		}
