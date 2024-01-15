@@ -15,7 +15,7 @@ metadata:
 
 ## Base image
 
-Rather than starting from *scratch*, we can build off of an existing image.
+Rather than starting from *scratch*, we can build on an existing image.
 
 ```yaml
 apiVerison: ayb.dcas.dev/v1
@@ -80,11 +80,65 @@ spec:
 
 ## Packages
 
-TODO
+The packages property is a list of type and name groups.
+
+Alpine example:
+
+```yaml
+apiVerison: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: my-image
+spec:
+  from: alpine:3.18
+  repositories:
+    alpine:
+      - uri: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main
+      - uri: https://mirror.aarnet.edu.au/pub/alpine/v3.18/community
+  packages:
+    - type: Alpine
+      names:
+        - git
+```
+
+Debian example:
+
+```yaml
+apiVerison: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: my-image
+spec:
+  from: debian:bullseye
+  repositories:
+    debian:
+      - uri: "https://mirror.aarnet.edu.au/pub/debian bullseye main"
+      - uri: "https://mirror.aarnet.edu.au/pub/debian-security bullseye-security main"
+  packages:
+    - type: Debian
+      names:
+        - git
+```
+
+While you could install packages that are both `Debian` and `Alpine` types in the same image, we don't recommend it.
 
 ## Files
 
-TODO
+Files can be included in the image.
+
+```yaml
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: example
+spec:
+  from: scratch
+  files:
+    - uri: "" # any URI supported by the https://github.com/hashicorp/go-getter project. Could be a local file, HTTPS URL, S3 bucket, etc
+      path: "" # folder to place downloaded file (or files if it's an archive). If downloading a raw file, you can also specify the file name
+      executable: false # whether to make the file executable. Only works on single files
+      subPath: "" # if unpacking an archive, extracts an individual file
+```
 
 ## Links
 
