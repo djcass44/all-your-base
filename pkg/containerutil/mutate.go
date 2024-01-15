@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/djcass44/all-your-base/pkg/empty"
 	"github.com/go-logr/logr"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
-	"github.com/google/go-containerregistry/pkg/v1/empty"
 	"github.com/google/go-containerregistry/pkg/v1/mutate"
 	"github.com/google/go-containerregistry/pkg/v1/tarball"
 	"github.com/google/go-containerregistry/pkg/v1/types"
@@ -65,6 +65,7 @@ func NormaliseImage(ctx context.Context, base v1.Image) (v1.Image, error) {
 		return nil, err
 	}
 
+	//goland:noinspection GoPreferNilSlice
 	newLayers := []v1.Layer{}
 
 	// go through each layer and convert it to

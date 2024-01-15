@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/chainguard-dev/go-apk/pkg/fs"
+	"github.com/djcass44/all-your-base/pkg/empty"
 	"github.com/go-logr/logr"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
-	"github.com/google/go-containerregistry/pkg/v1/empty"
 	"github.com/google/go-containerregistry/pkg/v1/mutate"
 	"github.com/google/go-containerregistry/pkg/v1/types"
 )

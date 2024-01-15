@@ -2,9 +2,9 @@ package containerutil
 
 import (
 	"context"
+	"github.com/djcass44/all-your-base/pkg/empty"
 	"github.com/go-logr/logr"
 	"github.com/go-logr/logr/testr"
-	"github.com/google/go-containerregistry/pkg/v1/empty"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

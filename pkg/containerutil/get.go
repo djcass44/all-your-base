@@ -3,12 +3,12 @@ package containerutil
 import (
 	"context"
 	"fmt"
+	"github.com/djcass44/all-your-base/pkg/empty"
 
 	"github.com/djcass44/ci-tools/pkg/ociutil"
 	"github.com/go-logr/logr"
 	"github.com/google/go-containerregistry/pkg/name"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
-	"github.com/google/go-containerregistry/pkg/v1/empty"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
 )
 
