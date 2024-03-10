@@ -15,21 +15,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 )
 
 type PackageKeeper struct {
 	indices []*yumindex.Metadata
 }
-
-const (
-	ModeRegular            = 33188
-	ModeBinary             = 33261
-	ModeSomethingMaybeJson = 41471
-)
-
-var allowedModes = []int{ModeRegular, ModeBinary, ModeSomethingMaybeJson}
 
 func NewPackageKeeper(ctx context.Context, repositories []string) (*PackageKeeper, error) {
 	log := logr.FromContextOrDiscard(ctx)
@@ -85,34 +76,40 @@ func (p *PackageKeeper) Unpack(ctx context.Context, pkgFile string, rootfs fs.Fu
 		if err != nil {
 			return fmt.Errorf("reading cpio: %w", err)
 		}
-		// skip non-files
-		if !slices.Contains(allowedModes, hdr.Mode()) {
-			log.V(4).Info("skipping non-file header", "path", hdr.Filename(), "mode", hdr.Mode())
-			continue
-		}
-		// create the target directory
-		if dir := filepath.Dir(hdr.Filename()); dir != "" {
-			log.V(6).Info("creating directory", "dir", dir)
-			if err := rootfs.MkdirAll(dir, 0o755); err != nil {
-				return fmt.Errorf("creating directory: %w", err)
+		fileName := strings.TrimPrefix(hdr.Filename(), ".")
+		fileMode := os.FileMode(hdr.Mode()).Perm()
+		switch hdr.Mode() &^ 07777 {
+		case cpio.S_ISREG:
+			// create the target directory
+			if dir := filepath.Dir(fileName); dir != "" {
+				log.V(6).Info("creating directory", "dir", dir)
+				if err := rootfs.MkdirAll(dir, 0o755); err != nil {
+					return fmt.Errorf("creating directory: %w", err)
+				}
 			}
-		}
-		log.V(5).Info("creating file", "file", hdr.Filename())
-		out, err := rootfs.Create(hdr.Filename())
-		if err != nil {
-			return fmt.Errorf("creating file: %w", err)
-		}
-		if _, err := io.Copy(out, cpioReader); err != nil {
+			log.V(5).Info("creating file", "file", fileName)
+			out, err := rootfs.Create(fileName)
+			if err != nil {
+				return fmt.Errorf("creating file: %w", err)
+			}
+			if _, err := io.Copy(out, cpioReader); err != nil {
+				_ = out.Close()
+				return fmt.Errorf("copying file: %w", err)
+			}
 			_ = out.Close()
-			return fmt.Errorf("copying file: %w", err)
+			log.V(5).Info("updating file permissions", "file", fileName, "permissions", fileMode)
+			if err := rootfs.Chmod(fileName, fileMode); err != nil {
+				return fmt.Errorf("chmodding file %s: %w", fileName, err)
+			}
+		default:
+			log.V(4).Info("unknown header mode", "path", fileName, "mode", hdr.Mode())
 		}
-		_ = out.Close()
 	}
 
 	return nil
 }
 
-func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Package, error) {
+func (p *PackageKeeper) Resolve(_ context.Context, pkg string) ([]lockfile.Package, error) {
 	for _, idx := range p.indices {
 		for _, p := range idx.PackagesList {
 			if p.Name == pkg {
