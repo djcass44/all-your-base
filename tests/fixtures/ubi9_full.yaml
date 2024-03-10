@@ -1,0 +1,19 @@
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: ubi9-full
+spec:
+  from: registry.access.redhat.com/ubi9/ubi-minimal
+  repositories:
+    rpm:
+      - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os
+  packages:
+    - type: RPM
+      names:
+        - git
+        - git-lfs
+  files:
+    - uri: https://ftp.gnu.org/gnu/hello/hello-2.12.tar.gz?checksum=cf04af86dc085268c5f4470fbae49b18afbc221b78096aab842d934a76bad0ab&archive=false
+      path: /hello-2.12.tar.gz
+  entrypoint:
+    - /bin/bash

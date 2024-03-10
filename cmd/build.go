@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/djcass44/all-your-base/pkg/packages/rpm"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -126,6 +127,10 @@ func build(cmd *cobra.Command, _ []string) error {
 	if err != nil {
 		return err
 	}
+	yumKeeper, err := rpm.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageRPM))]))
+	if err != nil {
+		return err
+	}
 
 	// validate that the configuration file lines up
 	// with what we expect from the lockfile
@@ -144,6 +149,8 @@ func build(cmd *cobra.Command, _ []string) error {
 			keeper = alpineKeeper
 		case aybv1.PackageDebian:
 			keeper = debianKeeper
+		case aybv1.PackageRPM:
+			keeper = yumKeeper
 		case aybv1.PackageOCI:
 			fallthrough
 		case aybv1.PackageFile:

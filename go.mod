@@ -4,15 +4,18 @@ go 1.21
 
 require (
 	github.com/blakesmith/ar v0.0.0-20190502131153-809d4375e1fb
+	github.com/cavaliergopher/rpm v1.2.1-0.20231126213118-b2e876bef7ce
 	github.com/chainguard-dev/go-apk v0.0.0-20231011214341-9fd940f239fa
 	github.com/djcass44/ci-tools v1.7.2
 	github.com/djcass44/go-utils/logging v0.2.4
 	github.com/drone/envsubst v1.0.3
 	github.com/go-logr/logr v1.4.1
 	github.com/google/go-containerregistry v0.16.1
+	github.com/google/uuid v1.5.0
 	github.com/hashicorp/go-getter v1.7.3
 	github.com/klauspost/compress v1.17.0
 	github.com/knqyf263/go-deb-version v0.0.0-20230223133812-3ed183d23422
+	github.com/sassoftware/go-rpmutils v0.2.0
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
 	github.com/ulikunitz/xz v0.5.11
@@ -76,7 +79,6 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/s2a-go v0.1.5 // indirect
-	github.com/google/uuid v1.5.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.5 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
@@ -111,11 +113,11 @@ require (
 	go.uber.org/goleak v1.2.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/build v0.0.0-20220928220451-9294235e16f5 // indirect
-	golang.org/x/crypto v0.18.0 // indirect
-	golang.org/x/net v0.20.0 // indirect
+	golang.org/x/crypto v0.21.0 // indirect
+	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/oauth2 v0.11.0 // indirect
 	golang.org/x/sync v0.4.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/api v0.138.0 // indirect
