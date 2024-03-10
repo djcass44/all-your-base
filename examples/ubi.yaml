@@ -1,0 +1,17 @@
+## This file is a standard image that
+# installs a single Yum package.
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: ubi9
+spec:
+  from: registry.access.redhat.com/ubi9/ubi-minimal
+  repositories:
+    rpm:
+      - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os
+  packages:
+    - type: RPM
+      names:
+        - python3
+  entrypoint:
+    - /bin/bash

@@ -78,6 +78,24 @@ spec:
       - uri: "https://mirror.aarnet.edu.au/pub/debian-security bullseye-security main"
 ```
 
+
+**Fedora/UBI**
+
+Repositories are referenced by the full URL of the directory containing the `Packages` and `repodata` directories.
+
+```yaml
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: my-image
+spec:
+  from: registry.access.redhat.com/ubi9/ubi-minimal
+  repositories:
+    rpm:
+      - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os
+      - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os
+```
+
 ## Packages
 
 The packages property is a list of type and name groups.
@@ -120,7 +138,26 @@ spec:
         - git
 ```
 
-While you could install packages that are both `Debian` and `Alpine` types in the same image, we don't recommend it.
+UBI example:
+
+```yaml
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: my-image
+spec:
+  from: registry.access.redhat.com/ubi9/ubi-minimal
+  repositories:
+    rpm:
+      - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os
+      - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os
+  packages:
+    - type: RPM
+      names:
+        - python3
+```
+
+While you could install packages that are provided by multiple package manager types (e.g. Alpine and Debian) in the same image, we don't recommend it.
 
 ## Files
 

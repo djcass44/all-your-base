@@ -101,7 +101,7 @@ func readBlockedCerts(ctx context.Context, path string, rootfs memfs.FullFS) ([]
 }
 
 // walkCertDir walks a given directory and searches for '.crt' files.
-// If files are found and they're aren't blocked, they're added to the bundle
+// If files are found, and they aren't blocked, they're added to the bundle
 func walkCertDir(ctx context.Context, dir string, bundle *strings.Builder, blocked []string, rootfs memfs.FullFS) error {
 	log := logr.FromContextOrDiscard(ctx)
 	log.V(2).Info("walking directory", "dir", dir)
