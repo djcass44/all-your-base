@@ -101,9 +101,15 @@ func (p *PackageKeeper) Extract(ctx context.Context, rootfs fs.FullFS, rs io.Rea
 		}
 		// create the parent directory if it doesn't exist.
 		if dir := filepath.Dir(entry.Filename()); dir != "" {
-			log.V(2).Info("creating directory", "path", dir)
-			if err := rootfs.MkdirAll(dir, 0o755); err != nil {
-				return fmt.Errorf("creating directory: %w", err)
+			if _, err := os.Stat(dir); err != nil {
+				if os.IsNotExist(err) {
+					log.V(2).Info("creating directory", "path", dir)
+					if err := rootfs.MkdirAll(dir, 0o755); err != nil {
+						return fmt.Errorf("creating directory: %w", err)
+					}
+				} else {
+					return fmt.Errorf("checking directory: %w", err)
+				}
 			}
 		}
 		// FIXME: Need a makedev implementation in go.
@@ -206,7 +212,8 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 	for _, idx := range p.indices {
 		for _, p := range idx.Package {
 			if p.Name == pkg {
-				dependencies := idx.GetProviders(ctx, p.Format.Requires.Entry.GetValues())
+				log.Info("fetching dependencies", "pkg", p.Name)
+				dependencies := idx.GetProviders(ctx, p.Format.Requires.Entry.GetValues(), nil)
 				for _, dep := range dependencies {
 					packages[fmt.Sprintf("%s-%s", dep.Name, dep.Version.Ver)] = lockfile.Package{
 						Name:      dep.Name,

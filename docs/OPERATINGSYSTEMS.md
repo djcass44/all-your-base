@@ -12,7 +12,7 @@ This can cause some issues and quirks.
 
 ### Yum/RPM
 
-* Installing an RPM package does not also install its dependencies (_this is being worked on_).
+* ~~Installing an RPM package does not also install its dependencies.~~
 * Only the primary XML package list is searched when locating packages. The SQLite database format is not used.
 
 ### Debian

@@ -43,14 +43,16 @@ func tarDir(ctx context.Context, fs fullfs.FullFS, platform *v1.Platform) (*byte
 // to the provided tar.Writer with root -> chroot.  All symlinks are dereferenced,
 // which is what leads to recursion when we encounter a directory symlink.
 func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, root string, creationTime v1.Time, platform *v1.Platform) error {
+	log := logr.FromContextOrDiscard(ctx).WithValues("root", root)
+	log.V(1).Info("walking filesystem")
 	return fs.WalkDir(rootfs, root, func(hostPath string, d os.DirEntry, err error) error {
-		log := logr.FromContextOrDiscard(ctx).WithValues("path", hostPath)
-		if hostPath == root {
-			return nil
-		}
 		if err != nil {
 			return fmt.Errorf("fs.WalkDir(%q): %w", root, err)
 		}
+		if hostPath == root || hostPath == "/" {
+			return nil
+		}
+		log.V(1).Info("checking file", "path", hostPath)
 
 		// hacky method of setting the uid...
 		uid := 0

@@ -20,7 +20,7 @@ func TestMetadata_GetProviders(t *testing.T) {
 	var metadata Metadata
 	require.NoError(t, xml.Unmarshal([]byte(primaryDB), &metadata))
 
-	matches := metadata.GetProviders(ctx, []string{"libacl.so.1()(64bit)", "libacl.so.1(ACL_1.0)(64bit)", "libc.so.6()(64bit)", "libc.so.6(GLIBC_2.11)(64bit)", "libc.so.6(GLIBC_2.14)(64bit)", "libc.so.6(GLIBC_2.15)(64bit)", "libc.so.6(GLIBC_2.2.5)(64bit)", "libc.so.6(GLIBC_2.28)(64bit)", "libc.so.6(GLIBC_2.3)(64bit)", "libc.so.6(GLIBC_2.3.4)(64bit)", "libc.so.6(GLIBC_2.4)(64bit)", "libselinux.so.1()(64bit)", "libtinfo.so.6()(64bit)", "rtld(GNU_HASH)"})
+	matches := metadata.GetProviders(ctx, []string{"libacl.so.1()(64bit)", "libacl.so.1(ACL_1.0)(64bit)", "libc.so.6()(64bit)", "libc.so.6(GLIBC_2.11)(64bit)", "libc.so.6(GLIBC_2.14)(64bit)", "libc.so.6(GLIBC_2.15)(64bit)", "libc.so.6(GLIBC_2.2.5)(64bit)", "libc.so.6(GLIBC_2.28)(64bit)", "libc.so.6(GLIBC_2.3)(64bit)", "libc.so.6(GLIBC_2.3.4)(64bit)", "libc.so.6(GLIBC_2.4)(64bit)", "libselinux.so.1()(64bit)", "libtinfo.so.6()(64bit)", "rtld(GNU_HASH)"}, nil)
 	for _, m := range matches {
 		t.Logf("match: %s=%s", m.Name, m.Version.Ver)
 	}
