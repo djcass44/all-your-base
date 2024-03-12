@@ -21,6 +21,7 @@ require (
 	github.com/ulikunitz/xz v0.5.11
 	gitlab.alpinelinux.org/alpine/go v0.8.0
 	go.uber.org/zap v1.26.0
+	golang.org/x/exp v0.0.0-20230817173708-d852ddb80c63
 	k8s.io/apimachinery v0.28.2
 	pault.ag/go/debian v0.15.0
 )

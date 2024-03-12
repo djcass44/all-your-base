@@ -12,8 +12,10 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/sassoftware/go-rpmutils/cpio"
 	"github.com/ulikunitz/xz"
+	"golang.org/x/exp/maps"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -67,64 +69,170 @@ func (p *PackageKeeper) Unpack(ctx context.Context, pkgFile string, rootfs fs.Fu
 		return fmt.Errorf("unsupported payload format: %s", format)
 	}
 
-	cpioReader := cpio.NewReader(xzReader)
+	return p.Extract(ctx, rootfs, xzReader)
+}
+
+// Extract the contents of a cpio stream from r to the destination directory dest
+func (p *PackageKeeper) Extract(ctx context.Context, rootfs fs.FullFS, rs io.Reader) error {
+	log := logr.FromContextOrDiscard(ctx)
+
+	linkMap := make(map[int][]string)
+
+	stream := cpio.NewReader(rs)
+
 	for {
-		hdr, err := cpioReader.Next()
+		entry, err := stream.Next()
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
-			return fmt.Errorf("reading cpio: %w", err)
+			return fmt.Errorf("reading stream: %w", err)
 		}
-		fileName := strings.TrimPrefix(hdr.Filename(), ".")
-		fileMode := os.FileMode(hdr.Mode()).Perm()
-		switch hdr.Mode() &^ 07777 {
-		case cpio.S_ISREG:
-			// create the target directory
-			if dir := filepath.Dir(fileName); dir != "" {
-				log.V(6).Info("creating directory", "dir", dir)
-				if err := rootfs.MkdirAll(dir, 0o755); err != nil {
-					return fmt.Errorf("creating directory: %w", err)
+
+		// sanitize path
+		target := path.Clean(entry.Filename())
+		for strings.HasPrefix(target, "../") {
+			target = target[3:]
+		}
+		target = filepath.Join("/", filepath.FromSlash(target))
+		if !strings.HasPrefix(target, string(filepath.Separator)) && "/" != target {
+			// this shouldn't happen due to the sanitization above but always check
+			return fmt.Errorf("invalid cpio path %q", entry.Filename())
+		}
+		// create the parent directory if it doesn't exist.
+		if dir := filepath.Dir(entry.Filename()); dir != "" {
+			log.V(2).Info("creating directory", "path", dir)
+			if err := rootfs.MkdirAll(dir, 0o755); err != nil {
+				return fmt.Errorf("creating directory: %w", err)
+			}
+		}
+		// FIXME: Need a makedev implementation in go.
+
+		switch entry.Mode() &^ 07777 {
+		case cpio.S_ISCHR:
+			// FIXME: skipping due to lack of makedev.
+			continue
+		case cpio.S_ISBLK:
+			// FIXME: skipping due to lack of makedev.
+			continue
+		case cpio.S_ISDIR:
+			log.V(2).Info("creating directory", "path", target)
+			m := os.FileMode(entry.Mode()).Perm()
+			if err := rootfs.Mkdir(target, m); err != nil && !os.IsExist(err) {
+				return fmt.Errorf("creating dir: %w", err)
+			}
+		case cpio.S_ISFIFO:
+			// skip
+			continue
+		case cpio.S_ISLNK:
+			buf := make([]byte, entry.Filesize())
+			if _, err := stream.Read(buf); err != nil {
+				return fmt.Errorf("reading symlink name: %w", err)
+			}
+			filename := string(buf)
+			log.V(2).Info("creating symlink", "path", target)
+			if err := rootfs.Symlink(filename, target); err != nil {
+				if os.IsExist(err) {
+					log.V(2).Info("skipping symlink since the target already exists", "path", target)
+					continue
 				}
+				return fmt.Errorf("creating symlink: %w", err)
 			}
-			log.V(5).Info("creating file", "file", fileName)
-			out, err := rootfs.Create(fileName)
+		case cpio.S_ISREG:
+			log.V(2).Info("creating file", "path", target)
+			// save hardlinks until after the target is written
+			if entry.Nlink() > 1 && entry.Filesize() == 0 {
+				l, ok := linkMap[entry.Ino()]
+				if !ok {
+					l = make([]string, 0)
+				}
+				l = append(l, target)
+				linkMap[entry.Ino()] = l
+				continue
+			}
+
+			f, err := rootfs.Create(target)
 			if err != nil {
-				return fmt.Errorf("creating file: %w", err)
+				return fmt.Errorf("creating file '%s': %w", target, err)
 			}
-			if _, err := io.Copy(out, cpioReader); err != nil {
-				_ = out.Close()
+			written, err := io.Copy(f, stream)
+			if err != nil {
 				return fmt.Errorf("copying file: %w", err)
 			}
-			_ = out.Close()
-			log.V(5).Info("updating file permissions", "file", fileName, "permissions", fileMode)
-			if err := rootfs.Chmod(fileName, fileMode); err != nil {
-				return fmt.Errorf("chmodding file %s: %w", fileName, err)
+			if written != int64(entry.Filesize()) {
+				return fmt.Errorf("short write")
+			}
+			if err := f.Close(); err != nil {
+				return err
+			}
+
+			// fix permissions
+			fileMode := os.FileMode(entry.Mode()).Perm()
+			log.V(5).Info("updating file permissions", "file", target, "permissions", fileMode)
+			if err := rootfs.Chmod(target, fileMode); err != nil {
+				return fmt.Errorf("chmodding file %s: %w", target, err)
+			}
+
+			// Create hardlinks after the file content is written.
+			if entry.Nlink() > 1 && entry.Filesize() > 0 {
+				l, ok := linkMap[entry.Ino()]
+				if !ok {
+					return fmt.Errorf("hardlinks missing")
+				}
+
+				for _, t := range l {
+					log.V(2).Info("creating hardlink", "target", target, "path", t)
+					if err := rootfs.Link(target, t); err != nil {
+						if os.IsExist(err) {
+							log.V(2).Info("skipping hardlink since the target already exists", "target", target, "path", t)
+							continue
+						}
+						return fmt.Errorf("creating hardlink: %w", err)
+					}
+				}
 			}
 		default:
-			log.V(4).Info("unknown header mode", "path", fileName, "mode", hdr.Mode())
+			return fmt.Errorf("unknown file mode 0%o for %s", entry.Mode(), entry.Filename())
 		}
 	}
 
 	return nil
 }
 
-func (p *PackageKeeper) Resolve(_ context.Context, pkg string) ([]lockfile.Package, error) {
+func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Package, error) {
+	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg)
+	// dedupe packages
+	packages := map[string]lockfile.Package{}
 	for _, idx := range p.indices {
-		for _, p := range idx.PackagesList {
+		for _, p := range idx.Package {
 			if p.Name == pkg {
-				return []lockfile.Package{
-					{
-						Name:      p.Name,
+				dependencies := idx.GetProviders(ctx, p.Format.Requires.Entry.GetValues())
+				for _, dep := range dependencies {
+					packages[fmt.Sprintf("%s-%s", dep.Name, dep.Version.Ver)] = lockfile.Package{
+						Name:      dep.Name,
 						Type:      v1.PackageRPM,
-						Version:   p.Version.Ver,
-						Resolved:  strings.TrimSuffix(idx.Source, "/") + "/" + strings.TrimPrefix(p.Location.Href, "/"),
-						Integrity: p.Checksum.Value,
-						Direct:    true,
-					},
-				}, nil
+						Version:   dep.Version.Ver,
+						Resolved:  strings.TrimSuffix(idx.Source, "/") + "/" + strings.TrimPrefix(dep.Location.Href, "/"),
+						Integrity: dep.Checksum.Text,
+						Direct:    false,
+					}
+					log.V(1).Info("collecting package", "name", dep.Name, "version", dep.Version.Ver)
+				}
+				packages[fmt.Sprintf("%s-%s", p.Name, p.Version.Ver)] = lockfile.Package{
+					Name:      p.Name,
+					Type:      v1.PackageRPM,
+					Version:   p.Version.Ver,
+					Resolved:  strings.TrimSuffix(idx.Source, "/") + "/" + strings.TrimPrefix(p.Location.Href, "/"),
+					Integrity: p.Checksum.Text,
+					Direct:    true,
+				}
+				log.V(1).Info("collecting package", "name", p.Name, "version", p.Version.Ver)
 			}
 		}
+	}
+	results := maps.Values(packages)
+	if len(results) > 0 {
+		return results, nil
 	}
 	return nil, fmt.Errorf("package could not be found in any index: %s", pkg)
 }
