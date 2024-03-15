@@ -22,7 +22,7 @@ func TestNewIndex(t *testing.T) {
 	index, err := NewIndex(ctx, "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os")
 	assert.NoError(t, err)
 	assert.NotZero(t, index.Packages)
-	assert.NotEmpty(t, index.PackagesList)
+	assert.NotEmpty(t, index.Package)
 
-	t.Logf("packages: %d", index.Packages)
+	t.Logf("packages: %s", index.Packages)
 }
