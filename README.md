@@ -49,3 +49,7 @@ You can also publish the image directly to a registry:
 ```shell
 ayb build --config tests/fixtures/alpine_318_full.yaml --image myrepo/alpine318 --tag test --tag latest
 ```
+
+## Documentation
+
+Documentation can be found in the [`docs`](./docs) directory.

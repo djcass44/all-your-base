@@ -1,7 +1,7 @@
 # Overrides
 
 To enable multi-environment builds, Ayb supports overriding certain fields in the `build.yaml` file.
-This can be useful when an image is built in a development environment and a corporate environment without direct internet access (e.g., behind a corporate firewall, air-gap).
+This can be useful when an image needs to be built in a development environment and a corporate environment without direct internet access (e.g. behind a corporate firewall or an air-gap).
 
 ## Parent image
 
@@ -19,7 +19,7 @@ spec:
 By default, Ayb will resolve the `from` field to `docker.io/library/debian:bullseye`.
 If you set the `MY_REGISTRY` environment variable to `registry.corporate.internal/docker.io`, Ayb will resolve it to `registry.corporate.internal/docker.io/library/debian:bullseye`.
 
-Keep in mind that Ayb will still validate the digest of the image. If you are unable to retain digests you can use the `--skip-image-locking` flag when locking.
+Keep in mind that Ayb will still validate the digest of the image. If you are unable to guarantee consistent digests you can use the `--skip-image-locking` flag when locking.
 
 ## Repositories & files
 
