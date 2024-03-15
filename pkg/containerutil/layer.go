@@ -13,7 +13,7 @@ import (
 	"github.com/google/go-containerregistry/pkg/v1/types"
 	"io"
 	"io/fs"
-	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -45,14 +45,16 @@ func tarDir(ctx context.Context, fs fullfs.FullFS, platform *v1.Platform) (*byte
 func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, root string, creationTime v1.Time, platform *v1.Platform) error {
 	log := logr.FromContextOrDiscard(ctx).WithValues("root", root)
 	log.V(1).Info("walking filesystem")
-	return fs.WalkDir(rootfs, root, func(hostPath string, d os.DirEntry, err error) error {
-		if err != nil {
-			return fmt.Errorf("fs.WalkDir(%q): %w", root, err)
-		}
+	dirs, err := fs.ReadDir(rootfs, root)
+	if err != nil {
+		return fmt.Errorf("fs.ReadDir(%q): %w", root, err)
+	}
+	for _, d := range dirs {
+		hostPath := filepath.Join(root, d.Name())
+		log.V(1).Info("checking file", "path", hostPath, "dir", d.IsDir())
 		if hostPath == root || hostPath == "/" {
-			return nil
+			continue
 		}
-		log.V(1).Info("checking file", "path", hostPath)
 
 		// hacky method of setting the uid...
 		uid := 0
@@ -63,7 +65,7 @@ func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, ro
 
 		// create directory shells
 		if d.IsDir() {
-			log.V(4).Info("adding directory to tar")
+			log.V(4).Info("adding directory to tar", "dir", hostPath)
 			header := &tar.Header{
 				Name:     hostPath,
 				Typeflag: tar.TypeDir,
@@ -74,7 +76,6 @@ func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, ro
 			if err := tw.WriteHeader(header); err != nil {
 				return fmt.Errorf("tar.Writer.WriteHeader(%q): %w", hostPath, err)
 			}
-			return nil
 		}
 
 		evalPath := hostPath
@@ -99,7 +100,7 @@ func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, ro
 			if err := tw.WriteHeader(header); err != nil {
 				return fmt.Errorf("tar.Writer.WriteHeader(%q): %w", hostPath, err)
 			}
-			return nil
+			continue
 		}
 
 		// Chase symlinks.
@@ -109,8 +110,11 @@ func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, ro
 		}
 
 		// Skip other directories.
-		if info.Mode().IsDir() {
-			return walkRecursive(ctx, rootfs, tw, hostPath, creationTime, platform)
+		if info.Mode().IsDir() && hostPath != root && hostPath != "/" {
+			if err := walkRecursive(ctx, rootfs, tw, hostPath, creationTime, platform); err != nil {
+				return err
+			}
+			continue
 		}
 
 		// Open the file to copy it into the tarball.
@@ -119,7 +123,6 @@ func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, ro
 		if err != nil {
 			return fmt.Errorf("os.Open(%q): %w", evalPath, err)
 		}
-		defer file.Close()
 
 		// Copy the file into the image tarball.
 		header := &tar.Header{
@@ -132,11 +135,14 @@ func walkRecursive(ctx context.Context, rootfs fullfs.FullFS, tw *tar.Writer, ro
 			ModTime:  creationTime.Time,
 		}
 		if err := tw.WriteHeader(header); err != nil {
+			_ = file.Close()
 			return fmt.Errorf("tar.Writer.WriteHeader(%q): %w", hostPath, err)
 		}
 		if _, err := io.Copy(tw, file); err != nil {
+			_ = file.Close()
 			return fmt.Errorf("io.Copy(%q, %q): %w", hostPath, evalPath, err)
 		}
-		return nil
-	})
+		_ = file.Close()
+	}
+	return nil
 }

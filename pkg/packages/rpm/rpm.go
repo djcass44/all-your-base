@@ -101,9 +101,9 @@ func (p *PackageKeeper) Extract(ctx context.Context, rootfs fs.FullFS, rs io.Rea
 		}
 		// create the parent directory if it doesn't exist.
 		if dir := filepath.Dir(entry.Filename()); dir != "" {
-			if _, err := os.Stat(dir); err != nil {
+			if _, err := rootfs.Stat(dir); err != nil {
 				if os.IsNotExist(err) {
-					log.V(2).Info("creating directory", "path", dir)
+					log.V(2).Info("creating parent directory", "path", dir)
 					if err := rootfs.MkdirAll(dir, 0o755); err != nil {
 						return fmt.Errorf("creating directory: %w", err)
 					}

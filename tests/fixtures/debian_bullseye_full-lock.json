@@ -5,8 +5,8 @@
 		"": {
 			"type": "OCI",
 			"version": "",
-			"resolved": "harbor.dcas.dev/docker.io/library/debian:bullseye@sha256:ab2b95aa8d7d6d54866b92c322cf0693933c1ae8038652f24ddfda1d1763a45a",
-			"integrity": "sha256:ab2b95aa8d7d6d54866b92c322cf0693933c1ae8038652f24ddfda1d1763a45a",
+			"resolved": "harbor.dcas.dev/docker.io/library/debian:bullseye@sha256:5a87974e73c64b3fb161d444a84bdd47c0e6b6058eacaeea64342e7cbce1f04d",
+			"integrity": "sha256:5a87974e73c64b3fb161d444a84bdd47c0e6b6058eacaeea64342e7cbce1f04d",
 			"direct": false
 		},
 		"binutils": {
@@ -144,23 +144,23 @@
 		},
 		"libc-dev-bin": {
 			"type": "Debian",
-			"version": "2.31-13+deb11u6",
-			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/g/glibc/libc-dev-bin_2.31-13+deb11u6_amd64.deb",
-			"integrity": "1824442ecc4f729f8bbffc0758880557a2316b4296947d2f4e1cf74de72be50f",
+			"version": "2.31-13+deb11u8",
+			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/g/glibc/libc-dev-bin_2.31-13+deb11u8_amd64.deb",
+			"integrity": "a92d0983b40835aca13cfa4b36e2bef2c47be798bfc52e0fa5911ff8669915b5",
 			"direct": false
 		},
 		"libc6": {
 			"type": "Debian",
-			"version": "2.31-13+deb11u6",
-			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/g/glibc/libc6_2.31-13+deb11u6_amd64.deb",
-			"integrity": "cb8771d39b068834197b2b75c6b06433685b6e6a23a315064fb7cb5ab80cc235",
+			"version": "2.31-13+deb11u8",
+			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/g/glibc/libc6_2.31-13+deb11u8_amd64.deb",
+			"integrity": "d55d9c9769336f9b8516c20bd8364ce90746fb860ae3dda242f421e711af3d1a",
 			"direct": false
 		},
 		"libc6-dev": {
 			"type": "Debian",
-			"version": "2.31-13+deb11u6",
-			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/g/glibc/libc6-dev_2.31-13+deb11u6_amd64.deb",
-			"integrity": "182581b23e7fb4e9f0dd2a88d97fb9f582e39a30f1827225f44404e087d2b945",
+			"version": "2.31-13+deb11u8",
+			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/g/glibc/libc6-dev_2.31-13+deb11u8_amd64.deb",
+			"integrity": "d2eb0030c17e0432516bff260cfe157c0c38dfb19164c6ea976eb1a6eafa91fd",
 			"direct": false
 		},
 		"libcc1-0": {
@@ -207,9 +207,9 @@
 		},
 		"libcurl3-gnutls": {
 			"type": "Debian",
-			"version": "7.74.0-1.3+deb11u9",
-			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/c/curl/libcurl3-gnutls_7.74.0-1.3+deb11u9_amd64.deb",
-			"integrity": "bfaffacec95713a1486b20f24219952a0d56db041d43ece1768b732d859be885",
+			"version": "7.74.0-1.3+deb11u11",
+			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/c/curl/libcurl3-gnutls_7.74.0-1.3+deb11u11_amd64.deb",
+			"integrity": "f29ed9dacf91ce5c083198b7d97e8e38869fb42ce1b3fc904c87b0377e148aa6",
 			"direct": false
 		},
 		"libdb5.3": {
@@ -284,9 +284,9 @@
 		},
 		"libgnutls30": {
 			"type": "Debian",
-			"version": "3.7.1-5+deb11u3",
-			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/g/gnutls28/libgnutls30_3.7.1-5+deb11u3_amd64.deb",
-			"integrity": "d7d504ff9d45a292a4af549014c9471b526a0dbc898ff9a606fe24e0319a2d8e",
+			"version": "3.7.1-5+deb11u4",
+			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/g/gnutls28/libgnutls30_3.7.1-5+deb11u4_amd64.deb",
+			"integrity": "b2fa128881a16c2196caddb551d3577baa296a7bc5d38109a978e8e69fdb5c94",
 			"direct": false
 		},
 		"libgomp1": {
@@ -403,9 +403,9 @@
 		},
 		"libnghttp2-14": {
 			"type": "Debian",
-			"version": "1.43.0-1",
-			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/n/nghttp2/libnghttp2-14_1.43.0-1_amd64.deb",
-			"integrity": "a1a8aae24ced43025c94a9cb0c0eabfb3fc070785de9ee51c9a3a4fe86f0d11e",
+			"version": "1.43.0-1+deb11u1",
+			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/n/nghttp2/libnghttp2-14_1.43.0-1+deb11u1_amd64.deb",
+			"integrity": "96c380d74b9600ee3c300773c60a7d56a78017ac4a0b98d70b52708c1c7e8fd9",
 			"direct": false
 		},
 		"libnsl-dev": {
@@ -438,9 +438,9 @@
 		},
 		"libperl5.32": {
 			"type": "Debian",
-			"version": "5.32.1-4+deb11u2",
-			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/p/perl/libperl5.32_5.32.1-4+deb11u2_amd64.deb",
-			"integrity": "224cafe65968deb83168113b74dff2d2f13b115a41d99eb209ed3b8f981df0b3",
+			"version": "5.32.1-4+deb11u3",
+			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/p/perl/libperl5.32_5.32.1-4+deb11u3_amd64.deb",
+			"integrity": "078487a45916167e3e4ee2e584c50306c84368dd06dae276604861ca0426c34e",
 			"direct": false
 		},
 		"libpsl5": {
@@ -564,30 +564,30 @@
 		},
 		"linux-libc-dev": {
 			"type": "Debian",
-			"version": "5.10.197-1",
-			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/l/linux/linux-libc-dev_5.10.197-1_amd64.deb",
-			"integrity": "221a760c0ba9d3c3ba3d3c01579f014a54513fbd1446e335b3dfef0dde78f704",
+			"version": "5.10.209-2",
+			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/l/linux/linux-libc-dev_5.10.209-2_amd64.deb",
+			"integrity": "6bc548874cdc85ba6147f90964e15be6908ac740f32a34b140ed172f39b4b39f",
 			"direct": false
 		},
 		"perl": {
 			"type": "Debian",
-			"version": "5.32.1-4+deb11u2",
-			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/p/perl/perl_5.32.1-4+deb11u2_amd64.deb",
-			"integrity": "1cebc4516ed7c240b812c7bdd7e6ea0810f513152717ca17ce139ee0dfbc7b0d",
+			"version": "5.32.1-4+deb11u3",
+			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/p/perl/perl_5.32.1-4+deb11u3_amd64.deb",
+			"integrity": "d5f710c7db9fcd6d9d6f119cd0dea64a4f765867447dd97b24ab44be1de7c60f",
 			"direct": false
 		},
 		"perl-base": {
 			"type": "Debian",
-			"version": "5.32.1-4+deb11u2",
-			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/p/perl/perl-base_5.32.1-4+deb11u2_amd64.deb",
-			"integrity": "018a3e48e58cbc478d3a4365090fb1daa151769f90f9b45984ec9d056ef96adc",
+			"version": "5.32.1-4+deb11u3",
+			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/p/perl/perl-base_5.32.1-4+deb11u3_amd64.deb",
+			"integrity": "94c6299552866aadc58acb8ec5111a74b17bcb453f6e2f45ea5f7c4f42580d13",
 			"direct": false
 		},
 		"perl-modules-5.32": {
 			"type": "Debian",
-			"version": "5.32.1-4+deb11u2",
-			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/p/perl/perl-modules-5.32_5.32.1-4+deb11u2_all.deb",
-			"integrity": "6fa15be322c3c89ec4a07d704ad58d4a2d1aabf866135a859f6d8d58c59e9df4",
+			"version": "5.32.1-4+deb11u3",
+			"resolved": "${FOO_BAR_ZOO:-https://mirror.aarnet.edu.au/pub/debian}/pool/main/p/perl/perl-modules-5.32_5.32.1-4+deb11u3_all.deb",
+			"integrity": "9a5cb99d0f33cb11c7f535aaebfb569c6b6f97a75d748a9a52ea3afed5bd3960",
 			"direct": false
 		},
 		"zlib1g": {
