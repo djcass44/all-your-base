@@ -11,7 +11,7 @@ import (
 	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
-	ca_certificates "github.com/djcass44/all-your-base/pkg/ca-certificates"
+	cacertificates "github.com/djcass44/all-your-base/pkg/ca-certificates"
 	"github.com/djcass44/all-your-base/pkg/containerutil"
 	"github.com/djcass44/all-your-base/pkg/downloader"
 	"github.com/djcass44/all-your-base/pkg/fileutil"
@@ -186,10 +186,7 @@ func build(cmd *cobra.Command, _ []string) error {
 		log.Info("using scratch base as nothing was provided")
 		baseImage = containerutil.MagicImageScratch
 	default:
-		// if we have nothing, use the "FROM" value
-		if baseImage == "" {
-			baseImage = airutil.ExpandEnv(cfg.Spec.From)
-		}
+		baseImage = airutil.ExpandEnv(cfg.Spec.From)
 	}
 
 	// pull the base image
@@ -284,7 +281,7 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	// update ca certificates
 	if !skipCaCerts {
-		if err := ca_certificates.UpdateCertificates(cmd.Context(), rootfs); err != nil {
+		if err := cacertificates.UpdateCertificates(cmd.Context(), rootfs); err != nil {
 			return err
 		}
 	}

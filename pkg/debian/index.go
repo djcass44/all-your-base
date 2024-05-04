@@ -3,22 +3,54 @@ package debian
 import (
 	"compress/gzip"
 	"context"
+	"errors"
 	"fmt"
 	"github.com/go-logr/logr"
 	version "github.com/knqyf263/go-deb-version"
+	"github.com/ulikunitz/xz"
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"pault.ag/go/debian/control"
 	"slices"
 )
 
+const (
+	PackageFileGzip = "Packages.gz"
+	PackageFileXZ   = "Packages.xz"
+)
+
+var ErrNotFound = errors.New("package file not found")
+
 func NewIndex(ctx context.Context, repository, release, component, arch string) (*Index, error) {
-	log := logr.FromContextOrDiscard(ctx).WithValues("repo", repository, "release", release, "component", component, "arch", arch)
+	// try to download the gzip repository
+	index, err := downloadIndex(ctx, repository, release, component, arch, PackageFileGzip, func(r io.Reader) (io.ReadCloser, error) {
+		return gzip.NewReader(r)
+	})
+	if err == nil {
+		return index, nil
+	}
+	if !errors.Is(err, ErrNotFound) {
+		return nil, err
+	}
+
+	// try to download the xz repository
+	return downloadIndex(ctx, repository, release, component, arch, PackageFileXZ, func(r io.Reader) (io.ReadCloser, error) {
+		reader, err := xz.NewReader(r)
+		if err != nil {
+			return nil, err
+		}
+		return io.NopCloser(reader), nil
+	})
+}
+
+func downloadIndex(ctx context.Context, repository, release, component, arch, filename string, reader func(r io.Reader) (io.ReadCloser, error)) (*Index, error) {
+	log := logr.FromContextOrDiscard(ctx).WithValues("repo", repository, "release", release, "component", component, "arch", arch, "filename", filename)
 	log.V(1).Info("downloading index")
 
-	target := fmt.Sprintf("%s/dists/%s/%s/binary-%s/Packages.gz", repository, release, component, arch)
-	f, err := os.CreateTemp("", "Packages-*.gz")
+	target := fmt.Sprintf("%s/dists/%s/%s/binary-%s/%s", repository, release, component, arch, filename)
+	f, err := os.CreateTemp("", fmt.Sprintf("Packages-*%s", filepath.Ext(filename)))
 	if err != nil {
 		return nil, err
 	}
@@ -28,11 +60,17 @@ func NewIndex(ctx context.Context, repository, release, component, arch string) 
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		log.Info("failed to locate Packages.gz file", "url", target)
+		// return a special error on 404, so we can check for
+		// other file types
+		if resp.StatusCode == http.StatusNotFound {
+			log.Info("failed to locate package index")
+			return nil, ErrNotFound
+		}
+		log.Info("failed to download file", "url", target)
 		return nil, fmt.Errorf("http response failed with code: %d", resp.StatusCode)
 	}
 	log.V(1).Info("successfully downloaded index", "code", resp.StatusCode)
-	gr, err := gzip.NewReader(resp.Body)
+	gr, err := reader(resp.Body)
 	if err != nil {
 		return nil, err
 	}

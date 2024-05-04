@@ -1,0 +1,20 @@
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: debian-bookworm-full
+spec:
+  from: harbor.dcas.dev/docker.io/library/debian:bookworm
+  repositories:
+    debian:
+      - url: ${FOO_BAR_ZOO:-https://deb.debian.org/debian} bookworm main
+      - url: ${FOO_BAR_ZOO:-https://deb.debian.org/debian-security} bookworm-security main
+  packages:
+    - type: Debian
+      names:
+        - git
+        - g++
+  files:
+    - uri: https://ftp.gnu.org/gnu/hello/hello-2.12.tar.gz?checksum=cf04af86dc085268c5f4470fbae49b18afbc221b78096aab842d934a76bad0ab&archive=false
+      path: /hello-2.12.tar.gz
+  entrypoint:
+    - /bin/bash
