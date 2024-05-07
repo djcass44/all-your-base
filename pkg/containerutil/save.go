@@ -8,8 +8,8 @@ import (
 )
 
 func Save(ctx context.Context, img v1.Image, dst, path string) error {
-	log := logr.FromContextOrDiscard(ctx)
-	log.Info("saving image to local file", "path", path)
+	log := logr.FromContextOrDiscard(ctx).WithValues("path", path, "dst", dst)
+	log.Info("saving image to local file")
 	if err := crane.Save(img, dst, path); err != nil {
 		log.Error(err, "failed to save image")
 		return err

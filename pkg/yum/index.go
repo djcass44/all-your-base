@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/go-getter"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -42,7 +43,7 @@ func NewIndex(ctx context.Context, repository string) (*yumindex.Metadata, error
 	if err := client.Get(); err != nil {
 		return nil, fmt.Errorf("downloading primary index: %w", err)
 	}
-	f, err := os.Open(dst)
+	f, err := os.Open(filepath.Clean(dst))
 	if err != nil {
 		return nil, fmt.Errorf("opening index: %w", err)
 	}

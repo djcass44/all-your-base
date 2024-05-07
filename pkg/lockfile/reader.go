@@ -20,6 +20,7 @@ func Read(ctx context.Context, cfgPath string) (*Lock, error) {
 		log.Error(err, "failed to open lockfile")
 		return nil, err
 	}
+	defer lock.Close()
 	// read the lockfile
 	var lockFile Lock
 	if err := json.NewDecoder(lock).Decode(&lockFile); err != nil {
