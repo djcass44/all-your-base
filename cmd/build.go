@@ -2,8 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/Snakdy/container-build-engine/pkg/builder"
+	"github.com/Snakdy/container-build-engine/pkg/containers"
+	"github.com/Snakdy/container-build-engine/pkg/pipelines"
+	"github.com/djcass44/all-your-base/internal/statements"
 	"github.com/djcass44/all-your-base/pkg/packages/rpm"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,12 +15,8 @@ import (
 	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	cacertificates "github.com/djcass44/all-your-base/pkg/ca-certificates"
-	"github.com/djcass44/all-your-base/pkg/containerutil"
 	"github.com/djcass44/all-your-base/pkg/downloader"
-	"github.com/djcass44/all-your-base/pkg/fileutil"
-	"github.com/djcass44/all-your-base/pkg/linuxutil"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
-	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/djcass44/all-your-base/pkg/packages/alpine"
 	"github.com/djcass44/all-your-base/pkg/packages/debian"
 	"github.com/go-logr/logr"
@@ -140,57 +139,37 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	pkgKeys := lockFile.SortedKeys()
 
+	var pipelineStatements []pipelines.OrderedPipelineStatement
+
 	// install packages
-	for _, name := range pkgKeys {
+	for i, name := range pkgKeys {
 		p := lockFile.Packages[name]
-		var keeper packages.PackageManager
-		switch p.Type {
-		case aybv1.PackageAlpine:
-			keeper = alpineKeeper
-		case aybv1.PackageDebian:
-			keeper = debianKeeper
-		case aybv1.PackageRPM:
-			keeper = yumKeeper
-		case aybv1.PackageOCI:
-			fallthrough
-		case aybv1.PackageFile:
-			continue
-		default:
-			return fmt.Errorf("unknown package type: %s", p.Type)
-		}
 
-		log.Info("installing package", "name", name, "version", p.Version)
-
-		// download the package
-		pkgPath, err := dl.Download(cmd.Context(), airutil.ExpandEnv(p.Resolved))
-		if err != nil {
-			return err
-		}
-
-		// unpack the package into the root
-		// filesystem
-		if err := keeper.Unpack(cmd.Context(), pkgPath, rootfs); err != nil {
-			return err
-		}
-	}
-
-	// create the non-root user
-	if err := linuxutil.NewUser(cmd.Context(), rootfs, defaultUsername, defaultUid); err != nil {
-		return err
+		pipelineStatements = append(pipelineStatements, pipelines.OrderedPipelineStatement{
+			ID: fmt.Sprintf("pkg-%d", i),
+			Options: map[string]any{
+				"type":     string(p.Type),
+				"name":     p.Name,
+				"version":  p.Version,
+				"resolved": p.Resolved,
+			},
+			Statement: statements.NewPackageStatement(alpineKeeper, debianKeeper, yumKeeper, dl),
+			DependsOn: []string{statements.StatementEnv},
+		})
 	}
 
 	baseImage := airutil.ExpandEnv(lockFile.Packages[""].Resolved)
 	switch baseImage {
-	case containerutil.MagicImageScratch:
+	case containers.MagicImageScratch:
 	case "":
 		log.Info("using scratch base as nothing was provided")
-		baseImage = containerutil.MagicImageScratch
+		baseImage = containers.MagicImageScratch
 	default:
 		baseImage = airutil.ExpandEnv(cfg.Spec.From)
 	}
 
 	// pull the base image
-	baseImg, err := containerutil.Get(cmd.Context(), baseImage)
+	baseImg, err := containers.Get(cmd.Context(), baseImage)
 	if err != nil {
 		return err
 	}
@@ -200,83 +179,50 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	// sort out environment variables
-	expandedEnv := append(imgCfg.Config.Env, "HOME=/home/somebody")
+	envOpts := map[string]any{"HOME": "/home/somebody"}
+	for _, kv := range imgCfg.Config.Env {
+		k, v, _ := strings.Cut(kv, "=")
+		envOpts[k] = v
+	}
 	for _, vars := range cfg.Spec.Env {
-		log.Info("exporting environment variable", "key", vars.Name)
-		expandedEnv = append(expandedEnv, fmt.Sprintf("%s=%s", vars.Name, os.Expand(vars.Value, expandList(expandedEnv))))
+		envOpts[vars.Name] = os.Expand(vars.Value, expandMap(envOpts))
 	}
 
-	// download files
-	for _, file := range cfg.Spec.Files {
-		// expand paths using environment variables
-		path := filepath.Clean(os.Expand(file.Path, expandList(expandedEnv)))
-		dst, err := os.MkdirTemp("", "file-download-*")
-		if err != nil {
-			log.Error(err, "failed to prepare download directory")
-			return err
-		}
-		srcUri, err := url.Parse(airutil.ExpandEnv(file.URI))
-		if err != nil {
-			return err
-		}
-		checksum, ok := lockFile.Packages[file.URI]
-		if !ok {
-			return fmt.Errorf("failed to locate lock statement for package: %s\nYou may need to update the lock file with the 'lock' command", file.URI)
-		}
-		q := srcUri.Query()
-		q.Set("checksum", checksum.Integrity)
-		srcUri.RawQuery = q.Encode()
+	pipelineStatements = append(pipelineStatements, pipelines.OrderedPipelineStatement{
+		ID:        statements.StatementEnv,
+		Options:   envOpts,
+		Statement: &pipelines.Env{},
+	})
 
-		log.Info("downloading file", "file", srcUri.String(), "path", dst)
-		client := &getter.Client{
-			Ctx:             cmd.Context(),
-			Pwd:             wd,
-			Src:             srcUri.String(),
-			Dst:             dst,
-			DisableSymlinks: true,
-			Mode:            getter.ClientModeAny,
-			Getters:         getters,
-		}
-		if err := client.Get(); err != nil {
-			log.Error(err, "failed to download file", "src", srcUri.String())
-			return err
-		}
-		var permissions os.FileMode = 0644
-		if file.Executable {
-			permissions = 0755
-		}
-		copySrc := dst
-		if file.SubPath != "" || filepath.Ext(file.URI) == "" {
-			if file.SubPath != "" {
-				copySrc = filepath.Join(dst, file.SubPath)
-			}
-			if filepath.Ext(file.URI) == "" {
-				copySrc = filepath.Join(dst, filepath.Base(file.URI))
-			}
-			log.V(1).Info("updating file permissions", "file", copySrc, "permissions", permissions)
-			if err := os.Chmod(copySrc, permissions); err != nil {
-				log.Error(err, "failed to update file permissions", "file", copySrc)
-				return err
-			}
-		}
-		// todo update file permissions for file types that don't match the above
-		log.V(2).Info("copying file or directory", "src", copySrc, "dst", path)
-		if err := fileutil.CopyDirectory(copySrc, path, rootfs); err != nil {
-			log.Error(err, "failed to copy directory")
-			return err
-		}
+	// download files
+	for i, file := range cfg.Spec.Files {
+		// expand paths using environment variables
+		path := filepath.Clean(os.Expand(file.Path, expandMap(envOpts)))
+		pipelineStatements = append(pipelineStatements, pipelines.OrderedPipelineStatement{
+			ID: fmt.Sprintf("file-download-%d", i),
+			Options: map[string]any{
+				"uri":        airutil.ExpandEnv(file.URI),
+				"path":       path,
+				"executable": file.Executable,
+				"sub-path":   file.SubPath,
+			},
+			Statement: &pipelines.File{},
+			DependsOn: []string{statements.StatementEnv},
+		})
 	}
 
 	// create links
-	for _, link := range cfg.Spec.Links {
+	for i, link := range cfg.Spec.Links {
 		srcPath := filepath.Clean(link.Source)
 		dstPath := filepath.Clean(link.Target)
-
-		log.Info("creating link", "src", srcPath, "dst", dstPath)
-		if err := rootfs.Symlink(srcPath, dstPath); err != nil {
-			log.Error(err, "failed to create link")
-			return err
-		}
+		pipelineStatements = append(pipelineStatements, pipelines.OrderedPipelineStatement{
+			ID: fmt.Sprintf("link-%d", i),
+			Options: map[string]any{
+				"source": srcPath,
+				"target": dstPath,
+			},
+			Statement: &pipelines.SymbolicLink{},
+		})
 	}
 
 	// update ca certificates
@@ -294,22 +240,26 @@ func build(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	imageBuilder := containerutil.NewImage(
-		containerutil.WithBaseImage(baseImg),
-		containerutil.WithEnv(expandedEnv...),
-		containerutil.WithEntrypoint(cfg.Spec.Entrypoint, cfg.Spec.Command),
-	)
-	img, err := imageBuilder.Append(cmd.Context(), rootfs, imgPlatform)
+	imageBuilder, err := builder.NewBuilder(cmd.Context(), baseImage, pipelineStatements, builder.Options{
+		WorkingDir:      wd,
+		Entrypoint:      cfg.Spec.Entrypoint,
+		Command:         cfg.Spec.Command,
+		ForceEntrypoint: true,
+	})
+	if err != nil {
+		return err
+	}
+	img, err := imageBuilder.Build(cmd.Context(), imgPlatform)
 	if err != nil {
 		return err
 	}
 
 	if localPath != "" {
-		return containerutil.Save(cmd.Context(), img, cfg.Name, localPath)
+		return containers.Save(cmd.Context(), img, cfg.Name, localPath)
 	}
 	// push all tags
 	for _, t := range tags {
-		if err := containerutil.Push(cmd.Context(), img, fmt.Sprintf("%s:%s", ociPath, t)); err != nil {
+		if err := containers.Push(cmd.Context(), img, fmt.Sprintf("%s:%s", ociPath, t)); err != nil {
 			return err
 		}
 	}
@@ -317,12 +267,11 @@ func build(cmd *cobra.Command, _ []string) error {
 	return nil
 }
 
-func expandList(vs []string) func(s string) string {
+func expandMap(kv map[string]any) func(s string) string {
 	return func(s string) string {
-		for _, e := range vs {
-			k, v, _ := strings.Cut(e, "=")
+		for k, v := range kv {
 			if k == s {
-				return v
+				return v.(string)
 			}
 		}
 		return ""

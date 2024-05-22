@@ -15,7 +15,6 @@ import (
 	"github.com/djcass44/all-your-base/pkg/archiveutil"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/go-logr/logr"
-	"gitlab.alpinelinux.org/alpine/go/repository"
 )
 
 var installedFile = filepath.Join("/lib", "apk", "db", "installed")
@@ -60,7 +59,7 @@ func (*PackageKeeper) Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) 
 	return nil
 }
 
-func (p *PackageKeeper) Record(ctx context.Context, pkg *repository.RepositoryPackage, rootfs fs.FullFS) error {
+func (p *PackageKeeper) Record(ctx context.Context, pkg *apk.RepositoryPackage, rootfs fs.FullFS) error {
 	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg.Name)
 	log.V(2).Info("recording package")
 
@@ -99,7 +98,7 @@ func (p *PackageKeeper) Record(ctx context.Context, pkg *repository.RepositoryPa
 	}
 	defer f.Close()
 
-	out := apk.PackageToIndex(pkg.Package)
+	out := apk.PackageToInstalled(pkg.Package)
 
 	if _, err = f.Write([]byte(strings.Join(out, "\n") + "\n")); err != nil {
 		log.Error(err, "failed to write to installed file")
@@ -113,7 +112,7 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 	resolver := apk.NewPkgResolver(ctx, p.indices)
 
 	// resolve the package
-	repoPkg, repoPkgDeps, _, err := resolver.GetPackageWithDependencies(pkg, nil)
+	repoPkg, repoPkgDeps, _, err := resolver.GetPackageWithDependencies(pkg, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +125,7 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 	names := make([]lockfile.Package, len(repoPkgDeps)+1)
 	names[0] = lockfile.Package{
 		Name:      repoPkg.Name,
-		Resolved:  repoPkg.Url(),
+		Resolved:  repoPkg.URL(),
 		Integrity: repoPkg.ChecksumString(),
 		Version:   repoPkg.Version,
 		Type:      v1.PackageAlpine,
@@ -138,7 +137,7 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 		}
 		names[i+1] = lockfile.Package{
 			Name:      repoPkgDeps[i].Name,
-			Resolved:  repoPkgDeps[i].Url(),
+			Resolved:  repoPkgDeps[i].URL(),
 			Integrity: repoPkgDeps[i].ChecksumString(),
 			Version:   repoPkgDeps[i].Version,
 			Type:      v1.PackageAlpine,

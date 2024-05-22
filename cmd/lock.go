@@ -3,6 +3,8 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Snakdy/container-build-engine/pkg/containers"
+	"github.com/Snakdy/container-build-engine/pkg/oci/auth"
 	"github.com/djcass44/all-your-base/pkg/packages/rpm"
 	"net/url"
 	"os"
@@ -12,12 +14,10 @@ import (
 	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
-	"github.com/djcass44/all-your-base/pkg/containerutil"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/djcass44/all-your-base/pkg/packages/alpine"
 	"github.com/djcass44/all-your-base/pkg/packages/debian"
-	"github.com/djcass44/ci-tools/pkg/ociutil"
 	"github.com/go-logr/logr"
 	"github.com/google/go-containerregistry/pkg/crane"
 	"github.com/hashicorp/go-getter"
@@ -72,8 +72,8 @@ func lock(cmd *cobra.Command, _ []string) error {
 	}
 
 	// get the digest of the base image
-	if cfg.Spec.From != containerutil.MagicImageScratch {
-		baseDigest, err := crane.Digest(airutil.ExpandEnv(cfg.Spec.From), crane.WithAuthFromKeychain(ociutil.KeyChain(ociutil.Auth{})))
+	if cfg.Spec.From != containers.MagicImageScratch {
+		baseDigest, err := crane.Digest(airutil.ExpandEnv(cfg.Spec.From), crane.WithAuthFromKeychain(auth.KeyChain(auth.Auth{})))
 		if err != nil {
 			return err
 		}
