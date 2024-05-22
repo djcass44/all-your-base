@@ -1,6 +1,7 @@
 package rpm
 
 import (
+	"compress/gzip"
 	"context"
 	"fmt"
 	"github.com/cavaliergopher/rpm"
@@ -17,6 +18,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 )
 
@@ -56,20 +58,34 @@ func (p *PackageKeeper) Unpack(ctx context.Context, pkgFile string, rootfs fs.Fu
 		return fmt.Errorf("reading package header: %w", err)
 	}
 
-	if compression := pkg.PayloadCompression(); compression != "xz" {
+	compression := pkg.PayloadCompression()
+	log.V(3).Info("detected payload compression", "compression", compression, "supported", supportedRPMCompressionTypes)
+	if !slices.Contains(supportedRPMCompressionTypes, compression) {
 		return fmt.Errorf("unsupported compression: %s", compression)
 	}
 
-	xzReader, err := xz.NewReader(f)
-	if err != nil {
-		return fmt.Errorf("creating xz reader: %w", err)
+	var reader io.Reader
+
+	switch compression {
+	case compressionXZ:
+		xzReader, err := xz.NewReader(f)
+		if err != nil {
+			return fmt.Errorf("creating xz reader: %w", err)
+		}
+		reader = xzReader
+	case compressionGzip:
+		gzipReader, err := gzip.NewReader(f)
+		if err != nil {
+			return fmt.Errorf("creating gzip reader: %w", err)
+		}
+		reader = gzipReader
 	}
 
 	if format := pkg.PayloadFormat(); format != "cpio" {
 		return fmt.Errorf("unsupported payload format: %s", format)
 	}
 
-	return p.Extract(ctx, rootfs, xzReader)
+	return p.Extract(ctx, rootfs, reader)
 }
 
 // Extract the contents of a cpio stream from r to the destination directory dest

@@ -15,6 +15,7 @@ This can cause some issues and quirks.
 * ~~Installing an RPM package does not also install its dependencies.~~
 * Only the primary XML package list is searched when locating packages. The SQLite database format is not used.
 * Packages with many transitive dependencies will drastically increase build time.
+* Only XZ and GZIP compressed RPMs are supported.
 
 ### Debian
 
