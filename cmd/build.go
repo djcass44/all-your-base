@@ -242,11 +242,16 @@ func build(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
+	entrypoint := cfg.Spec.Entrypoint
+	if entrypoint == nil {
+		entrypoint = []string{"/bin/sh"}
+	}
+
 	// package everything up as our final container image
 	imageBuilder, err := builder.NewBuilder(cmd.Context(), baseImage, pipelineStatements, builder.Options{
 		Username:        username,
 		WorkingDir:      wd,
-		Entrypoint:      cfg.Spec.Entrypoint,
+		Entrypoint:      entrypoint,
 		Command:         cfg.Spec.Command,
 		ForceEntrypoint: true,
 		DirFS:           false,

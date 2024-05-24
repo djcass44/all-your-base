@@ -63,10 +63,10 @@ func downloadIndex(ctx context.Context, repository, release, component, arch, fi
 		// return a special error on 404, so we can check for
 		// other file types
 		if resp.StatusCode == http.StatusNotFound {
-			log.Info("failed to locate package index")
+			log.V(1).Info("failed to locate package index")
 			return nil, ErrNotFound
 		}
-		log.Info("failed to download file", "url", target)
+		log.V(1).Info("failed to download file", "url", target)
 		return nil, fmt.Errorf("http response failed with code: %d", resp.StatusCode)
 	}
 	log.V(1).Info("successfully downloaded index", "code", resp.StatusCode)

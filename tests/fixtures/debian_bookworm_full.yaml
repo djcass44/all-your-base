@@ -7,7 +7,7 @@ spec:
   repositories:
     debian:
       - url: ${FOO_BAR_ZOO:-https://deb.debian.org/debian} bookworm main
-      - url: ${FOO_BAR_ZOO:-https://deb.debian.org/debian-security} bookworm-security main
+      - url: ${FOO_BAR_ZOO:-https://security.debian.org/debian-security} bookworm-security main
   packages:
     - type: Debian
       names:

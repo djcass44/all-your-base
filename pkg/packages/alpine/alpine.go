@@ -112,7 +112,8 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 	resolver := apk.NewPkgResolver(ctx, p.indices)
 
 	// resolve the package
-	repoPkg, repoPkgDeps, _, err := resolver.GetPackageWithDependencies(pkg, nil, nil)
+	dq := map[*apk.RepositoryPackage]string{}
+	repoPkg, repoPkgDeps, _, err := resolver.GetPackageWithDependencies(pkg, nil, dq)
 	if err != nil {
 		return nil, err
 	}
