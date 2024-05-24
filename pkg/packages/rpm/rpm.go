@@ -45,7 +45,7 @@ func NewPackageKeeper(ctx context.Context, repositories []string) (*PackageKeepe
 
 func (p *PackageKeeper) Unpack(ctx context.Context, pkgFile string, rootfs fs.FullFS) error {
 	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkgFile)
-	log.Info("unpacking rpm")
+	log.V(4).Info("unpacking rpm")
 
 	f, err := os.Open(pkgFile)
 	if err != nil {
@@ -59,7 +59,7 @@ func (p *PackageKeeper) Unpack(ctx context.Context, pkgFile string, rootfs fs.Fu
 	}
 
 	compression := pkg.PayloadCompression()
-	log.V(3).Info("detected payload compression", "compression", compression, "supported", supportedRPMCompressionTypes)
+	log.V(6).Info("detected payload compression", "compression", compression, "supported", supportedRPMCompressionTypes)
 	if !slices.Contains(supportedRPMCompressionTypes, compression) {
 		return fmt.Errorf("unsupported compression: %s", compression)
 	}
@@ -138,7 +138,7 @@ func (p *PackageKeeper) Extract(ctx context.Context, rootfs fs.FullFS, rs io.Rea
 			// FIXME: skipping due to lack of makedev.
 			continue
 		case cpio.S_ISDIR:
-			log.V(2).Info("creating directory", "path", target)
+			log.V(8).Info("creating directory", "path", target)
 			m := os.FileMode(entry.Mode()).Perm()
 			if err := rootfs.Mkdir(target, m); err != nil && !os.IsExist(err) {
 				return fmt.Errorf("creating dir: %w", err)
@@ -152,16 +152,16 @@ func (p *PackageKeeper) Extract(ctx context.Context, rootfs fs.FullFS, rs io.Rea
 				return fmt.Errorf("reading symlink name: %w", err)
 			}
 			filename := string(buf)
-			log.V(2).Info("creating symlink", "path", target)
+			log.V(7).Info("creating symlink", "path", target)
 			if err := rootfs.Symlink(filename, target); err != nil {
 				if os.IsExist(err) {
-					log.V(2).Info("skipping symlink since the target already exists", "path", target)
+					log.V(7).Info("skipping symlink since the target already exists", "path", target)
 					continue
 				}
 				return fmt.Errorf("creating symlink: %w", err)
 			}
 		case cpio.S_ISREG:
-			log.V(2).Info("creating file", "path", target)
+			log.V(8).Info("creating file", "path", target)
 			// save hardlinks until after the target is written
 			if entry.Nlink() > 1 && entry.Filesize() == 0 {
 				l, ok := linkMap[entry.Ino()]
@@ -190,7 +190,7 @@ func (p *PackageKeeper) Extract(ctx context.Context, rootfs fs.FullFS, rs io.Rea
 
 			// fix permissions
 			fileMode := os.FileMode(entry.Mode()).Perm()
-			log.V(5).Info("updating file permissions", "file", target, "permissions", fileMode)
+			log.V(9).Info("updating file permissions", "file", target, "permissions", fileMode)
 			if err := rootfs.Chmod(target, fileMode); err != nil {
 				return fmt.Errorf("chmodding file %s: %w", target, err)
 			}
@@ -228,7 +228,7 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 	for _, idx := range p.indices {
 		for _, p := range idx.Package {
 			if p.Name == pkg {
-				log.Info("fetching dependencies", "pkg", p.Name)
+				log.V(3).Info("fetching dependencies", "pkg", p.Name)
 				dependencies := idx.GetProviders(ctx, p.Format.Requires.Entry.GetValues(), nil)
 				for _, dep := range dependencies {
 					packages[fmt.Sprintf("%s-%s", dep.Name, dep.Version.Ver)] = lockfile.Package{
@@ -239,7 +239,7 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 						Integrity: dep.Checksum.Text,
 						Direct:    false,
 					}
-					log.V(1).Info("collecting package", "name", dep.Name, "version", dep.Version.Ver)
+					log.V(4).Info("collecting package", "name", dep.Name, "version", dep.Version.Ver)
 				}
 				packages[fmt.Sprintf("%s-%s", p.Name, p.Version.Ver)] = lockfile.Package{
 					Name:      p.Name,
@@ -249,7 +249,7 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 					Integrity: p.Checksum.Text,
 					Direct:    true,
 				}
-				log.V(1).Info("collecting package", "name", p.Name, "version", p.Version.Ver)
+				log.V(4).Info("collecting package", "name", p.Name, "version", p.Version.Ver)
 			}
 		}
 	}

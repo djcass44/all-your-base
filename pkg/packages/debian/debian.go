@@ -79,7 +79,7 @@ const (
 
 func (*PackageKeeper) unpackZstd(ctx context.Context, src fs.FullFS, dst fs.FullFS) error {
 	log := logr.FromContextOrDiscard(ctx)
-	log.V(1).Info("unpacking zstandard data archive")
+	log.V(5).Info("unpacking zstandard data archive")
 	f, err := src.Open(dataZstd)
 	if err != nil {
 		log.Error(err, "failed to open data.tar.xz file")
@@ -90,7 +90,7 @@ func (*PackageKeeper) unpackZstd(ctx context.Context, src fs.FullFS, dst fs.Full
 
 func (*PackageKeeper) unpackXZ(ctx context.Context, src fs.FullFS, dst fs.FullFS) error {
 	log := logr.FromContextOrDiscard(ctx)
-	log.V(1).Info("unpacking xz data archive")
+	log.V(5).Info("unpacking xz data archive")
 	f, err := src.Open(dataXZ)
 	if err != nil {
 		log.Error(err, "failed to open data.tar.xz file")

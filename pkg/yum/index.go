@@ -32,7 +32,7 @@ func NewIndex(ctx context.Context, repository string) (*yumindex.Metadata, error
 		primaryURL = fmt.Sprintf("%s/%s", repository, primaryURL)
 	}
 	dst := fmt.Sprintf("%s/%s-primary.xml", os.TempDir(), uuid.NewString())
-	log.V(1).Info("downloading primary index", "src", primaryURL, "dst", dst)
+	log.V(4).Info("downloading primary index", "src", primaryURL, "dst", dst)
 	client := &getter.Client{
 		Ctx:             ctx,
 		Src:             primaryURL,
@@ -58,7 +58,7 @@ func NewIndex(ctx context.Context, repository string) (*yumindex.Metadata, error
 
 func getMetadata(ctx context.Context, repository string) (*yumrepo.RepoData, error) {
 	log := logr.FromContextOrDiscard(ctx).WithValues("repo", repository)
-	log.V(1).Info("downloading repository metadata")
+	log.V(4).Info("downloading repository metadata")
 
 	target := fmt.Sprintf("%s/repodata/repomd.xml", repository)
 	resp, err := http.Get(target)
@@ -70,7 +70,7 @@ func getMetadata(ctx context.Context, repository string) (*yumrepo.RepoData, err
 		log.Info("failed to download repomd.xml", "url", target)
 		return nil, fmt.Errorf("http response failed with code: %d", resp.StatusCode)
 	}
-	log.V(1).Info("successfully downloaded repository metadata", "code", resp.StatusCode)
+	log.V(6).Info("successfully downloaded repository metadata", "code", resp.StatusCode)
 	var metadata yumrepo.RepoData
 	if err := xml.NewDecoder(resp.Body).Decode(&metadata); err != nil {
 		return nil, err

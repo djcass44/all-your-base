@@ -44,7 +44,7 @@ func NewPackageKeeper(ctx context.Context, repositories []string, rootfs fs.Full
 
 func (*PackageKeeper) Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) error {
 	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg)
-	log.Info("unpacking apk")
+	log.V(4).Info("unpacking apk")
 
 	f, err := os.Open(pkg)
 	if err != nil {
@@ -61,7 +61,7 @@ func (*PackageKeeper) Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) 
 
 func (p *PackageKeeper) Record(ctx context.Context, pkg *apk.RepositoryPackage, rootfs fs.FullFS) error {
 	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg.Name)
-	log.V(2).Info("recording package")
+	log.V(5).Info("recording package")
 
 	world, err := rootfs.ReadFile(installedFile)
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
@@ -74,7 +74,7 @@ func (p *PackageKeeper) Record(ctx context.Context, pkg *apk.RepositoryPackage, 
 	for scanner.Scan() {
 		line := scanner.Text()
 		if line == "P:"+pkg.Name {
-			log.V(2).Info("located package in installed file")
+			log.V(5).Info("located package in installed file")
 			return nil
 		}
 
@@ -90,7 +90,7 @@ func (p *PackageKeeper) Record(ctx context.Context, pkg *apk.RepositoryPackage, 
 		return err
 	}
 
-	log.V(1).Info("appending to the installed file")
+	log.V(5).Info("appending to the installed file")
 	f, err := rootfs.OpenFile(installedFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Error(err, "failed to open installed file for writing")

@@ -7,6 +7,7 @@ import (
 	"github.com/Snakdy/container-build-engine/pkg/pipelines"
 	"github.com/djcass44/all-your-base/internal/statements"
 	"github.com/djcass44/all-your-base/pkg/packages/rpm"
+	"github.com/hashicorp/go-getter"
 	"os"
 	"path/filepath"
 	"strings"
@@ -21,7 +22,6 @@ import (
 	"github.com/djcass44/all-your-base/pkg/packages/debian"
 	"github.com/go-logr/logr"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
-	"github.com/hashicorp/go-getter"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/util/yaml"
 )
@@ -39,7 +39,8 @@ const (
 	flagImage = "image"
 	flagTag   = "tag"
 
-	flagUid = "uid"
+	flagUid      = "uid"
+	flagUsername = "username"
 
 	flagCacheDir = "cache-dir"
 	flagPlatform = "platform"
@@ -59,7 +60,8 @@ func init() {
 	buildCmd.Flags().String(flagImage, "", "oci image path (without tag) to push the image")
 	buildCmd.Flags().StringArrayP(flagTag, "t", nil, "tags to push")
 
-	buildCmd.Flags().Int(flagUid, 1001, "uid of the non-root user to create")
+	buildCmd.Flags().Int(flagUid, defaultUid, "uid of the non-root user to create")
+	buildCmd.Flags().String(flagUsername, defaultUsername, "username of the non-root user to create")
 
 	buildCmd.Flags().String(flagCacheDir, "", "cache directory (defaults to user cache dir)")
 	buildCmd.Flags().String(flagPlatform, "linux/amd64", "build platform")
@@ -87,6 +89,14 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	platform, _ := cmd.Flags().GetString(flagPlatform)
 	skipCaCerts, _ := cmd.Flags().GetBool(flagSkipCACerts)
+
+	username, _ := cmd.Flags().GetString(flagUsername)
+
+	imgPlatform, err := v1.ParsePlatform(platform)
+	if err != nil {
+		log.Error(err, "failed to parse platform")
+		return err
+	}
 
 	// read the config file
 	cfg, err := readConfig(configPath)
@@ -233,18 +243,16 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	// package everything up as our final container image
-
-	imgPlatform, err := v1.ParsePlatform(platform)
-	if err != nil {
-		log.Error(err, "failed to parse platform")
-		return err
-	}
-
 	imageBuilder, err := builder.NewBuilder(cmd.Context(), baseImage, pipelineStatements, builder.Options{
+		Username:        username,
 		WorkingDir:      wd,
 		Entrypoint:      cfg.Spec.Entrypoint,
 		Command:         cfg.Spec.Command,
 		ForceEntrypoint: true,
+		DirFS:           false,
+		Metadata: builder.MetadataOptions{
+			CreatedBy: "all-your-base",
+		},
 	})
 	if err != nil {
 		return err
