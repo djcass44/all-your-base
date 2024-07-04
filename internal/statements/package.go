@@ -24,24 +24,24 @@ func NewPackageStatement(alpineKeeper *alpine.PackageKeeper, debianKeeper *debia
 	}
 }
 
-func (s *PackageStatement) Run(ctx *pipelines.BuildContext) error {
+func (s *PackageStatement) Run(ctx *pipelines.BuildContext, _ ...cbev1.Options) (cbev1.Options, error) {
 	log := logr.FromContextOrDiscard(ctx.Context)
 
 	packageType, err := cbev1.GetRequired[string](s.options, "type")
 	if err != nil {
-		return err
+		return cbev1.Options{}, err
 	}
 	name, err := cbev1.GetRequired[string](s.options, "name")
 	if err != nil {
-		return err
+		return cbev1.Options{}, err
 	}
 	version, err := cbev1.GetRequired[string](s.options, "version")
 	if err != nil {
-		return err
+		return cbev1.Options{}, err
 	}
 	resolved, err := cbev1.GetRequired[string](s.options, "resolved")
 	if err != nil {
-		return err
+		return cbev1.Options{}, err
 	}
 
 	var keeper packages.PackageManager
@@ -55,9 +55,9 @@ func (s *PackageStatement) Run(ctx *pipelines.BuildContext) error {
 	case aybv1.PackageOCI:
 		fallthrough
 	case aybv1.PackageFile:
-		return nil
+		return cbev1.Options{}, nil
 	default:
-		return fmt.Errorf("unknown package type: %s", packageType)
+		return cbev1.Options{}, fmt.Errorf("unknown package type: %s", packageType)
 	}
 
 	log.Info("installing package", "name", name, "version", version)
@@ -65,15 +65,15 @@ func (s *PackageStatement) Run(ctx *pipelines.BuildContext) error {
 	// download the package
 	pkgPath, err := s.dl.Download(ctx.Context, airutil.ExpandEnv(resolved))
 	if err != nil {
-		return err
+		return cbev1.Options{}, err
 	}
 
 	// unpack the package into the root
 	// filesystem
 	if err := keeper.Unpack(ctx.Context, pkgPath, ctx.FS); err != nil {
-		return err
+		return cbev1.Options{}, err
 	}
-	return nil
+	return cbev1.Options{}, nil
 }
 
 func (*PackageStatement) Name() string {

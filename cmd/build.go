@@ -222,18 +222,17 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	// create links
-	for i, link := range cfg.Spec.Links {
+	linkOpts := map[string]any{}
+	for _, link := range cfg.Spec.Links {
 		srcPath := filepath.Clean(link.Source)
 		dstPath := filepath.Clean(link.Target)
-		pipelineStatements = append(pipelineStatements, pipelines.OrderedPipelineStatement{
-			ID: fmt.Sprintf("link-%d", i),
-			Options: map[string]any{
-				"source": srcPath,
-				"target": dstPath,
-			},
-			Statement: &pipelines.SymbolicLink{},
-		})
+		linkOpts[srcPath] = dstPath
 	}
+	pipelineStatements = append(pipelineStatements, pipelines.OrderedPipelineStatement{
+		ID:        "symbolic-links",
+		Options:   linkOpts,
+		Statement: &pipelines.SymbolicLink{},
+	})
 
 	// update ca certificates
 	if !skipCaCerts {
