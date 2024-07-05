@@ -90,7 +90,8 @@ func build(cmd *cobra.Command, _ []string) error {
 	platform, _ := cmd.Flags().GetString(flagPlatform)
 	skipCaCerts, _ := cmd.Flags().GetBool(flagSkipCACerts)
 
-	username, _ := cmd.Flags().GetString(flagUsername)
+	forceUsername, _ := cmd.Flags().GetString(flagUsername)
+	forceUid, _ := cmd.Flags().GetInt(flagUid)
 
 	imgPlatform, err := v1.ParsePlatform(platform)
 	if err != nil {
@@ -253,14 +254,32 @@ func build(cmd *cobra.Command, _ []string) error {
 		entrypoint = []string{"/bin/sh"}
 	}
 
+	// figure out what the username should be
+	username := cfg.Spec.User.Username
+	if username == "" && forceUsername != defaultUsername {
+		username = forceUsername
+	} else if username == "" {
+		username = defaultUsername
+	}
+
+	// figure out what the uid should be
+	uid := cfg.Spec.User.Uid
+	if uid <= 0 && forceUid > 0 && forceUid != defaultUid {
+		uid = forceUid
+	} else if uid <= 0 {
+		uid = defaultUid
+	}
+
 	// package everything up as our final container image
+	log.Info("preparing to build image", "username", username, "uid", uid, "dirfs", cfg.Spec.DirFS)
 	imageBuilder, err := builder.NewBuilder(cmd.Context(), baseImage, pipelineStatements, builder.Options{
 		Username:        username,
+		Uid:             uid,
 		WorkingDir:      wd,
 		Entrypoint:      entrypoint,
 		Command:         cfg.Spec.Command,
 		ForceEntrypoint: true,
-		DirFS:           false,
+		DirFS:           cfg.Spec.DirFS,
 		Metadata: builder.MetadataOptions{
 			CreatedBy: "all-your-base",
 		},

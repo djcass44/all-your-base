@@ -21,6 +21,13 @@ type BuildSpec struct {
 	Files        []File                  `json:"files,omitempty"`
 	Links        []Link                  `json:"links,omitempty"`
 	Env          []EnvVar                `json:"env,omitempty"`
+	User         User                    `json:"user,omitempty"`
+	DirFS        bool                    `json:"dirFS,omitempty"`
+}
+
+type User struct {
+	Username string `json:"username,omitempty"`
+	Uid      int    `json:"uid,omitempty"`
 }
 
 type Repository struct {

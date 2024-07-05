@@ -227,3 +227,47 @@ spec:
   command:
     - /some/magic/application.sh
 ```
+
+## Advanced configuration
+
+### DirFS
+
+By default, all-your-base uses an in-memory virtual filesystem, which for highly complex builds may cause memory issues.
+You can optionally set the `dirFS` parameter to true which will make all-your-base use a temporary directory as the root filesystem.
+
+See [here](https://github.com/Snakdy/container-build-engine/blob/main/docs/VFS.md) for further explanation.
+
+> Only set this if you know what you're doing.
+
+```yaml
+apiVerison: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: my-image
+spec:
+  dirFS: true
+```
+
+### User
+
+The container must be run as a non-root user, however some options are exposed to tweak this user.
+By default, a user named `somebody` will be created with `uid=1001` and `gid=0`.
+
+```yaml
+apiVerison: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: my-image
+spec:
+  user:
+    username: some-user
+    uid: 1234
+```
+
+Note: the `uid` MUST be above `0`.
+
+Additionally, you can override both of these values with CLI arguments:
+
+```shell
+ayb build -c build.yaml --username=some-user --uid=1234
+```
