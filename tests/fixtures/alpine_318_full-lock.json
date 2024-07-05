@@ -5,8 +5,8 @@
 		"": {
 			"type": "OCI",
 			"version": "",
-			"resolved": "harbor.dcas.dev/docker.io/library/alpine:3.18@sha256:11e21d7b981a59554b3f822c49f6e9f57b6068bb74f49c4cd5cc4c663c7e5160",
-			"integrity": "sha256:11e21d7b981a59554b3f822c49f6e9f57b6068bb74f49c4cd5cc4c663c7e5160",
+			"resolved": "harbor.dcas.dev/docker.io/library/alpine:3.18@sha256:1875c923b73448b558132e7d4a44b815d078779ed7a73f76209c6372de95ea8d",
+			"integrity": "sha256:1875c923b73448b558132e7d4a44b815d078779ed7a73f76209c6372de95ea8d",
 			"direct": false
 		},
 		"binutils": {
@@ -32,16 +32,16 @@
 		},
 		"busybox": {
 			"type": "Alpine",
-			"version": "1.36.1-r6",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/busybox-1.36.1-r6.apk",
-			"integrity": "Q1KNW4neQTQeKuinldJ+uwTCbJUYw=",
+			"version": "1.36.1-r7",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/busybox-1.36.1-r7.apk",
+			"integrity": "Q1ierGKl33AY17yZdo8YN+z8NeMPg=",
 			"direct": false
 		},
 		"busybox-binsh": {
 			"type": "Alpine",
-			"version": "1.36.1-r6",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/busybox-binsh-1.36.1-r6.apk",
-			"integrity": "Q1wa39cNs6hgUKJi1R9VK3OzppxMg=",
+			"version": "1.36.1-r7",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/busybox-binsh-1.36.1-r7.apk",
+			"integrity": "Q1bChMYpNVeA+TjgHg35IplQm8/Y4=",
 			"direct": false
 		},
 		"ca-certificates": {
@@ -123,9 +123,9 @@
 		},
 		"libcrypto3": {
 			"type": "Alpine",
-			"version": "3.1.5-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libcrypto3-3.1.5-r0.apk",
-			"integrity": "Q1UOuu4GBUp8YDXrqDCQVawBtJij0=",
+			"version": "3.1.6-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libcrypto3-3.1.6-r0.apk",
+			"integrity": "Q1NqaoieInWRQIGbXme4KArtJ6RGQ=",
 			"direct": false
 		},
 		"libcurl": {
@@ -172,9 +172,9 @@
 		},
 		"libssl3": {
 			"type": "Alpine",
-			"version": "3.1.5-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libssl3-3.1.5-r0.apk",
-			"integrity": "Q1JeulgUsCMFAHgkHGkl/7+Dq+7OE=",
+			"version": "3.1.6-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/libssl3-3.1.6-r0.apk",
+			"integrity": "Q1bIJpgoMXDXSbUq6KZQYVP1bJSBc=",
 			"direct": false
 		},
 		"libstdc++": {
@@ -256,9 +256,9 @@
 		},
 		"ssl_client": {
 			"type": "Alpine",
-			"version": "1.36.1-r6",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/ssl_client-1.36.1-r6.apk",
-			"integrity": "Q1khfMSMr4I/TB71tr+of1zjfXexg=",
+			"version": "1.36.1-r7",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.18/main/x86_64/ssl_client-1.36.1-r7.apk",
+			"integrity": "Q1x4zGPlbjZ/7ZsYMAtZPaGWTob/k=",
 			"direct": false
 		},
 		"zlib": {

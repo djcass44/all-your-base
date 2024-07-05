@@ -32,7 +32,7 @@ func (d *Downloader) Download(ctx context.Context, src string) (string, error) {
 	dst := filepath.Join(d.cacheDir, filepath.Base(uri.Path))
 	log.V(1).Info("preparing to download file", "dst", dst)
 
-	log.Info("downloading file", "src", src, "dst", dst)
+	log.V(1).Info("downloading file", "src", src, "dst", dst)
 
 	client := &getter.Client{
 		Ctx:             ctx,

@@ -72,6 +72,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 	}
 
 	// get the digest of the base image
+	log.Info("generating parent image checksum")
 	if cfg.Spec.From != containers.MagicImageScratch {
 		baseDigest, err := crane.Digest(airutil.ExpandEnv(cfg.Spec.From), crane.WithAuthFromKeychain(auth.KeyChain(auth.Auth{})))
 		if err != nil {
@@ -122,6 +123,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 	}
 
 	// get package integrity
+	log.Info("generating package checksums")
 	for _, pkg := range cfg.Spec.Packages {
 		var keeper packages.PackageManager
 		switch pkg.Type {
@@ -142,7 +144,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 			}
 
 			for _, p := range packageList {
-				log.Info("downloading package", "name", p.Name)
+				log.V(1).Info("downloading package", "name", p.Name)
 
 				packageUrl := p.Resolved
 				for _, r := range repoList {
@@ -163,6 +165,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 	}
 
 	// get file integrity
+	log.Info("generating file checksums")
 	for _, file := range cfg.Spec.Files {
 		dst, err := os.CreateTemp("", "file-download-*")
 		if err != nil {
@@ -179,7 +182,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 		q.Set("archive", "false")
 		srcUri.RawQuery = q.Encode()
 
-		log.Info("downloading file", "file", srcUri, "path", dst.Name())
+		log.V(1).Info("downloading file", "file", srcUri, "path", dst.Name())
 		client := &getter.Client{
 			Ctx:             cmd.Context(),
 			Pwd:             wd,
@@ -205,6 +208,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
+	log.Info("exporting lockfile")
 	f, err := os.Create(lockfile.Name(configPath))
 	if err != nil {
 		return err

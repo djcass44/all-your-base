@@ -60,7 +60,7 @@ func (s *PackageStatement) Run(ctx *pipelines.BuildContext, _ ...cbev1.Options) 
 		return cbev1.Options{}, fmt.Errorf("unknown package type: %s", packageType)
 	}
 
-	log.Info("installing package", "name", name, "version", version)
+	log.V(1).Info("installing package", "name", name, "version", version)
 
 	// download the package
 	pkgPath, err := s.dl.Download(ctx.Context, airutil.ExpandEnv(resolved))

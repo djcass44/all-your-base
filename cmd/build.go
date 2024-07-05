@@ -204,12 +204,17 @@ func build(cmd *cobra.Command, _ []string) error {
 		Statement: &pipelines.Env{},
 	})
 
+	// collect a list of all the file statements in case
+	// something should be run after files are in place
+	var fileDeps []string
+
 	// download files
 	for i, file := range cfg.Spec.Files {
 		// expand paths using environment variables
 		path := filepath.Clean(os.Expand(file.Path, expandMap(envOpts)))
+		id := fmt.Sprintf("file-download-%d", i)
 		pipelineStatements = append(pipelineStatements, pipelines.OrderedPipelineStatement{
-			ID: fmt.Sprintf("file-download-%d", i),
+			ID: id,
 			Options: map[string]any{
 				"uri":        airutil.ExpandEnv(file.URI),
 				"path":       path,
@@ -219,6 +224,7 @@ func build(cmd *cobra.Command, _ []string) error {
 			Statement: &pipelines.File{},
 			DependsOn: []string{statements.StatementEnv},
 		})
+		fileDeps = append(fileDeps, id)
 	}
 
 	// create links
@@ -232,6 +238,7 @@ func build(cmd *cobra.Command, _ []string) error {
 		ID:        "symbolic-links",
 		Options:   linkOpts,
 		Statement: &pipelines.SymbolicLink{},
+		DependsOn: fileDeps,
 	})
 
 	// update ca certificates
