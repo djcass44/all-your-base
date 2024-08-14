@@ -1,10 +1,10 @@
 package statements
 
 import (
+	"chainguard.dev/apko/pkg/apk/fs"
 	"context"
 	cbev1 "github.com/Snakdy/container-build-engine/pkg/api/v1"
 	"github.com/Snakdy/container-build-engine/pkg/pipelines"
-	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/all-your-base/pkg/downloader"
 	"github.com/djcass44/all-your-base/pkg/packages/debian"
 	"github.com/go-logr/logr"

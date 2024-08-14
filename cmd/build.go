@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"chainguard.dev/apko/pkg/apk/fs"
 	"fmt"
 	"github.com/Snakdy/container-build-engine/pkg/builder"
 	"github.com/Snakdy/container-build-engine/pkg/containers"
@@ -12,7 +13,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	cacertificates "github.com/djcass44/all-your-base/pkg/ca-certificates"
@@ -278,6 +278,15 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	// package everything up as our final container image
 	log.Info("preparing to build image", "username", username, "uid", uid, "dirfs", cfg.Spec.DirFS)
+	var filesystem fs.FullFS
+	if cfg.Spec.DirFS {
+		filesystem, err = builder.NewDirFS()
+		if err != nil {
+			log.Error(err, "failed to setup tmpfs")
+			return err
+		}
+	}
+
 	imageBuilder, err := builder.NewBuilder(cmd.Context(), baseImage, pipelineStatements, builder.Options{
 		Username:        username,
 		Uid:             uid,
@@ -285,7 +294,7 @@ func build(cmd *cobra.Command, _ []string) error {
 		Entrypoint:      entrypoint,
 		Command:         cfg.Spec.Command,
 		ForceEntrypoint: true,
-		DirFS:           cfg.Spec.DirFS,
+		FS:              filesystem,
 		Metadata: builder.MetadataOptions{
 			CreatedBy: "all-your-base",
 		},

@@ -1,9 +1,9 @@
 package packages
 
 import (
+	"chainguard.dev/apko/pkg/apk/fs"
 	"context"
 
-	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 )
 

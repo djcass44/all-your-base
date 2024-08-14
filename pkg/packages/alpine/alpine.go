@@ -3,14 +3,15 @@ package alpine
 import (
 	"bufio"
 	"bytes"
+	"chainguard.dev/apko/pkg/apk/apk"
+	"chainguard.dev/apko/pkg/apk/fs"
 	"context"
 	"errors"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/chainguard-dev/go-apk/pkg/apk"
-	"github.com/chainguard-dev/go-apk/pkg/fs"
 	v1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/archiveutil"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
@@ -26,7 +27,7 @@ type PackageKeeper struct {
 
 func NewPackageKeeper(ctx context.Context, repositories []string, rootfs fs.FullFS) (*PackageKeeper, error) {
 	log := logr.FromContextOrDiscard(ctx)
-	indices, err := apk.GetRepositoryIndexes(ctx, repositories, map[string][]byte{}, "x86_64", apk.WithIgnoreSignatures(true))
+	indices, err := apk.GetRepositoryIndexes(ctx, repositories, map[string][]byte{}, "x86_64", apk.WithIgnoreSignatures(true), apk.WithHTTPClient(http.DefaultClient))
 	if err != nil {
 		return nil, err
 	}

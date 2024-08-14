@@ -1,11 +1,11 @@
 package rpm
 
 import (
+	"chainguard.dev/apko/pkg/apk/fs"
 	"compress/gzip"
 	"context"
 	"fmt"
 	"github.com/cavaliergopher/rpm"
-	"github.com/chainguard-dev/go-apk/pkg/fs"
 	v1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/djcass44/all-your-base/pkg/yum"

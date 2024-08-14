@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"chainguard.dev/apko/pkg/apk/fs"
 	"encoding/json"
 	"fmt"
 	"github.com/Snakdy/container-build-engine/pkg/containers"
@@ -11,7 +12,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/lockfile"

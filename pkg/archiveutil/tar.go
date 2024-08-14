@@ -2,10 +2,10 @@ package archiveutil
 
 import (
 	"archive/tar"
+	"chainguard.dev/apko/pkg/apk/fs"
 	"compress/gzip"
 	"context"
 	"errors"
-	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/go-logr/logr"
 	"github.com/klauspost/compress/zstd"
 	"github.com/ulikunitz/xz"

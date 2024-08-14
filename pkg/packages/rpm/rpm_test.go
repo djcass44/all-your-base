@@ -1,8 +1,8 @@
 package rpm
 
 import (
+	"chainguard.dev/apko/pkg/apk/fs"
 	"context"
-	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/go-logr/logr"
 	"github.com/go-logr/logr/testr"

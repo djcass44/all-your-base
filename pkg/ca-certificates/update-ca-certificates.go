@@ -2,8 +2,8 @@ package ca_certificates
 
 import (
 	"bufio"
+	memfs "chainguard.dev/apko/pkg/apk/fs"
 	"context"
-	memfs "github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/go-logr/logr"
 	"io/fs"
 	"os"

@@ -1,9 +1,9 @@
 package archiveutil
 
 import (
+	"chainguard.dev/apko/pkg/apk/fs"
 	"context"
 	"github.com/blakesmith/ar"
-	"github.com/chainguard-dev/go-apk/pkg/fs"
 	"github.com/go-logr/logr"
 	"io"
 	"os"
