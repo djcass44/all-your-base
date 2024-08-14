@@ -152,12 +152,17 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	var pipelineStatements []pipelines.OrderedPipelineStatement
 
+	// collect a list of all the package statements in case
+	// something should be run after files are in place
+	var pkgDeps []string
+
 	// install packages
 	for i, name := range pkgKeys {
 		p := lockFile.Packages[name]
 
+		id := fmt.Sprintf("pkg-%d", i)
 		pipelineStatements = append(pipelineStatements, pipelines.OrderedPipelineStatement{
-			ID: fmt.Sprintf("pkg-%d", i),
+			ID: id,
 			Options: map[string]any{
 				"type":     string(p.Type),
 				"name":     p.Name,
@@ -167,6 +172,7 @@ func build(cmd *cobra.Command, _ []string) error {
 			Statement: statements.NewPackageStatement(alpineKeeper, debianKeeper, yumKeeper, dl),
 			DependsOn: []string{statements.StatementEnv},
 		})
+		pkgDeps = append(pkgDeps, id)
 	}
 
 	baseImage := airutil.ExpandEnv(lockFile.Packages[""].Resolved)
@@ -223,7 +229,7 @@ func build(cmd *cobra.Command, _ []string) error {
 				"sub-path":   file.SubPath,
 			},
 			Statement: &pipelines.File{},
-			DependsOn: []string{statements.StatementEnv},
+			DependsOn: append([]string{statements.StatementEnv}, pkgDeps...),
 		})
 		fileDeps = append(fileDeps, id)
 	}
