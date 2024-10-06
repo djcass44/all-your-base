@@ -5,8 +5,8 @@
 		"": {
 			"type": "OCI",
 			"version": "",
-			"resolved": "registry.access.redhat.com/ubi9/ubi-minimal@sha256:2636170dc55a0931d013014a72ae26c0c2521d4b61a28354b3e2e5369fa335a3",
-			"integrity": "sha256:2636170dc55a0931d013014a72ae26c0c2521d4b61a28354b3e2e5369fa335a3",
+			"resolved": "registry.access.redhat.com/ubi9/ubi-minimal@sha256:c0e70387664f30cd9cf2795b547e4a9a51002c44a4a86aa9335ab030134bf392",
+			"integrity": "sha256:c0e70387664f30cd9cf2795b547e4a9a51002c44a4a86aa9335ab030134bf392",
 			"direct": false
 		},
 		"basesystem": {
@@ -25,9 +25,9 @@
 		},
 		"ca-certificates": {
 			"type": "RPM",
-			"version": "2023.2.60_v7.0.306",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os/Packages/c/ca-certificates-2023.2.60_v7.0.306-80.0.el8_8.noarch.rpm",
-			"integrity": "ff92e0dad18fe991855ee55ab0053b8f86c3fbd4cf96d710e186dc8e9da6936c",
+			"version": "2024.2.69_v8.0.303",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os/Packages/c/ca-certificates-2024.2.69_v8.0.303-80.0.el8_10.noarch.rpm",
+			"integrity": "5b97c63d4978f82a8d73cb83c81c438d69309bc929d35c6bebf5868f128da13f",
 			"direct": false
 		},
 		"coreutils-common": {
@@ -102,51 +102,51 @@
 		},
 		"git": {
 			"type": "RPM",
-			"version": "2.43.0",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/g/git-2.43.0-1.el8.x86_64.rpm",
-			"integrity": "1899d2cb1cb42fa2f31b91bdd7faa42728125fcc0cb28424e255b3ab73df336b",
+			"version": "2.43.5",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/g/git-2.43.5-1.el8_10.x86_64.rpm",
+			"integrity": "790d88e719568543468ea5787baeb7a29929d3c089343388b3e8a8f297cb74d2",
 			"direct": true
 		},
 		"git-core": {
 			"type": "RPM",
-			"version": "2.43.0",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/g/git-core-2.43.0-1.el8.x86_64.rpm",
-			"integrity": "c5b0471850f858694039ed2fa2338bc38ad6699391c8afd257129466277c774e",
+			"version": "2.43.5",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/g/git-core-2.43.5-1.el8_10.x86_64.rpm",
+			"integrity": "2cd53240da88b94667e6bb9f02ed3da009a5eee614bfdde6a5d8d17c9e52242c",
 			"direct": false
 		},
 		"git-core-doc": {
 			"type": "RPM",
-			"version": "2.43.0",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/g/git-core-doc-2.43.0-1.el8.noarch.rpm",
-			"integrity": "c6850a4bef27de3aea627bf007080cb0593e5cd9de41e4da3b0fb4fad406d8fc",
+			"version": "2.43.5",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/g/git-core-doc-2.43.5-1.el8_10.noarch.rpm",
+			"integrity": "8964c428be1e4d29bcdb7dab21928fdae8e9dec175d16aad5261f65fa221c95a",
 			"direct": false
 		},
 		"git-lfs": {
 			"type": "RPM",
 			"version": "3.4.1",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/g/git-lfs-3.4.1-2.el8_10.x86_64.rpm",
-			"integrity": "9ed3640e0592eadcc75c0aceda2752bd108681de1667bb4e21325f9b58bbbe21",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/g/git-lfs-3.4.1-3.el8_10.x86_64.rpm",
+			"integrity": "f4fba38645710cec8e5860fc6f2013d62b4f637df22e7ed246c5e2d614f532c5",
 			"direct": true
 		},
 		"glibc": {
 			"type": "RPM",
 			"version": "2.28",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os/Packages/g/glibc-2.28-251.el8_10.2.x86_64.rpm",
-			"integrity": "4c88b3189ceb325129c820d3f718d89046c30587cc18bf3b0bb25487c4d955db",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os/Packages/g/glibc-2.28-251.el8_10.5.x86_64.rpm",
+			"integrity": "cce1cf96e7a5a8beb177c9c3ea6920fca75ca19619509b1cc057c985fb91f881",
 			"direct": false
 		},
 		"glibc-common": {
 			"type": "RPM",
 			"version": "2.28",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os/Packages/g/glibc-common-2.28-251.el8_10.2.x86_64.rpm",
-			"integrity": "a667db9fc05fbfc8e83c52cf75f4cdb049ac439a421f2aac14a00ce99c23dd86",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os/Packages/g/glibc-common-2.28-251.el8_10.5.x86_64.rpm",
+			"integrity": "7e6cdf20ce7537b0f740988701baa5e85dff2b6bbe2d4d087b689e9a42186629",
 			"direct": false
 		},
 		"glibc-minimal-langpack": {
 			"type": "RPM",
 			"version": "2.28",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os/Packages/g/glibc-minimal-langpack-2.28-251.el8_10.2.x86_64.rpm",
-			"integrity": "0f3f60edd22b6e31eca15e0344d4ac7b6da52faf3286f7aab13a6df7a1f66e09",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os/Packages/g/glibc-minimal-langpack-2.28-251.el8_10.5.x86_64.rpm",
+			"integrity": "75837cfef70504c24d758cbbfeef8aa7ce547e3a19a68df82d725f57f624b281",
 			"direct": false
 		},
 		"gmp": {
@@ -396,9 +396,9 @@
 		},
 		"perl-B-Debug": {
 			"type": "RPM",
-			"version": "1.24",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-B-Debug-1.24-3.module+el8.1.0+2926+ce7246ad.noarch.rpm",
-			"integrity": "bff78233a4a24995c818925b792b6c46fa850f6a74c72e4c249a722a0d8ec18d",
+			"version": "1.26",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-B-Debug-1.26-2.el8.noarch.rpm",
+			"integrity": "9b3e9a9ee44f013e233c4fece1b4faae0c74cd4e1ed855ace23fa8df491b28fd",
 			"direct": false
 		},
 		"perl-Benchmark": {
@@ -410,9 +410,9 @@
 		},
 		"perl-CPAN": {
 			"type": "RPM",
-			"version": "2.18",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-CPAN-2.18-399.el8.noarch.rpm",
-			"integrity": "5e9ee1eb6cc8aadf2a8d7c68fd7462fa64ee2b27d6abbb4d22fa7e80b3c84ebe",
+			"version": "2.28",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-CPAN-2.28-5.module+el8.10.0+21354+3ad137bb.noarch.rpm",
+			"integrity": "48ac4b288e3c986653907b5ebf79d37047f4037c81f54a386e6490692f090cf9",
 			"direct": false
 		},
 		"perl-CPAN-Meta": {
@@ -459,9 +459,9 @@
 		},
 		"perl-Compress-Raw-Bzip2": {
 			"type": "RPM",
-			"version": "2.096",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Compress-Raw-Bzip2-2.096-1.module+el8.10.0+21354+3ad137bb.x86_64.rpm",
-			"integrity": "317f75af48aaee284a2311adc791c15ec5d07f4eadccab0c37fadbe3fbec2d13",
+			"version": "2.081",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Compress-Raw-Bzip2-2.081-1.el8.x86_64.rpm",
+			"integrity": "f6153ef3b052c08853ab5372890da81408e0c4d47bb9c4bbc4363df39a5896b2",
 			"direct": false
 		},
 		"perl-Compress-Raw-Lzma": {
@@ -544,8 +544,8 @@
 		"perl-Devel-SelfStubber": {
 			"type": "RPM",
 			"version": "1.06",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Devel-SelfStubber-1.06-473.module+el8.10.0+21354+3ad137bb.noarch.rpm",
-			"integrity": "c3aa6879785cfa24192a3857abc49137b7a8338c2871cb2fe1cc567272ca8e32",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Devel-SelfStubber-1.06-422.el8.noarch.rpm",
+			"integrity": "b72254ca9dbc9f40dd46ec3b6836b7e80a4e7c2673f7f7f58aecc59a26a1f0ca",
 			"direct": false
 		},
 		"perl-Devel-Size": {
@@ -564,9 +564,9 @@
 		},
 		"perl-Digest-MD5": {
 			"type": "RPM",
-			"version": "2.55",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Digest-MD5-2.55-397.module+el8.1.0+2926+ce7246ad.x86_64.rpm",
-			"integrity": "e93d9830ba21d68a7bda86d6ba1c15d94daf2d3c354be6a93bf859b9eea79ba2",
+			"version": "2.58",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Digest-MD5-2.58-1.module+el8.10.0+21354+3ad137bb.x86_64.rpm",
+			"integrity": "ce8e70b1bf8ec5029258e834604ad3bd213c35a8b0a1a1cd0119eeb94c958910",
 			"direct": false
 		},
 		"perl-Digest-SHA": {
@@ -599,9 +599,9 @@
 		},
 		"perl-Encode": {
 			"type": "RPM",
-			"version": "2.97",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Encode-2.97-3.el8.i686.rpm",
-			"integrity": "9b70caffbc11f238053c344e5f70854fd7a9ae283f89990ed190657afcf739d8",
+			"version": "3.08",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Encode-3.08-461.module+el8.10.0+21354+3ad137bb.x86_64.rpm",
+			"integrity": "caf34d37b8c6b1d1117747b2a3e918ae14b12f6fbc2a83e8060bb53b12a17c69",
 			"direct": false
 		},
 		"perl-Encode-devel": {
@@ -669,9 +669,9 @@
 		},
 		"perl-ExtUtils-Embed": {
 			"type": "RPM",
-			"version": "1.35",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-ExtUtils-Embed-1.35-473.module+el8.10.0+21354+3ad137bb.noarch.rpm",
-			"integrity": "d8fc886daacb470072776e1f2196cab8b0acc9dc68e145993992c339a001b2d5",
+			"version": "1.34",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-ExtUtils-Embed-1.34-422.el8.noarch.rpm",
+			"integrity": "80325f6ae70cf30a4fdcc6500a4c2ed1679847435e6806f658add65e57a5b08d",
 			"direct": false
 		},
 		"perl-ExtUtils-Install": {
@@ -858,9 +858,9 @@
 		},
 		"perl-Git": {
 			"type": "RPM",
-			"version": "2.43.0",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Git-2.43.0-1.el8.noarch.rpm",
-			"integrity": "355ddc34403bb4519246603d04ee61830746049d11275c3f30ae71b40263ec5a",
+			"version": "2.43.5",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Git-2.43.5-1.el8_10.noarch.rpm",
+			"integrity": "084a4cf8531b3c09aeab819bb8c27e500e65520ce09308abd801c556eb8ebe77",
 			"direct": false
 		},
 		"perl-HTTP-Tiny": {
@@ -1222,9 +1222,9 @@
 		},
 		"perl-Pod-Html": {
 			"type": "RPM",
-			"version": "1.25",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Pod-Html-1.25-473.module+el8.10.0+21354+3ad137bb.noarch.rpm",
-			"integrity": "cf400c0fb9d0bcaee882f5b4af529cdc11ecf91837be637443c596d761d23ab0",
+			"version": "1.22.02",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Pod-Html-1.22.02-422.el8.noarch.rpm",
+			"integrity": "d54dd643a0efd5c3672872da8e36f1fc9490b4b2b4adfb62485cb7e4151e722b",
 			"direct": false
 		},
 		"perl-Pod-Parser": {
@@ -1285,9 +1285,9 @@
 		},
 		"perl-SelfLoader": {
 			"type": "RPM",
-			"version": "1.26",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-SelfLoader-1.26-473.module+el8.10.0+21354+3ad137bb.noarch.rpm",
-			"integrity": "2e92f9b13d2377c179c8f357260503fbb05393a37efa0f10de363b92b1feec7a",
+			"version": "1.23",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-SelfLoader-1.23-422.el8.noarch.rpm",
+			"integrity": "c4b30a57b40d89bd7271782400735b3ebef37fca2981fcf0cf1e8b230d7c5751",
 			"direct": false
 		},
 		"perl-Socket": {
@@ -1390,9 +1390,9 @@
 		},
 		"perl-Test": {
 			"type": "RPM",
-			"version": "1.31",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Test-1.31-473.module+el8.10.0+21354+3ad137bb.noarch.rpm",
-			"integrity": "cc4e467b779858940be5e15b96ad21f111c1df810e27df68b094de43c9924cd6",
+			"version": "1.30",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/perl-Test-1.30-422.el8.noarch.rpm",
+			"integrity": "970caa2afb5d849042622b67ca96119c5171002487f5094f9f319abb34c83936",
 			"direct": false
 		},
 		"perl-Test-Harness": {
@@ -1892,6 +1892,13 @@
 			"integrity": "aa0b69886ff9a3c3acb8855ce3061dad32eb67aaf7fdf6ca1ebc33f9a0650f0a",
 			"direct": false
 		},
+		"platform-python": {
+			"type": "RPM",
+			"version": "3.6.8",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os/Packages/p/platform-python-3.6.8-67.el8_10.i686.rpm",
+			"integrity": "50d42beb54fe72f03225a9e2ccb1ef102a10715f9a0aa64c547d8a85268335a0",
+			"direct": false
+		},
 		"python-rpm-macros": {
 			"type": "RPM",
 			"version": "3",
@@ -1923,8 +1930,8 @@
 		"redhat-release": {
 			"type": "RPM",
 			"version": "8.10",
-			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os/Packages/r/redhat-release-8.10-0.2.el8.x86_64.rpm",
-			"integrity": "0b33e8973cde22ede0c2118027c3d1c6058a873d0cec3d15b33049a612972c74",
+			"resolved": "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os/Packages/r/redhat-release-8.10-0.3.el8.x86_64.rpm",
+			"integrity": "e0e166b34568c303eca2ff0b4ba24dc5d945b8415a5c7b1c0e8b72dd2c70434b",
 			"direct": false
 		},
 		"redhat-rpm-config": {

@@ -301,7 +301,8 @@ func build(cmd *cobra.Command, _ []string) error {
 			return err
 		}
 		filesystem = vfs.NewVFS(tmpFs)
-
+	} else {
+		filesystem = fs.NewMemFS()
 	}
 
 	imageBuilder, err := builder.NewBuilder(cmd.Context(), baseImage, pipelineStatements, builder.Options{
