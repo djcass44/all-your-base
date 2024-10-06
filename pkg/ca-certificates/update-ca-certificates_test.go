@@ -15,7 +15,7 @@ func TestUpdateCertificates(t *testing.T) {
 	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
 
 	rootfs := vfs.NewVFS(t.TempDir())
-	require.NoError(t, files.CopyDirectory("./testdata", "/", rootfs))
+	require.NoError(t, files.CopyDirectory(ctx, "./testdata", "/", rootfs))
 
 	err := UpdateCertificates(ctx, rootfs)
 	assert.NoError(t, err)

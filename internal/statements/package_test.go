@@ -1,10 +1,10 @@
 package statements
 
 import (
-	"chainguard.dev/apko/pkg/apk/fs"
 	"context"
 	cbev1 "github.com/Snakdy/container-build-engine/pkg/api/v1"
 	"github.com/Snakdy/container-build-engine/pkg/pipelines"
+	"github.com/Snakdy/container-build-engine/pkg/vfs"
 	"github.com/djcass44/all-your-base/pkg/downloader"
 	"github.com/djcass44/all-your-base/pkg/packages/debian"
 	"github.com/go-logr/logr"
@@ -25,7 +25,7 @@ func TestPackageStatement_Run(t *testing.T) {
 	dl, err := downloader.NewDownloader(t.TempDir())
 	require.NoError(t, err)
 
-	rootfs := fs.NewMemFS()
+	rootfs := vfs.NewVFS(t.TempDir())
 
 	bctx := &pipelines.BuildContext{
 		Context:          ctx,

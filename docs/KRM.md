@@ -271,3 +271,17 @@ Additionally, you can override both of these values with CLI arguments:
 ```shell
 ayb build -c build.yaml --username=some-user --uid=1234
 ```
+
+### Shell
+
+The default user will be given the `/bin/sh` shell. If you wish to override this, or set it to a different location, do you set the `shell` variable:
+
+```yaml
+apiVerison: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: my-image
+spec:
+  user:
+    shell: /bin/bash
+```

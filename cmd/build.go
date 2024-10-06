@@ -6,6 +6,7 @@ import (
 	"github.com/Snakdy/container-build-engine/pkg/builder"
 	"github.com/Snakdy/container-build-engine/pkg/containers"
 	"github.com/Snakdy/container-build-engine/pkg/pipelines"
+	"github.com/Snakdy/container-build-engine/pkg/vfs"
 	"github.com/djcass44/all-your-base/internal/statements"
 	"github.com/djcass44/all-your-base/pkg/packages/rpm"
 	"github.com/hashicorp/go-getter"
@@ -220,17 +221,31 @@ func build(cmd *cobra.Command, _ []string) error {
 		// expand paths using environment variables
 		path := filepath.Clean(os.Expand(file.Path, expandMap(envOpts)))
 		id := fmt.Sprintf("file-download-%d", i)
-		pipelineStatements = append(pipelineStatements, pipelines.OrderedPipelineStatement{
-			ID: id,
-			Options: map[string]any{
-				"uri":        airutil.ExpandEnv(file.URI),
-				"path":       path,
-				"executable": file.Executable,
-				"sub-path":   file.SubPath,
-			},
-			Statement: &pipelines.File{},
-			DependsOn: append([]string{statements.StatementEnv}, pkgDeps...),
-		})
+		// if the file source has a '/' suffix, then we should
+		// treat it as a directory
+		if strings.HasSuffix(file.URI, "/") {
+			pipelineStatements = append(pipelineStatements, pipelines.OrderedPipelineStatement{
+				ID: id,
+				Options: map[string]any{
+					"src": airutil.ExpandEnv(file.URI),
+					"dst": path,
+				},
+				Statement: &pipelines.Dir{},
+				DependsOn: append([]string{statements.StatementEnv}, pkgDeps...),
+			})
+		} else {
+			pipelineStatements = append(pipelineStatements, pipelines.OrderedPipelineStatement{
+				ID: id,
+				Options: map[string]any{
+					"uri":        airutil.ExpandEnv(file.URI),
+					"path":       path,
+					"executable": file.Executable,
+					"sub-path":   file.SubPath,
+				},
+				Statement: &pipelines.File{},
+				DependsOn: append([]string{statements.StatementEnv}, pkgDeps...),
+			})
+		}
 		fileDeps = append(fileDeps, id)
 	}
 
@@ -280,16 +295,19 @@ func build(cmd *cobra.Command, _ []string) error {
 	log.Info("preparing to build image", "username", username, "uid", uid, "dirfs", cfg.Spec.DirFS)
 	var filesystem fs.FullFS
 	if cfg.Spec.DirFS {
-		filesystem, err = builder.NewDirFS()
+		tmpFs, err := os.MkdirTemp("", "container-build-engine-fs-*")
 		if err != nil {
 			log.Error(err, "failed to setup tmpfs")
 			return err
 		}
+		filesystem = vfs.NewVFS(tmpFs)
+
 	}
 
 	imageBuilder, err := builder.NewBuilder(cmd.Context(), baseImage, pipelineStatements, builder.Options{
 		Username:        username,
 		Uid:             uid,
+		Shell:           cfg.Spec.User.Shell,
 		WorkingDir:      wd,
 		Entrypoint:      entrypoint,
 		Command:         cfg.Spec.Command,

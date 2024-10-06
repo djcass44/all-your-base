@@ -1,0 +1,22 @@
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: ubuntu-vfs-full
+spec:
+  dirFS: true
+  from: harbor.dcas.dev/docker.io/library/ubuntu:noble
+  repositories:
+    debian:
+      - url: https://mirror.aarnet.edu.au/pub/ubuntu/archive noble main
+      - url: https://mirror.aarnet.edu.au/pub/ubuntu/archive noble universe
+  packages:
+    - type: Debian
+      names:
+        - build-essential
+        - git
+        - git-lfs
+        - g++
+        - gcc
+        - openjdk-17-jdk
+  entrypoint:
+    - /bin/bash

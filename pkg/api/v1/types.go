@@ -28,6 +28,7 @@ type BuildSpec struct {
 type User struct {
 	Username string `json:"username,omitempty"`
 	Uid      int    `json:"uid,omitempty"`
+	Shell    string `json:"shell,omitempty"`
 }
 
 type Repository struct {
