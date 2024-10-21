@@ -54,6 +54,8 @@ func (s *PackageStatement) Run(ctx *pipelines.BuildContext, _ ...cbev1.Options) 
 		keeper = s.yumKeeper
 	case aybv1.PackageOCI:
 		fallthrough
+	case aybv1.PackageDir:
+		fallthrough
 	case aybv1.PackageFile:
 		return cbev1.Options{}, nil
 	default:

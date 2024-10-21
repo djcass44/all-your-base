@@ -7,6 +7,7 @@ import (
 	"github.com/Snakdy/container-build-engine/pkg/containers"
 	"github.com/Snakdy/container-build-engine/pkg/oci/auth"
 	"github.com/djcass44/all-your-base/pkg/packages/rpm"
+	"github.com/gosimple/hashdir"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -167,6 +168,24 @@ func lock(cmd *cobra.Command, _ []string) error {
 	// get file integrity
 	log.Info("generating file checksums")
 	for _, file := range cfg.Spec.Files {
+		// if the file source has a '/' suffix, then we should
+		// treat it as a directory
+		if strings.HasSuffix(file.URI, "/") {
+			src := airutil.ExpandEnv(file.URI)
+			log.V(1).Info("hashing directory", "dir", src)
+			digest, err := hashdir.Make(src, "sha256")
+			if err != nil {
+				log.Error(err, "failed to generate directory digest", "alg", "sha256", "path", src)
+				return err
+			}
+			lockFile.Packages[file.URI] = lockfile.Package{
+				Name:      file.URI,
+				Resolved:  src,
+				Integrity: "sha256:" + digest,
+				Type:      aybv1.PackageDir,
+			}
+			continue
+		}
 		dst, err := os.CreateTemp("", "file-download-*")
 		if err != nil {
 			log.Error(err, "failed to prepare download directory")

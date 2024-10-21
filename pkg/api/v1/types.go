@@ -9,6 +9,7 @@ const (
 	PackageDebian PackageType = "Debian"
 	PackageRPM    PackageType = "RPM"
 	PackageFile   PackageType = "File"
+	PackageDir    PackageType = "Dir"
 	PackageOCI    PackageType = "OCI"
 )
 

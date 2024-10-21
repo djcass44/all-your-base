@@ -5,8 +5,8 @@
 		"": {
 			"type": "OCI",
 			"version": "",
-			"resolved": "harbor.dcas.dev/docker.io/library/debian:bookworm@sha256:27586f4609433f2f49a9157405b473c62c3cb28a581c413393975b4e8496d0ab",
-			"integrity": "sha256:27586f4609433f2f49a9157405b473c62c3cb28a581c413393975b4e8496d0ab",
+			"resolved": "harbor.dcas.dev/docker.io/library/debian:bookworm@sha256:e11072c1614c08bf88b543fcfe09d75a0426d90896408e926454e88078274fcb",
+			"integrity": "sha256:e11072c1614c08bf88b543fcfe09d75a0426d90896408e926454e88078274fcb",
 			"direct": false
 		},
 		"binutils": {
@@ -588,6 +588,13 @@
 			"version": "1.4.3-1",
 			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/r/rpcsvc-proto/rpcsvc-proto_1.4.3-1_amd64.deb",
 			"integrity": "32ac0692694f8a34cc90c895f4fc739680fb2ef0e2d4870a68833682bf1c81a3",
+			"direct": false
+		},
+		"testdata/": {
+			"type": "Dir",
+			"version": "",
+			"resolved": "testdata/",
+			"integrity": "sha256:627aa1b6ecefeb79675bf8ac4e6d89eb43d05ba04c95a388ce15d08f5d7cf5f8",
 			"direct": false
 		},
 		"zlib1g": {

@@ -106,6 +106,14 @@ func build(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
+	// figure out what the username should be
+	username := cfg.Spec.User.Username
+	if username == "" && forceUsername != defaultUsername {
+		username = forceUsername
+	} else if username == "" {
+		username = defaultUsername
+	}
+
 	lockFile, err := lockfile.Read(cmd.Context(), configPath)
 	if err != nil {
 		return err
@@ -197,7 +205,7 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	// sort out environment variables
-	envOpts := map[string]any{"HOME": "/home/somebody"}
+	envOpts := map[string]any{"HOME": fmt.Sprintf("/home/%s", username)}
 	for _, kv := range imgCfg.Config.Env {
 		k, v, _ := strings.Cut(kv, "=")
 		envOpts[k] = v
@@ -221,6 +229,12 @@ func build(cmd *cobra.Command, _ []string) error {
 		// expand paths using environment variables
 		path := filepath.Clean(os.Expand(file.Path, expandMap(envOpts)))
 		id := fmt.Sprintf("file-download-%d", i)
+
+		p, ok := lockFile.Packages[file.URI]
+		if !ok {
+			return fmt.Errorf("file not found in lockfile: %s (resolved: %s)", file.URI, path)
+		}
+
 		// if the file source has a '/' suffix, then we should
 		// treat it as a directory
 		if strings.HasSuffix(file.URI, "/") {
@@ -241,6 +255,7 @@ func build(cmd *cobra.Command, _ []string) error {
 					"path":       path,
 					"executable": file.Executable,
 					"sub-path":   file.SubPath,
+					"checksum":   p.Integrity,
 				},
 				Statement: &pipelines.File{},
 				DependsOn: append([]string{statements.StatementEnv}, pkgDeps...),
@@ -273,14 +288,6 @@ func build(cmd *cobra.Command, _ []string) error {
 	entrypoint := cfg.Spec.Entrypoint
 	if entrypoint == nil {
 		entrypoint = []string{"/bin/sh"}
-	}
-
-	// figure out what the username should be
-	username := cfg.Spec.User.Username
-	if username == "" && forceUsername != defaultUsername {
-		username = forceUsername
-	} else if username == "" {
-		username = defaultUsername
 	}
 
 	// figure out what the uid should be

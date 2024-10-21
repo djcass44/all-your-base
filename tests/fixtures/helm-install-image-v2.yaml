@@ -3,20 +3,23 @@ kind: Build
 metadata:
   name: helm-install-image
 spec:
-  from: harbor.dcas.dev/docker.io/library/alpine:3.18
+  user:
+    username: gitlab-workspaces
+    uid: 5001
+  from: harbor.dcas.dev/docker.io/library/alpine:3.20
   repositories:
     alpine:
-      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main
+      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.20/main
   packages:
     - type: Alpine
       names:
         - git
         - ca-certificates
   files:
-    - uri: https://storage.googleapis.com/kubernetes-release/release/v1.28.0/bin/linux/amd64/kubectl
-      path: /home/somebody/.local/bin/kubectl
+    - uri: https://storage.googleapis.com/kubernetes-release/release/v1.31.0/bin/linux/amd64/kubectl
+      path: $HOME/.local/bin/kubectl
       executable: true
-    - uri: https://get.helm.sh/helm-v3.10.0-linux-amd64.tar.gz
-      path: /home/somebody/.local/bin/helm
+    - uri: https://get.helm.sh/helm-v3.16.2-linux-amd64.tar.gz
+      path: $HOME/.local/bin/helm
       subPath: linux-amd64/helm
       executable: true
