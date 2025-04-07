@@ -9,7 +9,7 @@ import (
 	"github.com/djcass44/all-your-base/pkg/yum/yumrepo"
 	"github.com/go-logr/logr"
 	"github.com/google/uuid"
-	"github.com/hashicorp/go-getter"
+	"github.com/hashicorp/go-getter/v2"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -33,14 +33,13 @@ func NewIndex(ctx context.Context, repository string) (*yumindex.Metadata, error
 	}
 	dst := fmt.Sprintf("%s/%s-primary.xml", os.TempDir(), uuid.NewString())
 	log.V(4).Info("downloading primary index", "src", primaryURL, "dst", dst)
-	client := &getter.Client{
-		Ctx:             ctx,
+	req := &getter.Request{
 		Src:             primaryURL,
 		Dst:             dst,
-		Mode:            getter.ClientModeFile,
+		GetMode:         getter.ModeFile,
 		DisableSymlinks: true,
 	}
-	if err := client.Get(); err != nil {
+	if _, err := getter.DefaultClient.Get(ctx, req); err != nil {
 		return nil, fmt.Errorf("downloading primary index: %w", err)
 	}
 	f, err := os.Open(filepath.Clean(dst))

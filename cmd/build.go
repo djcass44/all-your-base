@@ -9,7 +9,6 @@ import (
 	"github.com/Snakdy/container-build-engine/pkg/vfs"
 	"github.com/djcass44/all-your-base/internal/statements"
 	"github.com/djcass44/all-your-base/pkg/packages/rpm"
-	"github.com/hashicorp/go-getter"
 	"os"
 	"path/filepath"
 	"strings"
@@ -355,15 +354,6 @@ func expandMap(kv map[string]any) func(s string) string {
 		}
 		return ""
 	}
-}
-
-var getters = map[string]getter.Getter{
-	"file":  &getter.FileGetter{Copy: true},
-	"https": &getter.HttpGetter{XTerraformGetDisabled: true, Netrc: true},
-	"s3":    &getter.S3Getter{},
-	"git":   &getter.GitGetter{},
-	"gcs":   &getter.GCSGetter{},
-	"hg":    &getter.HgGetter{},
 }
 
 func getCacheDir(d string) string {

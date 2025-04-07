@@ -21,7 +21,7 @@ import (
 	"github.com/djcass44/all-your-base/pkg/packages/debian"
 	"github.com/go-logr/logr"
 	"github.com/google/go-containerregistry/pkg/crane"
-	"github.com/hashicorp/go-getter"
+	"github.com/hashicorp/go-getter/v2"
 	"github.com/spf13/cobra"
 )
 
@@ -202,16 +202,15 @@ func lock(cmd *cobra.Command, _ []string) error {
 		srcUri.RawQuery = q.Encode()
 
 		log.V(1).Info("downloading file", "file", srcUri, "path", dst.Name())
-		client := &getter.Client{
-			Ctx:             cmd.Context(),
-			Pwd:             wd,
+		req := &getter.Request{
 			Src:             srcUri.String(),
 			Dst:             dst.Name(),
-			DisableSymlinks: true,
-			Mode:            getter.ClientModeFile,
-			Getters:         getters,
+			Pwd:             wd,
+			GetMode:         getter.ModeFile,
+			Copy:            true,
+			DisableSymlinks: false,
 		}
-		if err := client.Get(); err != nil {
+		if _, err := getter.DefaultClient.Get(cmd.Context(), req); err != nil {
 			log.Error(err, "failed to download file", "src", srcUri.String())
 			return err
 		}

@@ -3,7 +3,7 @@ package downloader
 import (
 	"context"
 	"github.com/go-logr/logr"
-	"github.com/hashicorp/go-getter"
+	"github.com/hashicorp/go-getter/v2"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -34,14 +34,13 @@ func (d *Downloader) Download(ctx context.Context, src string) (string, error) {
 
 	log.V(1).Info("downloading file", "src", src, "dst", dst)
 
-	client := &getter.Client{
-		Ctx:             ctx,
+	req := &getter.Request{
 		Src:             src,
 		Dst:             dst,
-		Mode:            getter.ClientModeFile,
+		GetMode:         getter.ModeFile,
 		DisableSymlinks: true,
 	}
-	if err := client.Get(); err != nil {
+	if _, err := getter.DefaultClient.Get(ctx, req); err != nil {
 		log.Error(err, "failed to download file", "src", src)
 		return "", err
 	}
