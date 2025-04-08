@@ -5,6 +5,7 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/go-logr/logr/testr"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -21,6 +22,7 @@ func TestNewIndex(t *testing.T) {
 
 	index, err := NewIndex(ctx, "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os")
 	assert.NoError(t, err)
+	require.NotNil(t, index)
 	assert.NotZero(t, index.Packages)
 	assert.NotEmpty(t, index.Package)
 
