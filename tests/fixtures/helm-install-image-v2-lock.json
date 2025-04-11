@@ -5,8 +5,8 @@
 		"": {
 			"type": "OCI",
 			"version": "",
-			"resolved": "harbor.dcas.dev/docker.io/library/alpine:3.20@sha256:beefdbd8a1da6d2915566fde36db9db0b524eb737fc57cd1367effd16dc0d06d",
-			"integrity": "sha256:beefdbd8a1da6d2915566fde36db9db0b524eb737fc57cd1367effd16dc0d06d",
+			"resolved": "harbor.dcas.dev/docker.io/library/alpine:3.20@sha256:de4fe7064d8f98419ea6b49190df1abbf43450c1702eeb864fe9ced453c1cc5f",
+			"integrity": "sha256:de4fe7064d8f98419ea6b49190df1abbf43450c1702eeb864fe9ced453c1cc5f",
 			"direct": false
 		},
 		"brotli-libs": {
@@ -39,16 +39,16 @@
 		},
 		"ca-certificates": {
 			"type": "Alpine",
-			"version": "20240705-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/ca-certificates-20240705-r0.apk",
-			"integrity": "Q1+HdS8QDcXNfNIg+wrMfvKo3OZOw=",
+			"version": "20241121-r1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/ca-certificates-20241121-r1.apk",
+			"integrity": "Q1WClHJoxb5CdISFa++OgNpPpB8ss=",
 			"direct": true
 		},
 		"git": {
 			"type": "Alpine",
-			"version": "2.45.2-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/git-2.45.2-r0.apk",
-			"integrity": "Q1rLMuBv39Hv3jNKe+Qe1Bor1OoTQ=",
+			"version": "2.45.3-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/git-2.45.3-r0.apk",
+			"integrity": "Q1K5yTs6LUTW8yPhsyrFgs4QjTDOc=",
 			"direct": true
 		},
 		"https://get.helm.sh/helm-v3.16.2-linux-amd64.tar.gz": {
@@ -67,23 +67,23 @@
 		},
 		"libcrypto3": {
 			"type": "Alpine",
-			"version": "3.3.2-r1",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/libcrypto3-3.3.2-r1.apk",
-			"integrity": "Q1pjohR/l9T+wNVJjW9TTGLmNuvqs=",
+			"version": "3.3.3-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/libcrypto3-3.3.3-r0.apk",
+			"integrity": "Q1IqVnoZTCjDutOgSpu6dE2oj3/hk=",
 			"direct": false
 		},
 		"libcurl": {
 			"type": "Alpine",
-			"version": "8.10.1-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/libcurl-8.10.1-r0.apk",
-			"integrity": "Q1M9GbA0WJHtn8NOPhPuYh36WaU3A=",
+			"version": "8.12.1-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/libcurl-8.12.1-r0.apk",
+			"integrity": "Q1PeHJhvcsY6ovF11rfqXaWyrNYb4=",
 			"direct": false
 		},
 		"libexpat": {
 			"type": "Alpine",
-			"version": "2.6.3-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/libexpat-2.6.3-r0.apk",
-			"integrity": "Q19Oh/te7ldvu024Lgp+f465yAOnI=",
+			"version": "2.7.0-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/libexpat-2.7.0-r0.apk",
+			"integrity": "Q1n4LhzATOaSc3X37jAex1oQnplvA=",
 			"direct": false
 		},
 		"libidn2": {
@@ -102,9 +102,9 @@
 		},
 		"libssl3": {
 			"type": "Alpine",
-			"version": "3.3.2-r1",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/libssl3-3.3.2-r1.apk",
-			"integrity": "Q1yCdM6Dfj4jIOiKuJHk9d8BdP/oo=",
+			"version": "3.3.3-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/libssl3-3.3.3-r0.apk",
+			"integrity": "Q1Y0+RmJdKGq8SFjzu94qYru+BSvc=",
 			"direct": false
 		},
 		"libunistring": {
@@ -116,9 +116,9 @@
 		},
 		"musl": {
 			"type": "Alpine",
-			"version": "1.2.5-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/musl-1.2.5-r0.apk",
-			"integrity": "Q1PS2iNeHDH3BF6TgqSMu/pcc3XIY=",
+			"version": "1.2.5-r1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.20/main/x86_64/musl-1.2.5-r1.apk",
+			"integrity": "Q1g77Lhz/TLn9rRw0IZRrAssKe4PY=",
 			"direct": false
 		},
 		"nghttp2-libs": {

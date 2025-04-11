@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Snakdy/container-build-engine/pkg/containers"
+	"github.com/Snakdy/container-build-engine/pkg/fetch"
 	"github.com/Snakdy/container-build-engine/pkg/oci/auth"
 	"github.com/djcass44/all-your-base/pkg/packages/rpm"
 	"github.com/gosimple/hashdir"
@@ -21,7 +22,6 @@ import (
 	"github.com/djcass44/all-your-base/pkg/packages/debian"
 	"github.com/go-logr/logr"
 	"github.com/google/go-containerregistry/pkg/crane"
-	"github.com/hashicorp/go-getter/v2"
 	"github.com/spf13/cobra"
 )
 
@@ -186,12 +186,11 @@ func lock(cmd *cobra.Command, _ []string) error {
 			}
 			continue
 		}
-		dst, err := os.CreateTemp("", "file-download-*")
+		dst, err := os.MkdirTemp("", "file-download-*")
 		if err != nil {
 			log.Error(err, "failed to prepare download directory")
 			return err
 		}
-		_ = dst.Close()
 		srcUri, err := url.Parse(airutil.ExpandEnv(file.URI))
 		if err != nil {
 			return err
@@ -201,20 +200,13 @@ func lock(cmd *cobra.Command, _ []string) error {
 		q.Set("archive", "false")
 		srcUri.RawQuery = q.Encode()
 
-		log.V(1).Info("downloading file", "file", srcUri, "path", dst.Name())
-		req := &getter.Request{
-			Src:             srcUri.String(),
-			Dst:             dst.Name(),
-			Pwd:             wd,
-			GetMode:         getter.ModeFile,
-			Copy:            true,
-			DisableSymlinks: false,
-		}
-		if _, err := getter.DefaultClient.Get(cmd.Context(), req); err != nil {
+		log.V(1).Info("downloading file", "file", srcUri, "path", dst)
+		out, err := fetch.Fetch(cmd.Context(), srcUri.String(), dst, "")
+		if err != nil {
 			log.Error(err, "failed to download file", "src", srcUri.String())
 			return err
 		}
-		integrity, err := lockfile.Sha256(dst.Name())
+		integrity, err := lockfile.Sha256(out)
 		if err != nil {
 			return err
 		}

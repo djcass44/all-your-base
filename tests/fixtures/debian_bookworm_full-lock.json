@@ -5,8 +5,8 @@
 		"": {
 			"type": "OCI",
 			"version": "",
-			"resolved": "harbor.dcas.dev/docker.io/library/debian:bookworm@sha256:e11072c1614c08bf88b543fcfe09d75a0426d90896408e926454e88078274fcb",
-			"integrity": "sha256:e11072c1614c08bf88b543fcfe09d75a0426d90896408e926454e88078274fcb",
+			"resolved": "harbor.dcas.dev/docker.io/library/debian:bookworm@sha256:00cd074b40c4d99ff0c24540bdde0533ca3791edcdac0de36d6b9fb3260d89e2",
+			"integrity": "sha256:00cd074b40c4d99ff0c24540bdde0533ca3791edcdac0de36d6b9fb3260d89e2",
 			"direct": false
 		},
 		"binutils": {
@@ -81,16 +81,16 @@
 		},
 		"git": {
 			"type": "Debian",
-			"version": "1:2.39.2-1.1",
-			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/g/git/git_2.39.2-1.1_amd64.deb",
-			"integrity": "fa5cd07754d9a4f93e2a6f54a5b1fa160230e312121d62c0c609b6701f9b93a3",
+			"version": "1:2.39.5-0+deb12u2",
+			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/g/git/git_2.39.5-0+deb12u2_amd64.deb",
+			"integrity": "5446b1f6c6f9f058e7b22413b650a45b527c979eb2276d33f46570265ee5eb35",
 			"direct": true
 		},
 		"git-man": {
 			"type": "Debian",
-			"version": "1:2.39.2-1.1",
-			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/g/git/git-man_2.39.2-1.1_all.deb",
-			"integrity": "34097adaf793f92cc93c8f07059d34766a6a8f2b1d0b1b74b9bb530516402642",
+			"version": "1:2.39.5-0+deb12u2",
+			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/g/git/git-man_2.39.5-0+deb12u2_all.deb",
+			"integrity": "e0355241d0207d3f1b056c1084375e87e804f24067d59b92f45b5e34782b9a43",
 			"direct": false
 		},
 		"https://ftp.gnu.org/gnu/hello/hello-2.12.tar.gz?checksum=cf04af86dc085268c5f4470fbae49b18afbc221b78096aab842d934a76bad0ab\u0026archive=false": {
@@ -137,23 +137,23 @@
 		},
 		"libc-dev-bin": {
 			"type": "Debian",
-			"version": "2.36-9+deb12u8",
-			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/g/glibc/libc-dev-bin_2.36-9+deb12u8_amd64.deb",
-			"integrity": "20d0917b8ff1e2a62c92d2b300e9573c1948c7220c2e29de96c69746001dfe57",
+			"version": "2.36-9+deb12u10",
+			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/g/glibc/libc-dev-bin_2.36-9+deb12u10_amd64.deb",
+			"integrity": "db898f3f85e19d4d54a277a0ab479b57566be5b902e6e8ebe814410aa3149e72",
 			"direct": false
 		},
 		"libc6": {
 			"type": "Debian",
-			"version": "2.36-9+deb12u8",
-			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/g/glibc/libc6_2.36-9+deb12u8_amd64.deb",
-			"integrity": "dbb527d86181f4b50edf5790c34c4d0b4ceac7f199b1266a9336b5708f8e9798",
+			"version": "2.36-9+deb12u10",
+			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/g/glibc/libc6_2.36-9+deb12u10_amd64.deb",
+			"integrity": "5dc83256f10ca4d0f2a53dd6583ffd0d0e319af30074ea6c82fb0ae77bd16365",
 			"direct": false
 		},
 		"libc6-dev": {
 			"type": "Debian",
-			"version": "2.36-9+deb12u8",
-			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/g/glibc/libc6-dev_2.36-9+deb12u8_amd64.deb",
-			"integrity": "7ae2baa371d1c920ae1116349c15e54a41744ed85d579c0c3ebf4e743c51c189",
+			"version": "2.36-9+deb12u10",
+			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/g/glibc/libc6-dev_2.36-9+deb12u10_amd64.deb",
+			"integrity": "5597f588e682c0d8a02b5445eab3b61e5530c9a32db3527698cb963669b27527",
 			"direct": false
 		},
 		"libcc1-0": {
@@ -200,9 +200,9 @@
 		},
 		"libcurl3-gnutls": {
 			"type": "Debian",
-			"version": "7.88.1-10+deb12u7",
-			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/c/curl/libcurl3-gnutls_7.88.1-10+deb12u7_amd64.deb",
-			"integrity": "3aea3d6707025f7dae5e7bcd92cdfdda26681f70c1e5d4fc8cd6d573dc2dd68c",
+			"version": "7.88.1-10+deb12u12",
+			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/c/curl/libcurl3-gnutls_7.88.1-10+deb12u12_amd64.deb",
+			"integrity": "0ef8f287b5d49ad3293c15913a796352ef1f0afc55c082ce64fe493527538c11",
 			"direct": false
 		},
 		"libdb5.3": {
@@ -221,9 +221,9 @@
 		},
 		"libexpat1": {
 			"type": "Debian",
-			"version": "2.5.0-1",
-			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/e/expat/libexpat1_2.5.0-1_amd64.deb",
-			"integrity": "fe36a7f35361fc40d0057ef447a7302fd41d51740d51c98fb3870bbed5b96e56",
+			"version": "2.5.0-1+deb12u1",
+			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/e/expat/libexpat1_2.5.0-1+deb12u1_amd64.deb",
+			"integrity": "c2bd305125bcece5816b2521f293a99499d674cd2dd744416caa4952158ad99d",
 			"direct": false
 		},
 		"libffi8": {
@@ -270,9 +270,9 @@
 		},
 		"libgnutls30": {
 			"type": "Debian",
-			"version": "3.7.9-2+deb12u3",
-			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/g/gnutls28/libgnutls30_3.7.9-2+deb12u3_amd64.deb",
-			"integrity": "cee417d4107bbe94ddcc124524366ea675e89d106b70969a7d508ef26e92a713",
+			"version": "3.7.9-2+deb12u4",
+			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/g/gnutls28/libgnutls30_3.7.9-2+deb12u4_amd64.deb",
+			"integrity": "1c113d2a3eb06d66fc3a6f30d00e8c38b102e3b1d9f8911272bd0e45c22ed36b",
 			"direct": false
 		},
 		"libgomp1": {
@@ -396,9 +396,9 @@
 		},
 		"libnghttp2-14": {
 			"type": "Debian",
-			"version": "1.52.0-1+deb12u1",
-			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/n/nghttp2/libnghttp2-14_1.52.0-1+deb12u1_amd64.deb",
-			"integrity": "ee690db978151ae372dcede4bba26c299d985046e6dc708bb907961901b73b6a",
+			"version": "1.52.0-1+deb12u2",
+			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/n/nghttp2/libnghttp2-14_1.52.0-1+deb12u2_amd64.deb",
+			"integrity": "dbe3eb8c831e654ac7d5cf045d605d53fd763e8ebc238607c25f301996103bb9",
 			"direct": false
 		},
 		"libnsl-dev": {
@@ -480,9 +480,9 @@
 		},
 		"libssl3": {
 			"type": "Debian",
-			"version": "3.0.14-1~deb12u1",
-			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/o/openssl/libssl3_3.0.14-1~deb12u1_amd64.deb",
-			"integrity": "808ed2385960ee7b3365d583680e2f7a700c410b0ab4f81cc63b8bd166f61bae",
+			"version": "3.0.15-1~deb12u1",
+			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/o/openssl/libssl3_3.0.15-1~deb12u1_amd64.deb",
+			"integrity": "d7897e6c55a8d9e229dcf16b0b1d472d7f7be741b2b3b2ac624908ff63215a93",
 			"direct": false
 		},
 		"libstdc++-12-dev": {
@@ -501,9 +501,9 @@
 		},
 		"libtasn1-6": {
 			"type": "Debian",
-			"version": "4.19.0-2",
-			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/libt/libtasn1-6/libtasn1-6_4.19.0-2_amd64.deb",
-			"integrity": "eec4dc9d949d2c666b1da3fa762a340e8ba10c3a04d3eed32749a97695c15641",
+			"version": "4.19.0-2+deb12u1",
+			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/libt/libtasn1-6/libtasn1-6_4.19.0-2+deb12u1_amd64.deb",
+			"integrity": "2c27c613b69be248d09432839ea3d3382f6ee27fabaa65987aa2d884cd00afda",
 			"direct": false
 		},
 		"libtirpc-common": {
@@ -557,9 +557,9 @@
 		},
 		"linux-libc-dev": {
 			"type": "Debian",
-			"version": "6.1.106-3",
-			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/l/linux/linux-libc-dev_6.1.106-3_amd64.deb",
-			"integrity": "92e1785628599defb198b1cfac9a8b8f40af47a3a7e290ba4d09f08a81a42dc0",
+			"version": "6.1.129-1",
+			"resolved": "${FOO_BAR_ZOO:-https://deb.debian.org/debian}/pool/main/l/linux/linux-libc-dev_6.1.129-1_amd64.deb",
+			"integrity": "4b7b5d53705183f8e1c99a0e14d5b5e690ff57964dc3c08389dcbf38799b1593",
 			"direct": false
 		},
 		"perl": {
