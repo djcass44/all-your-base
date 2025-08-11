@@ -1,17 +1,18 @@
 package cmd
 
 import (
-	"chainguard.dev/apko/pkg/apk/fs"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"chainguard.dev/apko/pkg/apk/fs"
 	"github.com/Snakdy/container-build-engine/pkg/builder"
 	"github.com/Snakdy/container-build-engine/pkg/containers"
 	"github.com/Snakdy/container-build-engine/pkg/pipelines"
 	"github.com/Snakdy/container-build-engine/pkg/vfs"
 	"github.com/djcass44/all-your-base/internal/statements"
 	"github.com/djcass44/all-your-base/pkg/packages/rpm"
-	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
@@ -225,8 +226,15 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	// download files
 	for i, file := range cfg.Spec.Files {
+		// take note of if the path has a / suffix, indicating
+		// that the path should be treated as a folder. filepath.Clean
+		// wipes the trailing slash
+		hasDirMarker := strings.HasSuffix(file.Path, "/")
 		// expand paths using environment variables
 		path := filepath.Clean(os.Expand(file.Path, expandMap(envOpts)))
+		if hasDirMarker {
+			path = path + "/"
+		}
 		id := fmt.Sprintf("file-download-%d", i)
 
 		p, ok := lockFile.Packages[file.URI]

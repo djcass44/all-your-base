@@ -4,11 +4,12 @@ import (
 	"context"
 	_ "embed"
 	"encoding/xml"
+	"testing"
+
 	"github.com/go-logr/logr"
 	"github.com/go-logr/logr/testr"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 //go:embed testdata/aa4c51a3ffefb98ce7e412a98df164f40bfc07c4bc659aa855eb10f791d03c16-primary.xml

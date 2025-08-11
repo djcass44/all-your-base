@@ -2,12 +2,15 @@ package requestutil
 
 import (
 	"fmt"
+	"io"
+	"net/http"
+
 	"github.com/carlmjohnson/requests"
 	"github.com/go-logr/logr"
 	"github.com/mholt/archives"
-	"io"
-	"net/http"
 )
+
+const ContentTypeGzip = "application/gzip"
 
 func WithGzip(out io.Writer) requests.ResponseHandler {
 	return func(response *http.Response) error {
@@ -15,7 +18,7 @@ func WithGzip(out io.Writer) requests.ResponseHandler {
 		var stream io.ReadCloser
 
 		// if it's a gzip response, decompress it
-		if response.Header.Get("Content-Type") == "application/gzip" {
+		if response.Header.Get("Content-Type") == ContentTypeGzip {
 			log.V(8).Info("decompressing gzip response")
 			dec, err := archives.Gz{}.OpenReader(response.Body)
 			if err != nil {

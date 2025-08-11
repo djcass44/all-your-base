@@ -1,13 +1,14 @@
 package archiveutil
 
 import (
-	"chainguard.dev/apko/pkg/apk/fs"
 	"context"
-	"github.com/blakesmith/ar"
-	"github.com/go-logr/logr"
 	"io"
 	"os"
 	"path/filepath"
+
+	"chainguard.dev/apko/pkg/apk/fs"
+	"github.com/blakesmith/ar"
+	"github.com/go-logr/logr"
 )
 
 // Unar expands an ar archive into the given path.

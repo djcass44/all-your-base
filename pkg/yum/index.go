@@ -6,12 +6,13 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/carlmjohnson/requests"
 	"github.com/djcass44/all-your-base/pkg/requestutil"
 	"github.com/djcass44/all-your-base/pkg/yum/yumindex"
 	"github.com/djcass44/all-your-base/pkg/yum/yumrepo"
 	"github.com/go-logr/logr"
-	"strings"
 )
 
 func NewIndex(ctx context.Context, repository string) (*yumindex.Metadata, error) {

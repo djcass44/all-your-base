@@ -5,15 +5,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-logr/logr"
-	version "github.com/knqyf263/go-deb-version"
-	"github.com/ulikunitz/xz"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
-	"pault.ag/go/debian/control"
 	"slices"
+
+	"github.com/go-logr/logr"
+	version "github.com/knqyf263/go-deb-version"
+	"github.com/ulikunitz/xz"
+	"pault.ag/go/debian/control"
 )
 
 const (
@@ -54,6 +55,7 @@ func downloadIndex(ctx context.Context, repository, release, component, arch, fi
 	if err != nil {
 		return nil, err
 	}
+	defer f.Close()
 	resp, err := http.Get(target)
 	if err != nil {
 		return nil, err
@@ -89,6 +91,7 @@ func newIndex(ctx context.Context, source, path string) (*Index, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer f.Close()
 	dec, err := control.NewDecoder(f, nil)
 	if err != nil {
 		return nil, err

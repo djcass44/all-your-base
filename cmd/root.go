@@ -1,11 +1,12 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/djcass44/go-utils/logging"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
 )
 
 var command = &cobra.Command{

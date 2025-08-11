@@ -3,14 +3,15 @@ package alpine
 import (
 	"bufio"
 	"bytes"
-	"chainguard.dev/apko/pkg/apk/apk"
-	"chainguard.dev/apko/pkg/apk/fs"
 	"context"
 	"errors"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"chainguard.dev/apko/pkg/apk/apk"
+	"chainguard.dev/apko/pkg/apk/fs"
 
 	v1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/archiveutil"

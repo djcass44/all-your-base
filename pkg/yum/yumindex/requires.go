@@ -2,6 +2,7 @@ package yumindex
 
 import (
 	"context"
+
 	"github.com/go-logr/logr"
 	"golang.org/x/exp/maps"
 )
@@ -40,7 +41,7 @@ func (m *Metadata) GetPackageAndDependencies(ctx context.Context, pkg string, ex
 
 	for _, p := range m.Package {
 		for _, e := range p.Format.Provides.Entry {
-			// bunch of them are empty so just skip
+			// a bunch of them are empty, so just skip
 			// them
 			if e.Name == "" {
 				continue

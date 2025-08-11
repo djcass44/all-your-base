@@ -1,10 +1,17 @@
 package rpm
 
 import (
-	"chainguard.dev/apko/pkg/apk/fs"
 	"compress/gzip"
 	"context"
 	"fmt"
+	"io"
+	"os"
+	"path"
+	"path/filepath"
+	"slices"
+	"strings"
+
+	"chainguard.dev/apko/pkg/apk/fs"
 	"github.com/cavaliergopher/rpm"
 	v1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
@@ -14,12 +21,6 @@ import (
 	"github.com/sassoftware/go-rpmutils/cpio"
 	"github.com/ulikunitz/xz"
 	"golang.org/x/exp/maps"
-	"io"
-	"os"
-	"path"
-	"path/filepath"
-	"slices"
-	"strings"
 )
 
 type PackageKeeper struct {
@@ -179,9 +180,11 @@ func (p *PackageKeeper) Extract(ctx context.Context, rootfs fs.FullFS, rs io.Rea
 			}
 			written, err := io.Copy(f, stream)
 			if err != nil {
+				_ = f.Close()
 				return fmt.Errorf("copying file: %w", err)
 			}
 			if written != int64(entry.Filesize()) {
+				_ = f.Close()
 				return fmt.Errorf("short write")
 			}
 			if err := f.Close(); err != nil {

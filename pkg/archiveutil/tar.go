@@ -2,17 +2,18 @@ package archiveutil
 
 import (
 	"archive/tar"
-	"chainguard.dev/apko/pkg/apk/fs"
 	"compress/gzip"
 	"context"
 	"errors"
-	"github.com/go-logr/logr"
-	"github.com/klauspost/compress/zstd"
-	"github.com/ulikunitz/xz"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"chainguard.dev/apko/pkg/apk/fs"
+	"github.com/go-logr/logr"
+	"github.com/klauspost/compress/zstd"
+	"github.com/ulikunitz/xz"
 )
 
 // Guntar is the same as Untar, but it first decodes the gzipped archive.
