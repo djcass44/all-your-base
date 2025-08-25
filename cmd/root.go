@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/djcass44/all-your-base/cmd/cache"
 	"github.com/djcass44/go-utils/logging"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -28,7 +29,7 @@ const flagLogLevel = "v"
 
 func init() {
 	command.PersistentFlags().Int(flagLogLevel, 0, "log level. Higher is more")
-	command.AddCommand(buildCmd, lockCmd)
+	command.AddCommand(buildCmd, lockCmd, cache.Command)
 }
 
 func Execute(version string) {

@@ -14,9 +14,10 @@ const (
 )
 
 type PackageStatement struct {
-	options      cbev1.Options
-	alpineKeeper *alpine.PackageKeeper
-	debianKeeper *debian.PackageKeeper
-	yumKeeper    *rpm.PackageKeeper
-	dl           *downloader.Downloader
+	options       cbev1.Options
+	alpineKeeper  *alpine.PackageKeeper
+	debianKeeper  *debian.PackageKeeper
+	yumKeeper     *rpm.PackageKeeper
+	dl            *downloader.Downloader
+	forceChecksum bool
 }

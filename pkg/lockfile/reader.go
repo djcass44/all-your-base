@@ -4,15 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/go-logr/logr"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/go-logr/logr"
 )
 
 func Read(ctx context.Context, cfgPath string) (*Lock, error) {
 	log := logr.FromContextOrDiscard(ctx)
-	lock, err := os.Open(Name(cfgPath))
+	lock, err := os.Open(Name(filepath.Clean(cfgPath)))
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, errors.New("missing lockfile")

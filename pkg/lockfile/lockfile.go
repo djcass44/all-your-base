@@ -2,8 +2,9 @@ package lockfile
 
 import (
 	"fmt"
-	v1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"sort"
+
+	v1 "github.com/djcass44/all-your-base/pkg/api/v1"
 )
 
 // Validate checks that the configuration file lines up
@@ -33,7 +34,7 @@ func (l *Lock) Validate(cfg v1.BuildSpec) error {
 			continue
 		}
 		var found bool
-		// check that the lock file are all present in the manifest
+		// check that the locked files are all present in the manifest
 		if v.Type == v1.PackageFile {
 			for _, f := range cfg.Files {
 				if f.URI == k {

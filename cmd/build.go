@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"crypto/x509"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -11,6 +12,7 @@ import (
 	"github.com/Snakdy/container-build-engine/pkg/containers"
 	"github.com/Snakdy/container-build-engine/pkg/pipelines"
 	"github.com/Snakdy/container-build-engine/pkg/vfs"
+	"github.com/djcass44/all-your-base/internal/containerutil"
 	"github.com/djcass44/all-your-base/internal/statements"
 	"github.com/djcass44/all-your-base/pkg/packages/rpm"
 
@@ -100,6 +102,16 @@ func build(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
+	// create a copy of the system certificate
+	// pool in case a later modification to the
+	// environment overwrites the SSL_CERT_*
+	// variables
+	systemCertPool, err := x509.SystemCertPool()
+	if err != nil {
+		log.Error(err, "failed to get system cert pool")
+		return err
+	}
+
 	// read the config file
 	cfg, err := readConfig(configPath)
 	if err != nil {
@@ -174,11 +186,12 @@ func build(cmd *cobra.Command, _ []string) error {
 			ID: id,
 			Options: map[string]any{
 				"type":     string(p.Type),
-				"name":     p.Name,
+				"name":     name,
 				"version":  p.Version,
 				"resolved": p.Resolved,
+				"checksum": p.Integrity,
 			},
-			Statement: statements.NewPackageStatement(alpineKeeper, debianKeeper, yumKeeper, dl),
+			Statement: statements.NewPackageStatement(alpineKeeper, debianKeeper, yumKeeper, dl, lockFile.LockfileVersion > 1),
 			DependsOn: []string{statements.StatementEnv},
 		})
 		pkgDeps = append(pkgDeps, id)
@@ -345,7 +358,7 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 	// push all tags
 	for _, t := range tags {
-		if err := containers.Push(cmd.Context(), img, fmt.Sprintf("%s:%s", ociPath, t)); err != nil {
+		if err := containerutil.Push(cmd.Context(), img, fmt.Sprintf("%s:%s", ociPath, t), systemCertPool); err != nil {
 			return err
 		}
 	}

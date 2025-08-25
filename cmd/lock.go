@@ -12,15 +12,13 @@ import (
 	"github.com/Snakdy/container-build-engine/pkg/containers"
 	"github.com/Snakdy/container-build-engine/pkg/fetch"
 	"github.com/Snakdy/container-build-engine/pkg/oci/auth"
-	"github.com/djcass44/all-your-base/pkg/packages/rpm"
-	"github.com/gosimple/hashdir"
-
 	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/djcass44/all-your-base/pkg/packages/alpine"
 	"github.com/djcass44/all-your-base/pkg/packages/debian"
+	"github.com/djcass44/all-your-base/pkg/packages/rpm"
 	"github.com/go-logr/logr"
 	"github.com/google/go-containerregistry/pkg/crane"
 	"github.com/spf13/cobra"
@@ -69,7 +67,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 
 	lockFile := lockfile.Lock{
 		Name:            cfg.Name,
-		LockfileVersion: 1,
+		LockfileVersion: 2,
 		Packages:        map[string]lockfile.Package{},
 	}
 
@@ -158,9 +156,15 @@ func lock(cmd *cobra.Command, _ []string) error {
 						packageUrl = strings.ReplaceAll(p.Resolved, repoName, originalRepoName)
 					}
 				}
+				checksum, err := lockfile.HashURL(cmd.Context(), airutil.ExpandEnv(packageUrl))
+				if err != nil {
+					return err
+				}
 
 				p.Resolved = packageUrl
+				p.Integrity = "sha256:" + checksum
 				lockFile.Packages[p.Name] = p
+				log.V(4).Info("downloaded package", "name", p.Name, "resolved", p.Resolved, "checksum", p.Integrity)
 			}
 		}
 
@@ -174,7 +178,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 		if strings.HasSuffix(file.URI, "/") {
 			src := airutil.ExpandEnv(file.URI)
 			log.V(1).Info("hashing directory", "dir", src)
-			digest, err := hashdir.Make(src, "sha256")
+			digest, err := lockfile.HashDir(src)
 			if err != nil {
 				log.Error(err, "failed to generate directory digest", "alg", "sha256", "path", src)
 				return err
@@ -207,7 +211,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 			log.Error(err, "failed to download file", "src", srcUri.String())
 			return err
 		}
-		integrity, err := lockfile.Sha256(out)
+		integrity, err := lockfile.HashFile(out)
 		if err != nil {
 			return err
 		}

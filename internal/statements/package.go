@@ -9,6 +9,7 @@ import (
 	"github.com/djcass44/all-your-base/pkg/airutil"
 	aybv1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/downloader"
+	"github.com/djcass44/all-your-base/pkg/lockfile"
 	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/djcass44/all-your-base/pkg/packages/alpine"
 	"github.com/djcass44/all-your-base/pkg/packages/debian"
@@ -16,12 +17,13 @@ import (
 	"github.com/go-logr/logr"
 )
 
-func NewPackageStatement(alpineKeeper *alpine.PackageKeeper, debianKeeper *debian.PackageKeeper, yumKeeper *rpm.PackageKeeper, dl *downloader.Downloader) *PackageStatement {
+func NewPackageStatement(alpineKeeper *alpine.PackageKeeper, debianKeeper *debian.PackageKeeper, yumKeeper *rpm.PackageKeeper, dl *downloader.Downloader, forceChecksum bool) *PackageStatement {
 	return &PackageStatement{
-		alpineKeeper: alpineKeeper,
-		debianKeeper: debianKeeper,
-		yumKeeper:    yumKeeper,
-		dl:           dl,
+		alpineKeeper:  alpineKeeper,
+		debianKeeper:  debianKeeper,
+		yumKeeper:     yumKeeper,
+		dl:            dl,
+		forceChecksum: forceChecksum,
 	}
 }
 
@@ -41,6 +43,10 @@ func (s *PackageStatement) Run(ctx *pipelines.BuildContext, _ ...cbev1.Options) 
 		return cbev1.Options{}, err
 	}
 	resolved, err := cbev1.GetRequired[string](s.options, "resolved")
+	if err != nil {
+		return cbev1.Options{}, err
+	}
+	checksum, err := cbev1.GetOptional[string](s.options, "checksum")
 	if err != nil {
 		return cbev1.Options{}, err
 	}
@@ -69,6 +75,21 @@ func (s *PackageStatement) Run(ctx *pipelines.BuildContext, _ ...cbev1.Options) 
 	pkgPath, err := s.dl.Download(ctx.Context, airutil.ExpandEnv(resolved))
 	if err != nil {
 		return cbev1.Options{}, err
+	}
+
+	// generate and validate the checksum
+	// of the package
+	actualChecksum, err := lockfile.HashFile(pkgPath)
+	if err != nil {
+		return cbev1.Options{}, err
+	}
+	actualChecksum = "sha256:" + actualChecksum
+	if checksum != "" || s.forceChecksum {
+		log.V(1).Info("verifying package checksum", "name", name, "version", version, "expectedChecksum", checksum, "actualChecksum", actualChecksum)
+		if checksum != actualChecksum {
+			log.Info("package checksum mismatch detected - consider clearing the cache using 'ayb cache clean'")
+			return cbev1.Options{}, fmt.Errorf("package checksum mismatch: expected '%s', actual '%s'", checksum, actualChecksum)
+		}
 	}
 
 	// unpack the package into the root

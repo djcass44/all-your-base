@@ -2,11 +2,12 @@ package downloader
 
 import (
 	"context"
-	"github.com/go-logr/logr"
-	"github.com/hashicorp/go-getter/v2"
 	"net/url"
 	"os"
 	"path/filepath"
+
+	"github.com/go-logr/logr"
+	"github.com/hashicorp/go-getter/v2"
 )
 
 func NewDownloader(cacheDir string) (*Downloader, error) {
@@ -30,9 +31,12 @@ func (d *Downloader) Download(ctx context.Context, src string) (string, error) {
 	// download the file to a predictable location so that
 	// we can avoid repeated downloads
 	dst := filepath.Join(d.cacheDir, filepath.Base(uri.Path))
-	log.V(1).Info("preparing to download file", "dst", dst)
-
 	log.V(1).Info("downloading file", "src", src, "dst", dst)
+
+	if _, err := os.Stat(dst); !os.IsNotExist(err) {
+		log.V(1).Info("skipping file download as it already exists", "src", src, "dst", dst)
+		return dst, nil
+	}
 
 	req := &getter.Request{
 		Src:             src,
