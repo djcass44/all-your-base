@@ -19,4 +19,4 @@ spec:
         - gcc
         - openjdk-17-jdk
   entrypoint:
-    - /bin/bash
+    - /usr/bin/bash
