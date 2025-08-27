@@ -1,12 +1,12 @@
 apiVersion: ayb.dcas.dev/v1
 kind: Build
 metadata:
-  name: alpine-318-full
+  name: alpine-full
 spec:
-  from: harbor.dcas.dev/docker.io/library/alpine:3.18
+  from: harbor.dcas.dev/docker.io/library/alpine:3.22
   repositories:
     alpine:
-      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main
+      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.22/main
   packages:
     - type: Alpine
       names:

@@ -84,6 +84,7 @@ func readBlockedCerts(ctx context.Context, path string, rootfs memfs.FullFS) ([]
 		log.Error(err, "failed to open configuration file")
 		return nil, err
 	}
+	defer f.Close()
 
 	var blocked []string
 

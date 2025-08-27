@@ -56,6 +56,9 @@ func downloadIndex(ctx context.Context, repository, release, component, arch, fi
 		return nil, err
 	}
 	defer f.Close()
+	defer func() {
+		_ = os.Remove(f.Name())
+	}()
 	resp, err := http.Get(target)
 	if err != nil {
 		return nil, err

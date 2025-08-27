@@ -30,7 +30,8 @@ func (d *Downloader) Download(ctx context.Context, src string) (string, error) {
 
 	// download the file to a predictable location so that
 	// we can avoid repeated downloads
-	dst := filepath.Join(d.cacheDir, uri.Hostname(), filepath.Base(uri.Path))
+	cachePath := HashString(uri.Hostname() + "/" + uri.Path)
+	dst := filepath.Join(d.cacheDir, cachePath, filepath.Base(uri.Path))
 	// create the parent directory so that we don't
 	// have any name clashes between different repositories
 	if err := os.MkdirAll(filepath.Dir(dst), 0755); err != nil {

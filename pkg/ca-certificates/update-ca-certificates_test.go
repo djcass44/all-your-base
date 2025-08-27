@@ -2,13 +2,14 @@ package ca_certificates
 
 import (
 	"context"
+	"testing"
+
 	"github.com/Snakdy/container-build-engine/pkg/files"
 	"github.com/Snakdy/container-build-engine/pkg/vfs"
 	"github.com/go-logr/logr"
 	"github.com/go-logr/logr/testr"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestUpdateCertificates(t *testing.T) {
