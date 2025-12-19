@@ -1,14 +1,10 @@
 package alpine
 
 import (
-	"bufio"
-	"bytes"
 	"context"
-	"errors"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"chainguard.dev/apko/pkg/apk/apk"
 	"chainguard.dev/apko/pkg/apk/fs"
@@ -19,7 +15,10 @@ import (
 	"github.com/go-logr/logr"
 )
 
-var installedFile = filepath.Join("/lib", "apk", "db", "installed")
+var installedFiles = []string{
+	filepath.Join("/lib", "apk", "db", "installed"),
+	filepath.Join("/usr", "lib", "apk", "db", "installed"),
+}
 
 type PackageKeeper struct {
 	rootfs  fs.FullFS
@@ -65,46 +64,10 @@ func (p *PackageKeeper) Record(ctx context.Context, pkg *apk.RepositoryPackage, 
 	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg.Name)
 	log.V(5).Info("recording package")
 
-	world, err := rootfs.ReadFile(installedFile)
-	if err != nil && !errors.Is(err, os.ErrNotExist) {
-		log.Error(err, "failed to open installed file")
-		return err
-	}
-
-	// check if the package is already in the world file
-	scanner := bufio.NewScanner(bytes.NewReader(world))
-	for scanner.Scan() {
-		line := scanner.Text()
-		if line == "P:"+pkg.Name {
-			log.V(5).Info("located package in installed file")
-			return nil
+	for _, i := range installedFiles {
+		if err := p.writeInstalled(ctx, i, pkg, rootfs); err != nil {
+			return err
 		}
-
-	}
-	if err := scanner.Err(); err != nil {
-		log.Error(err, "failed to read world file")
-		return err
-	}
-
-	// otherwise, append and write
-	if err := rootfs.MkdirAll(filepath.Dir(installedFile), 0755); err != nil {
-		log.Error(err, "failed to create world directory")
-		return err
-	}
-
-	log.V(5).Info("appending to the installed file")
-	f, err := rootfs.OpenFile(installedFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Error(err, "failed to open installed file for writing")
-		return err
-	}
-	defer f.Close()
-
-	out := apk.PackageToInstalled(pkg.Package)
-
-	if _, err = f.Write([]byte(strings.Join(out, "\n") + "\n")); err != nil {
-		log.Error(err, "failed to write to installed file")
-		return err
 	}
 
 	return nil
