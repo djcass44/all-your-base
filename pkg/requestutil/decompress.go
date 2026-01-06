@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/carlmjohnson/requests"
+	"github.com/gabriel-vasile/mimetype"
 	"github.com/go-logr/logr"
 	"github.com/mholt/archives"
 )
@@ -18,7 +19,7 @@ func WithGzip(out io.Writer) requests.ResponseHandler {
 		var stream io.ReadCloser
 
 		// if it's a gzip response, decompress it
-		if response.Header.Get("Content-Type") == ContentTypeGzip {
+		if mimetype.EqualsAny(response.Header.Get("Content-Type"), ContentTypeGzip) {
 			log.V(8).Info("decompressing gzip response")
 			dec, err := archives.Gz{}.OpenReader(response.Body)
 			if err != nil {

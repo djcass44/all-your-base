@@ -10,6 +10,7 @@ require (
 	github.com/cavaliergopher/rpm v1.3.0
 	github.com/djcass44/go-utils/logging v0.3.0
 	github.com/drone/envsubst v1.0.3
+	github.com/gabriel-vasile/mimetype v1.4.12
 	github.com/go-logr/logr v1.4.3
 	github.com/google/go-containerregistry v0.20.6
 	github.com/gosimple/hashdir v1.0.2
