@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"chainguard.dev/apko/pkg/apk/fs"
+	"github.com/Snakdy/container-build-engine/pkg/containers"
 	"github.com/djcass44/all-your-base/pkg/packages"
 	"github.com/go-logr/logr"
 	"github.com/go-logr/logr/testr"
@@ -31,10 +32,13 @@ func TestPackageKeeper_Unpack(t *testing.T) {
 }
 
 func TestPackageKeeper_Resolve(t *testing.T) {
+	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
 	testfs := fs.NewMemFS()
 
-	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
-	pkg, err := NewPackageKeeper(ctx, []string{"https://mirror.aarnet.edu.au/pub/alpine/v3.18/main"}, testfs)
+	baseImage, err := containers.Get(ctx, "harbor.dcas.dev/docker.io/library/alpine:3.23")
+	require.NoError(t, err)
+
+	pkg, err := NewPackageKeeper(ctx, []string{"https://mirror.aarnet.edu.au/pub/alpine/v3.23/main"}, testfs, baseImage)
 	require.NoError(t, err)
 
 	packageNames, err := pkg.Resolve(ctx, "git")

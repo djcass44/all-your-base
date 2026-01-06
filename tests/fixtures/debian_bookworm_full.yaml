@@ -13,6 +13,7 @@ spec:
       names:
         - git
         - g++
+        - less
   files:
     - uri: https://go.dev/dl/go1.25.0.src.tar.gz
       path: /go1.25.0.src.tar.gz

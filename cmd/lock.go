@@ -109,11 +109,11 @@ func lock(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
-	alpineKeeper, err := alpine.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageAlpine))]), fs.NewMemFS())
+	alpineKeeper, err := alpine.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageAlpine))]), fs.NewMemFS(), nil)
 	if err != nil {
 		return err
 	}
-	debianKeeper, err := debian.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageDebian))]))
+	debianKeeper, err := debian.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageDebian))]), fs.NewMemFS(), nil)
 	if err != nil {
 		return err
 	}

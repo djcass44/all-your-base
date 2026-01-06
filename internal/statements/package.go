@@ -92,6 +92,11 @@ func (s *PackageStatement) Run(ctx *pipelines.BuildContext, _ ...cbev1.Options) 
 		}
 	}
 
+	if _, err := keeper.Resolve(ctx.Context, name); err != nil {
+		log.Error(err, "failed to resolve package", "name", name, "version", version)
+		return cbev1.Options{}, fmt.Errorf("resolving package details: %w", err)
+	}
+
 	// unpack the package into the root
 	// filesystem
 	if err := keeper.Unpack(ctx.Context, pkgPath, ctx.FS); err != nil {

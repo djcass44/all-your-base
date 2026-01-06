@@ -1,0 +1,13 @@
+{
+	"name": "scratch-distroless",
+	"lockfileVersion": 2,
+	"packages": {
+		"musl": {
+			"type": "Alpine",
+			"version": "1.2.5-r21",
+			"resolved": "${ALPINE_MIRROR:-https://mirror.aarnet.edu.au/pub/alpine}/v3.23/main/x86_64/musl-1.2.5-r21.apk",
+			"integrity": "sha256:fd5bb1158ec3092bc62922f701e245a647b497405d3b5c9ad9b46cb4bc492752",
+			"direct": true
+		}
+	}
+}

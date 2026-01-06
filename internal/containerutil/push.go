@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/Snakdy/container-build-engine/pkg/oci/auth"
 	"github.com/go-logr/logr"
@@ -19,6 +20,8 @@ import (
 func Push(ctx context.Context, img v1.Image, dst string, certPool *x509.CertPool) error {
 	log := logr.FromContextOrDiscard(ctx).WithValues("ref", dst)
 	log.Info("pushing image")
+
+	start := time.Now()
 
 	// tweak the default transport so that we
 	// can provide a custom certPool
@@ -43,5 +46,7 @@ func Push(ctx context.Context, img v1.Image, dst string, certPool *x509.CertPool
 		return err
 	}
 	fmt.Println(ref.String() + "@" + d.String())
+
+	log.Info("pushed image", "duration", time.Since(start))
 	return nil
 }

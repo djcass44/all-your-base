@@ -1,0 +1,15 @@
+apiVersion: ayb.dcas.dev/v1
+kind: Build
+metadata:
+  name: scratch-distroless
+spec:
+  from: scratch
+  user:
+    shell: /sbin/nologin
+  repositories:
+    alpine:
+      - url: "${ALPINE_MIRROR:-https://mirror.aarnet.edu.au/pub/alpine}/v3.23/main"
+  packages:
+    - type: Alpine
+      names:
+        - musl

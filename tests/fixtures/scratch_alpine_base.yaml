@@ -6,7 +6,7 @@ spec:
   from: scratch
   repositories:
     alpine:
-      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.18/main
+      - url: https://mirror.aarnet.edu.au/pub/alpine/v3.23/main
   packages:
     - type: Alpine
       names:

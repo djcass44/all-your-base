@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"chainguard.dev/apko/pkg/apk/fs"
+	ociv1 "github.com/google/go-containerregistry/pkg/v1"
 
 	v1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/archiveutil"
@@ -16,11 +17,7 @@ import (
 	"github.com/go-logr/logr"
 )
 
-type PackageKeeper struct {
-	indices []*debian.Index
-}
-
-func NewPackageKeeper(ctx context.Context, repositories []string) (*PackageKeeper, error) {
+func NewPackageKeeper(ctx context.Context, repositories []string, rootfs fs.FullFS, base ociv1.Image) (*PackageKeeper, error) {
 	log := logr.FromContextOrDiscard(ctx)
 
 	var indices []*debian.Index
@@ -37,13 +34,15 @@ func NewPackageKeeper(ctx context.Context, repositories []string) (*PackageKeepe
 		indices = append(indices, idx)
 	}
 	return &PackageKeeper{
+		rootfs:  rootfs,
 		indices: indices,
+		base:    base,
 	}, nil
 }
 
 func (p *PackageKeeper) Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) error {
 	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg)
-	log.Info("unpacking deb")
+	log.V(4).Info("unpacking deb")
 
 	// first we need to unpack the deb file using
 	// the equivalent of 'ar -x'
@@ -121,6 +120,9 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 				Type:      v1.PackageDebian,
 				Direct:    out[i].Package == pkg,
 			}
+		}
+		if err := p.writeInstalled(ctx, out, p.rootfs); err != nil {
+			return nil, err
 		}
 		return names, nil
 	}

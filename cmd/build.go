@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"chainguard.dev/apko/pkg/apk/fs"
 	"github.com/Snakdy/container-build-engine/pkg/builder"
@@ -48,7 +49,8 @@ const (
 	flagCacheDir = "cache-dir"
 	flagPlatform = "platform"
 
-	flagSkipCACerts = "skip-ca-certificates"
+	flagSkipCACerts          = "skip-ca-certificates"
+	flagSkipPackageRecording = "skip-package-recording"
 )
 
 const (
@@ -70,6 +72,7 @@ func init() {
 	buildCmd.Flags().String(flagPlatform, "linux/amd64", "build platform")
 
 	buildCmd.Flags().Bool(flagSkipCACerts, false, "skip running update-ca-certificates")
+	buildCmd.Flags().Bool(flagSkipPackageRecording, true, "skip package recording")
 
 	_ = buildCmd.MarkFlagRequired(flagConfig)
 	_ = buildCmd.MarkFlagFilename(flagConfig, ".yaml", ".yml")
@@ -142,19 +145,56 @@ func build(cmd *cobra.Command, _ []string) error {
 	_ = os.Chdir(wd)
 	log.Info("updating working directory", "dir", wd)
 
-	rootfs := fs.NewMemFS()
+	// figure out what the uid should be
+	uid := cfg.Spec.User.Uid
+	if uid <= 0 && forceUid > 0 && forceUid != defaultUid {
+		uid = forceUid
+	} else if uid <= 0 {
+		uid = defaultUid
+	}
+
+	log.Info("preparing to build image", "username", username, "uid", uid, "dirfs", cfg.Spec.DirFS)
+	var filesystem fs.FullFS
+	if cfg.Spec.DirFS {
+		tmpFs, err := os.MkdirTemp("", "container-build-engine-fs-*")
+		if err != nil {
+			log.Error(err, "failed to setup tmpfs")
+			return err
+		}
+		filesystem = vfs.NewVFS(tmpFs)
+	} else {
+		filesystem = fs.NewMemFS()
+	}
 	log.V(3).Info("prepared root filesystem")
+
+	baseImage := airutil.ExpandEnv(lockFile.Packages[""].Resolved)
+	switch baseImage {
+	case containers.MagicImageScratch:
+	case "":
+		log.Info("using scratch base as nothing was provided")
+		baseImage = containers.MagicImageScratch
+	default:
+		baseImage = airutil.ExpandEnv(cfg.Spec.From)
+	}
+
+	// pull the base image
+	pullStart := time.Now()
+	baseImg, err := containers.Get(cmd.Context(), baseImage)
+	if err != nil {
+		return err
+	}
+	log.Info("pulled base image", "duration", time.Since(pullStart))
 
 	dl, err := downloader.NewDownloader(cacheDir)
 	if err != nil {
 		return err
 	}
 
-	alpineKeeper, err := alpine.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageAlpine))]), rootfs)
+	alpineKeeper, err := alpine.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageAlpine))]), filesystem, baseImg)
 	if err != nil {
 		return err
 	}
-	debianKeeper, err := debian.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageDebian))]))
+	debianKeeper, err := debian.NewPackageKeeper(cmd.Context(), repoURLs(cfg.Spec.Repositories[strings.ToLower(string(aybv1.PackageDebian))]), filesystem, baseImg)
 	if err != nil {
 		return err
 	}
@@ -197,21 +237,6 @@ func build(cmd *cobra.Command, _ []string) error {
 		pkgDeps = append(pkgDeps, id)
 	}
 
-	baseImage := airutil.ExpandEnv(lockFile.Packages[""].Resolved)
-	switch baseImage {
-	case containers.MagicImageScratch:
-	case "":
-		log.Info("using scratch base as nothing was provided")
-		baseImage = containers.MagicImageScratch
-	default:
-		baseImage = airutil.ExpandEnv(cfg.Spec.From)
-	}
-
-	// pull the base image
-	baseImg, err := containers.Get(cmd.Context(), baseImage)
-	if err != nil {
-		return err
-	}
 	imgCfg, err := baseImg.ConfigFile()
 	if err != nil {
 		return err
@@ -300,7 +325,7 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	// update ca certificates
 	if !skipCaCerts {
-		if err := cacertificates.UpdateCertificates(cmd.Context(), rootfs); err != nil {
+		if err := cacertificates.UpdateCertificates(cmd.Context(), filesystem); err != nil {
 			return err
 		}
 	}
@@ -310,28 +335,7 @@ func build(cmd *cobra.Command, _ []string) error {
 		entrypoint = []string{"/bin/sh"}
 	}
 
-	// figure out what the uid should be
-	uid := cfg.Spec.User.Uid
-	if uid <= 0 && forceUid > 0 && forceUid != defaultUid {
-		uid = forceUid
-	} else if uid <= 0 {
-		uid = defaultUid
-	}
-
 	// package everything up as our final container image
-	log.Info("preparing to build image", "username", username, "uid", uid, "dirfs", cfg.Spec.DirFS)
-	var filesystem fs.FullFS
-	if cfg.Spec.DirFS {
-		tmpFs, err := os.MkdirTemp("", "container-build-engine-fs-*")
-		if err != nil {
-			log.Error(err, "failed to setup tmpfs")
-			return err
-		}
-		filesystem = vfs.NewVFS(tmpFs)
-	} else {
-		filesystem = fs.NewMemFS()
-	}
-
 	imageBuilder, err := builder.NewBuilder(cmd.Context(), baseImage, pipelineStatements, builder.Options{
 		Username:        username,
 		Uid:             uid,

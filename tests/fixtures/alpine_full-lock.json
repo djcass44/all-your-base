@@ -5,8 +5,8 @@
 		"": {
 			"type": "OCI",
 			"version": "",
-			"resolved": "harbor.dcas.dev/docker.io/library/alpine:3.22@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1",
-			"integrity": "sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1",
+			"resolved": "harbor.dcas.dev/docker.io/library/alpine:3.22@sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412",
+			"integrity": "sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412",
 			"direct": false
 		},
 		".npmrc": {
@@ -39,16 +39,16 @@
 		},
 		"c-ares": {
 			"type": "Alpine",
-			"version": "1.34.5-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/c-ares-1.34.5-r0.apk",
-			"integrity": "sha256:272a39be858c5fa7e9c87681004a305e53a01f01c91fc02c132d79d3be44709f",
+			"version": "1.34.6-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/c-ares-1.34.6-r0.apk",
+			"integrity": "sha256:102006a36777a55d805339eb8799f5ff0819548c309710ade9eb01e3247306e2",
 			"direct": false
 		},
 		"ca-certificates-bundle": {
 			"type": "Alpine",
-			"version": "20250619-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/ca-certificates-bundle-20250619-r0.apk",
-			"integrity": "sha256:821141fef773b757aa6767b463acc15a806f224f0e004fc09e0ed97c03a837fd",
+			"version": "20250911-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/ca-certificates-bundle-20250911-r0.apk",
+			"integrity": "sha256:d96050722cec7263a09fd9adaf759aa3ba2ec1441fccb4608284567567bb1bd9",
 			"direct": false
 		},
 		"file": {
@@ -123,23 +123,23 @@
 		},
 		"libcrypto3": {
 			"type": "Alpine",
-			"version": "3.5.2-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libcrypto3-3.5.2-r0.apk",
-			"integrity": "sha256:b2107bc1d0a88f3ed78605c3b80d604a80152ca861555e8481924c7e65b542b8",
+			"version": "3.5.4-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libcrypto3-3.5.4-r0.apk",
+			"integrity": "sha256:8a8a0d6687a7b7481882f0f89a9de4d838b33386b32e10812e6aab4a4642ed52",
 			"direct": false
 		},
 		"libcurl": {
 			"type": "Alpine",
-			"version": "8.14.1-r1",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libcurl-8.14.1-r1.apk",
-			"integrity": "sha256:c2b4320da5d01882f576c31e70c9d379ec850480901336cb2b3e49ad733ccbe9",
+			"version": "8.14.1-r2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libcurl-8.14.1-r2.apk",
+			"integrity": "sha256:7df34e65b8ba62830e053a4fc517b99ada6a1594f19c64becf2aecce1855e542",
 			"direct": false
 		},
 		"libexpat": {
 			"type": "Alpine",
-			"version": "2.7.1-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libexpat-2.7.1-r0.apk",
-			"integrity": "sha256:1f509e55726ba10abb7bbbe824c2f0096bab49d79901abbd18519b055067d258",
+			"version": "2.7.3-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libexpat-2.7.3-r0.apk",
+			"integrity": "sha256:d76b44b386a08cfe9a1623d5c9443b8c7954ea34c8b461c6b3d6a06d85ddb42f",
 			"direct": false
 		},
 		"libgcc": {
@@ -179,9 +179,9 @@
 		},
 		"libssl3": {
 			"type": "Alpine",
-			"version": "3.5.2-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libssl3-3.5.2-r0.apk",
-			"integrity": "sha256:d6926a33e2a4f2f6f6b5ebb06faa978d3840437332ac8705abd1514d894fa8bf",
+			"version": "3.5.4-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libssl3-3.5.4-r0.apk",
+			"integrity": "sha256:ec328c55578e050611057f2af543dd3d2aaa7ca0f104dc9536776f21b2296a24",
 			"direct": false
 		},
 		"libstdc++": {
@@ -256,9 +256,9 @@
 		},
 		"pcre2": {
 			"type": "Alpine",
-			"version": "10.43-r1",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/pcre2-10.43-r1.apk",
-			"integrity": "sha256:a2437597efd0b2b1cd0b4f7af348993cd0a510f491537b933ed0d73389c70218",
+			"version": "10.46-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/pcre2-10.46-r0.apk",
+			"integrity": "sha256:cfb8ad103a101fa6a31769e50e188dab9c60124705682d01b3de268795db58ad",
 			"direct": false
 		},
 		"zlib": {

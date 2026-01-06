@@ -4,10 +4,10 @@ import (
 	"context"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	"chainguard.dev/apko/pkg/apk/apk"
 	"chainguard.dev/apko/pkg/apk/fs"
+	ociv1 "github.com/google/go-containerregistry/pkg/v1"
 
 	v1 "github.com/djcass44/all-your-base/pkg/api/v1"
 	"github.com/djcass44/all-your-base/pkg/archiveutil"
@@ -15,17 +15,7 @@ import (
 	"github.com/go-logr/logr"
 )
 
-var installedFiles = []string{
-	filepath.Join("/lib", "apk", "db", "installed"),
-	filepath.Join("/usr", "lib", "apk", "db", "installed"),
-}
-
-type PackageKeeper struct {
-	rootfs  fs.FullFS
-	indices []apk.NamedIndex
-}
-
-func NewPackageKeeper(ctx context.Context, repositories []string, rootfs fs.FullFS) (*PackageKeeper, error) {
+func NewPackageKeeper(ctx context.Context, repositories []string, rootfs fs.FullFS, base ociv1.Image) (*PackageKeeper, error) {
 	log := logr.FromContextOrDiscard(ctx)
 	indices, err := apk.GetRepositoryIndexes(ctx, repositories, map[string][]byte{}, "x86_64", apk.WithIgnoreSignatures(true), apk.WithHTTPClient(http.DefaultClient))
 	if err != nil {
@@ -40,6 +30,7 @@ func NewPackageKeeper(ctx context.Context, repositories []string, rootfs fs.Full
 	return &PackageKeeper{
 		indices: indices,
 		rootfs:  rootfs,
+		base:    base,
 	}, nil
 }
 
@@ -60,19 +51,6 @@ func (*PackageKeeper) Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) 
 	return nil
 }
 
-func (p *PackageKeeper) Record(ctx context.Context, pkg *apk.RepositoryPackage, rootfs fs.FullFS) error {
-	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg.Name)
-	log.V(5).Info("recording package")
-
-	for _, i := range installedFiles {
-		if err := p.writeInstalled(ctx, i, pkg, rootfs); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Package, error) {
 	resolver := apk.NewPkgResolver(ctx, p.indices)
 
@@ -83,7 +61,7 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 		return nil, err
 	}
 
-	if err := p.Record(ctx, repoPkg, p.rootfs); err != nil {
+	if err := p.writeInstalled(ctx, append(repoPkgDeps, repoPkg), p.rootfs); err != nil {
 		return nil, err
 	}
 
@@ -98,9 +76,6 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 		Direct:    true,
 	}
 	for i := range repoPkgDeps {
-		if err := p.Record(ctx, repoPkgDeps[i], p.rootfs); err != nil {
-			return nil, err
-		}
 		names[i+1] = lockfile.Package{
 			Name:      repoPkgDeps[i].Name,
 			Resolved:  repoPkgDeps[i].URL(),
