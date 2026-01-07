@@ -11,7 +11,10 @@ import (
 	"github.com/mholt/archives"
 )
 
-const ContentTypeGzip = "application/gzip"
+var ContentTypesGzip = []string{
+	"application/gzip",
+	"application/x-gzip",
+}
 
 func WithGzip(out io.Writer) requests.ResponseHandler {
 	return func(response *http.Response) error {
@@ -19,7 +22,7 @@ func WithGzip(out io.Writer) requests.ResponseHandler {
 		var stream io.ReadCloser
 
 		// if it's a gzip response, decompress it
-		if mimetype.EqualsAny(response.Header.Get("Content-Type"), ContentTypeGzip) {
+		if isGzipped(response.Header.Get("Content-Type")) {
 			log.V(8).Info("decompressing gzip response")
 			dec, err := archives.Gz{}.OpenReader(response.Body)
 			if err != nil {
@@ -36,4 +39,8 @@ func WithGzip(out io.Writer) requests.ResponseHandler {
 		}
 		return nil
 	}
+}
+
+func isGzipped(s string) bool {
+	return mimetype.EqualsAny(s, ContentTypesGzip...)
 }
