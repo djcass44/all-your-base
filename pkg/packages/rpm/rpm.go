@@ -18,6 +18,7 @@ import (
 	"github.com/djcass44/all-your-base/pkg/yum"
 	"github.com/djcass44/all-your-base/pkg/yum/yumindex"
 	"github.com/go-logr/logr"
+	"github.com/klauspost/compress/zstd"
 	"github.com/sassoftware/go-rpmutils/cpio"
 	"github.com/ulikunitz/xz"
 	"golang.org/x/exp/maps"
@@ -80,6 +81,12 @@ func (p *PackageKeeper) Unpack(ctx context.Context, pkgFile string, rootfs fs.Fu
 			return fmt.Errorf("creating gzip reader: %w", err)
 		}
 		reader = gzipReader
+	case compressionZstd:
+		zstdReader, err := zstd.NewReader(f)
+		if err != nil {
+			return fmt.Errorf("creating zstd reader: %w", err)
+		}
+		reader = zstdReader
 	}
 
 	if format := pkg.PayloadFormat(); format != "cpio" {
@@ -106,7 +113,7 @@ func (p *PackageKeeper) Extract(ctx context.Context, rootfs fs.FullFS, rs io.Rea
 			return fmt.Errorf("reading stream: %w", err)
 		}
 
-		// sanitize path
+		// sanitise path
 		target := path.Clean(entry.Filename())
 		for strings.HasPrefix(target, "../") {
 			target = target[3:]

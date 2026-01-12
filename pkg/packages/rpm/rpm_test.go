@@ -20,7 +20,7 @@ func TestPackageKeeper_Unpack(t *testing.T) {
 	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
 
 	tempDir := t.TempDir()
-	out := fs.DirFS(tempDir)
+	out := fs.DirFS(ctx, tempDir)
 
 	pkg := &PackageKeeper{}
 
@@ -37,6 +37,13 @@ func TestPackageKeeper_Unpack(t *testing.T) {
 
 		assert.DirExists(t, filepath.Join(tempDir, "usr", "local", "cuda-10.0"))
 		assert.FileExists(t, filepath.Join(tempDir, "usr", "local", "cuda-10.0", "targets", "x86_64-linux", "lib", "libcublas.so.10.0.130"))
+	})
+	t.Run("zstandard rpm", func(t *testing.T) {
+		err := pkg.Unpack(ctx, "./testdata/perl-Net-SSLeay-1.94-3.el9.x86_64.rpm", out)
+		assert.NoError(t, err)
+
+		assert.DirExists(t, filepath.Join(tempDir, "usr", "lib64", "perl5"))
+		assert.FileExists(t, filepath.Join(tempDir, "usr", "bin", "git"))
 	})
 }
 
