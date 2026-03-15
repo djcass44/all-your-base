@@ -50,6 +50,7 @@ func (s *PackageStatement) Run(ctx *pipelines.BuildContext, _ ...cbev1.Options) 
 	if err != nil {
 		return cbev1.Options{}, err
 	}
+	record, _ := cbev1.GetOptional[bool](s.options, "record")
 
 	var keeper packages.PackageManager
 	switch aybv1.PackageType(packageType) {
@@ -92,9 +93,14 @@ func (s *PackageStatement) Run(ctx *pipelines.BuildContext, _ ...cbev1.Options) 
 		}
 	}
 
-	if _, err := keeper.Resolve(ctx.Context, name); err != nil {
-		log.Error(err, "failed to resolve package", "name", name, "version", version)
-		return cbev1.Options{}, fmt.Errorf("resolving package details: %w", err)
+	if record {
+		log.V(1).Info("recording package", "name", name, "version", version)
+		if _, err := keeper.Resolve(ctx.Context, name, true); err != nil {
+			log.Error(err, "failed to resolve package", "name", name, "version", version)
+			return cbev1.Options{}, fmt.Errorf("resolving package details: %w", err)
+		}
+	} else {
+		log.V(1).Info("skipping package recording", "name", name, "version", version)
 	}
 
 	// unpack the package into the root

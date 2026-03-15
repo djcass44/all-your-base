@@ -99,7 +99,7 @@ func (*PackageKeeper) unpackXZ(ctx context.Context, src fs.FullFS, dst fs.FullFS
 	return archiveutil.XZuntar(ctx, f, dst)
 }
 
-func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Package, error) {
+func (p *PackageKeeper) Resolve(ctx context.Context, pkg string, write bool) ([]lockfile.Package, error) {
 	for _, idx := range p.indices {
 		out, err := idx.GetPackageWithDependencies(ctx, map[string]debian.Package{}, &debian.PackageVersion{
 			Names: []string{pkg},
@@ -121,8 +121,10 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 				Direct:    out[i].Package == pkg,
 			}
 		}
-		if err := p.writeInstalled(ctx, out, p.rootfs); err != nil {
-			return nil, err
+		if write {
+			if err := p.writeInstalled(ctx, out, p.rootfs); err != nil {
+				return nil, err
+			}
 		}
 		return names, nil
 	}

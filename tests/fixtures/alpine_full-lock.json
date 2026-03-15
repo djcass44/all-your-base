@@ -5,8 +5,8 @@
 		"": {
 			"type": "OCI",
 			"version": "",
-			"resolved": "harbor.dcas.dev/docker.io/library/alpine:3.22@sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412",
-			"integrity": "sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412",
+			"resolved": "harbor.dcas.dev/docker.io/library/alpine:3.23@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659",
+			"integrity": "sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659",
 			"direct": false
 		},
 		".npmrc": {
@@ -18,79 +18,79 @@
 		},
 		"binutils": {
 			"type": "Alpine",
-			"version": "2.44-r3",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/binutils-2.44-r3.apk",
-			"integrity": "sha256:d12005fc43aa4e818ce240dcdd5ae90a42a5a4b3ea6937800c7b0a5b877190aa",
+			"version": "2.45.1-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/binutils-2.45.1-r0.apk",
+			"integrity": "sha256:aa14316996719d126cd1c3edee159a7f477c788ed0c1e6228ddb4df9cdc391dc",
 			"direct": false
 		},
 		"brotli-libs": {
 			"type": "Alpine",
-			"version": "1.1.0-r2",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/brotli-libs-1.1.0-r2.apk",
-			"integrity": "sha256:a693524543421b3a90f163ccb48d5ad0f5fd773b5c3b640acc461eace2cb01b6",
+			"version": "1.2.0-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/brotli-libs-1.2.0-r0.apk",
+			"integrity": "sha256:09fbf1ddf0c71c6c4ab7bc12aef3452d8ace5adeab10c4c30214fc70f5e0e087",
 			"direct": false
 		},
 		"build-base": {
 			"type": "Alpine",
 			"version": "0.5-r3",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/build-base-0.5-r3.apk",
-			"integrity": "sha256:2788ae90dc82999b26d121536ec2bd1c053e46b470c0202229bd4b4d2347d1b4",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/build-base-0.5-r3.apk",
+			"integrity": "sha256:d8516466765870157591696f144cb32785b575d8b851254100a93cf8dd913d10",
 			"direct": true
 		},
 		"c-ares": {
 			"type": "Alpine",
 			"version": "1.34.6-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/c-ares-1.34.6-r0.apk",
-			"integrity": "sha256:102006a36777a55d805339eb8799f5ff0819548c309710ade9eb01e3247306e2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/c-ares-1.34.6-r0.apk",
+			"integrity": "sha256:3e026e30e3d210d1a49c4d518f6c202dda9b652c484e53b49e4ebf8836ff3244",
 			"direct": false
 		},
 		"ca-certificates-bundle": {
 			"type": "Alpine",
-			"version": "20250911-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/ca-certificates-bundle-20250911-r0.apk",
-			"integrity": "sha256:d96050722cec7263a09fd9adaf759aa3ba2ec1441fccb4608284567567bb1bd9",
+			"version": "20251003-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/ca-certificates-bundle-20251003-r0.apk",
+			"integrity": "sha256:3c4992a05cc08a2d2c0a23f49eb37bfa8c5513086540ae9e3a368c6a6eefad0f",
 			"direct": false
 		},
 		"file": {
 			"type": "Alpine",
 			"version": "5.46-r2",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/file-5.46-r2.apk",
-			"integrity": "sha256:94c99dfe7cde72e07aa2b289674e682e821518bfc59e31ce628990d939caed7c",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/file-5.46-r2.apk",
+			"integrity": "sha256:634b19688837316f83b440c0f3ba6f35c90c308cdb9163fb8acd7e8b41b154d1",
 			"direct": false
 		},
 		"fortify-headers": {
 			"type": "Alpine",
 			"version": "1.1-r5",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/fortify-headers-1.1-r5.apk",
-			"integrity": "sha256:544a27bd0e002f54677109e2cce594f10f7d0df5321e5e64604e896bba92cdf8",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/fortify-headers-1.1-r5.apk",
+			"integrity": "sha256:2163524765f6c7536ec0bab40d74e8521e6effc4aa2a9fbe16b2cf1c130d7393",
 			"direct": false
 		},
 		"g++": {
 			"type": "Alpine",
-			"version": "14.2.0-r6",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/g++-14.2.0-r6.apk",
-			"integrity": "sha256:4490ba28b819efdb26a78493e63942605a022d407652eea77027eaba918e6f1a",
+			"version": "15.2.0-r2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/g++-15.2.0-r2.apk",
+			"integrity": "sha256:2519885a63d85f3b6c8771464ec0bf6d44def11b93b5ad987ffc4a1e14cd51df",
 			"direct": true
 		},
 		"gcc": {
 			"type": "Alpine",
-			"version": "14.2.0-r6",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/gcc-14.2.0-r6.apk",
-			"integrity": "sha256:4fd10bd05784f596e5ff0adc724a94b71380fac0ac276bd257dd861e8b5822e6",
+			"version": "15.2.0-r2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/gcc-15.2.0-r2.apk",
+			"integrity": "sha256:039886b6ad6e36a040a18db0ffa898f8ad1d0fc69eadd49d3c77270eafdc5e7e",
 			"direct": false
 		},
 		"git": {
 			"type": "Alpine",
-			"version": "2.49.1-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/git-2.49.1-r0.apk",
-			"integrity": "sha256:42f4573799ffce0c7dd4954d2247eb882eb87360dc18637930624484ecfd1c90",
+			"version": "2.52.0-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/git-2.52.0-r0.apk",
+			"integrity": "sha256:0e1db246b3940fa2c66be6553eaad0eb49119956f2174ac83a66b50054ead145",
 			"direct": true
 		},
 		"gmp": {
 			"type": "Alpine",
-			"version": "6.3.0-r3",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/gmp-6.3.0-r3.apk",
-			"integrity": "sha256:d3f987ae3836ac7774324bff443dd49d03b846209660729d0c30dfff5546e138",
+			"version": "6.3.0-r4",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/gmp-6.3.0-r4.apk",
+			"integrity": "sha256:5aa4a73a11126f2bc757ef1fee1eddb70105bd38f2659ae93aae1fafa02a0359",
 			"direct": false
 		},
 		"https://raw.githubusercontent.com/djcass44/all-your-base/refs/heads/main/README.md": {
@@ -103,176 +103,183 @@
 		"isl26": {
 			"type": "Alpine",
 			"version": "0.26-r1",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/isl26-0.26-r1.apk",
-			"integrity": "sha256:ecd11e4446097ff62b49e6ab8f552b438a304634a8f8e2db713fcbbe62f04c61",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/isl26-0.26-r1.apk",
+			"integrity": "sha256:ad583e51f55f16d83db85f0a8279ddfd15b3909f7158afff25d93c72b018a2a1",
 			"direct": false
 		},
 		"jansson": {
 			"type": "Alpine",
 			"version": "2.14.1-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/jansson-2.14.1-r0.apk",
-			"integrity": "sha256:7fde81421482507163410715a7ef7d7df6a091870edab855c24e8f6fc84e3e2d",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/jansson-2.14.1-r0.apk",
+			"integrity": "sha256:6dc100ea8b420ed1adabe13553325620afd9fbcae9b62de5b63c9bae0b7c2e91",
 			"direct": false
 		},
 		"libatomic": {
 			"type": "Alpine",
-			"version": "14.2.0-r6",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libatomic-14.2.0-r6.apk",
-			"integrity": "sha256:e9a884f8a63f614b722dd5191ede154a6b6b81d99457af610bc6f544a6d2d7bc",
+			"version": "15.2.0-r2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libatomic-15.2.0-r2.apk",
+			"integrity": "sha256:81fe3f7d9935ba883bc84f4622b2738a4e9a646d0ae7c1f944fd4b799bc768f2",
 			"direct": false
 		},
 		"libcrypto3": {
 			"type": "Alpine",
-			"version": "3.5.4-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libcrypto3-3.5.4-r0.apk",
-			"integrity": "sha256:8a8a0d6687a7b7481882f0f89a9de4d838b33386b32e10812e6aab4a4642ed52",
+			"version": "3.5.5-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libcrypto3-3.5.5-r0.apk",
+			"integrity": "sha256:4531f3807683659ca7d02c73cfdbc0ae9925da995bda42e2ce3db267797bc217",
 			"direct": false
 		},
 		"libcurl": {
 			"type": "Alpine",
-			"version": "8.14.1-r2",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libcurl-8.14.1-r2.apk",
-			"integrity": "sha256:7df34e65b8ba62830e053a4fc517b99ada6a1594f19c64becf2aecce1855e542",
+			"version": "8.17.0-r1",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libcurl-8.17.0-r1.apk",
+			"integrity": "sha256:5abcda9f4a0d9173b7ad93547439dbb9f7af5b313e86daf8077b31e628b92b90",
 			"direct": false
 		},
 		"libexpat": {
 			"type": "Alpine",
-			"version": "2.7.3-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libexpat-2.7.3-r0.apk",
-			"integrity": "sha256:d76b44b386a08cfe9a1623d5c9443b8c7954ea34c8b461c6b3d6a06d85ddb42f",
+			"version": "2.7.4-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libexpat-2.7.4-r0.apk",
+			"integrity": "sha256:9914f8aa4f29570dc415a2d187e856cc902af314b17d723ce5d844416a5170ba",
 			"direct": false
 		},
 		"libgcc": {
 			"type": "Alpine",
-			"version": "14.2.0-r6",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libgcc-14.2.0-r6.apk",
-			"integrity": "sha256:04f3467bc967e705221a843fe4d3de5850db826e571686e0c0ed453d38cb5c59",
+			"version": "15.2.0-r2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libgcc-15.2.0-r2.apk",
+			"integrity": "sha256:4279d14cbf43311312d3a7d43619f4c15ede2e46d5608ba421ed157ded57c700",
 			"direct": false
 		},
 		"libgomp": {
 			"type": "Alpine",
-			"version": "14.2.0-r6",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libgomp-14.2.0-r6.apk",
-			"integrity": "sha256:026e5c9d0bab7e82c42fa11b96ed95e66d2549bd5de5c869c18a3600c2e3aa02",
+			"version": "15.2.0-r2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libgomp-15.2.0-r2.apk",
+			"integrity": "sha256:7eda0581da0d10365e9ebd62f9b4e3a973cd2b791d6a174d2f7a1150c2753d64",
 			"direct": false
 		},
 		"libidn2": {
 			"type": "Alpine",
-			"version": "2.3.7-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libidn2-2.3.7-r0.apk",
-			"integrity": "sha256:515cfe061176c7456ea3548651d0014084d77dd3774b78e2c944404ae75a41ff",
+			"version": "2.3.8-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libidn2-2.3.8-r0.apk",
+			"integrity": "sha256:526275e11e449b99e5264e0ba32625fa12a78c426de61378f8b5cc0af5fc7014",
 			"direct": false
 		},
 		"libmagic": {
 			"type": "Alpine",
 			"version": "5.46-r2",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libmagic-5.46-r2.apk",
-			"integrity": "sha256:1fe23639567b42d215d860b2983ed4ccad442c658fbc9082e946823e87c251a8",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libmagic-5.46-r2.apk",
+			"integrity": "sha256:b23d3cffbba8b1d0c1aeb36d4b44bd549f69bd0ef4fd37422c7dc165954902e0",
 			"direct": false
 		},
 		"libpsl": {
 			"type": "Alpine",
 			"version": "0.21.5-r3",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libpsl-0.21.5-r3.apk",
-			"integrity": "sha256:1e79da4fa1364b7153b8950a363a6de0bef1d1b48d46fcb3b850cd4f233727b2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libpsl-0.21.5-r3.apk",
+			"integrity": "sha256:86ada309d460ea8768b340cbf83c7234a1564f8fea9c370fb19f028a2a165891",
 			"direct": false
 		},
 		"libssl3": {
 			"type": "Alpine",
-			"version": "3.5.4-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libssl3-3.5.4-r0.apk",
-			"integrity": "sha256:ec328c55578e050611057f2af543dd3d2aaa7ca0f104dc9536776f21b2296a24",
+			"version": "3.5.5-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libssl3-3.5.5-r0.apk",
+			"integrity": "sha256:d0c5680469e8e420a966aad0e3a267369a99db2cb394341a1a8ec4c8535e35ed",
 			"direct": false
 		},
 		"libstdc++": {
 			"type": "Alpine",
-			"version": "14.2.0-r6",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libstdc++-14.2.0-r6.apk",
-			"integrity": "sha256:939f7c99898f3e8154207a17f4acbe8bc40437e1bb1b43f5525620ca9e452a2e",
+			"version": "15.2.0-r2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libstdc++-15.2.0-r2.apk",
+			"integrity": "sha256:d4be2967a06d78b499f5e136323f4ebe51ad367b381933b3369539499c4f5752",
 			"direct": false
 		},
 		"libstdc++-dev": {
 			"type": "Alpine",
-			"version": "14.2.0-r6",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libstdc++-dev-14.2.0-r6.apk",
-			"integrity": "sha256:13e2169b46a24f03c87caf91387312724b01951c222bd061d6d87c48903836a9",
+			"version": "15.2.0-r2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libstdc++-dev-15.2.0-r2.apk",
+			"integrity": "sha256:dee79044d2efdc6229896971fc86fd481c554eb0c3cd3ad337bf3d6356c08b49",
 			"direct": false
 		},
 		"libunistring": {
 			"type": "Alpine",
-			"version": "1.3-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/libunistring-1.3-r0.apk",
-			"integrity": "sha256:989640e58f7646c0495c3950df36eb7b4df152d8150c2c888f8ab954fed8c908",
+			"version": "1.4.1-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/libunistring-1.4.1-r0.apk",
+			"integrity": "sha256:eca5eb66c8ac64cca7160fb766b15e885f75d18c15d0919d0adee987a53b9473",
 			"direct": false
 		},
 		"make": {
 			"type": "Alpine",
 			"version": "4.4.1-r3",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/make-4.4.1-r3.apk",
-			"integrity": "sha256:5b66eb4c2db0b0452f1c88d19909397f09e72425d1d9769a480d6370d8a9c310",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/make-4.4.1-r3.apk",
+			"integrity": "sha256:db47019dc9ebbfec1c0224efb8c30b3e26f22728b6f433b492af57da622787d5",
 			"direct": false
 		},
 		"mpc1": {
 			"type": "Alpine",
 			"version": "1.3.1-r1",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/mpc1-1.3.1-r1.apk",
-			"integrity": "sha256:bfc0d8bd7e3b8de2fdfcf4977437281e58147cc568194cb82ba887bd190376e6",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/mpc1-1.3.1-r1.apk",
+			"integrity": "sha256:114dcb18a4e5c7739fdab19414e156295c2783d56cdd226bcee4b5afc6a88c76",
 			"direct": false
 		},
 		"mpfr4": {
 			"type": "Alpine",
-			"version": "4.2.1_p1-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/mpfr4-4.2.1_p1-r0.apk",
-			"integrity": "sha256:33f2f274333164dfc25a0002ca58bb99f6d26843d5486c03e3fa207e5432ac59",
+			"version": "4.2.2-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/mpfr4-4.2.2-r0.apk",
+			"integrity": "sha256:4361c9084ae95e3987cee87fed35bbaca10c75907eb1900365707196d250bdc8",
 			"direct": false
 		},
 		"musl": {
 			"type": "Alpine",
-			"version": "1.2.5-r10",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/musl-1.2.5-r10.apk",
-			"integrity": "sha256:ff1f912e37c0145de9a369dcdd66164fb0c4e7618153edf6432b4e386404ccbb",
+			"version": "1.2.5-r21",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/musl-1.2.5-r21.apk",
+			"integrity": "sha256:fd5bb1158ec3092bc62922f701e245a647b497405d3b5c9ad9b46cb4bc492752",
 			"direct": false
 		},
 		"musl-dev": {
 			"type": "Alpine",
-			"version": "1.2.5-r10",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/musl-dev-1.2.5-r10.apk",
-			"integrity": "sha256:a93f9c71684d422da2372cb2e18cdc4488e4853752a519ea2f4a9431c8ef0d2d",
+			"version": "1.2.5-r21",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/musl-dev-1.2.5-r21.apk",
+			"integrity": "sha256:a82753d912955e1861d5de27eb25185e725f72c6719106007522b2d1cd7b0693",
 			"direct": false
 		},
 		"nghttp2-libs": {
 			"type": "Alpine",
-			"version": "1.65.0-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/nghttp2-libs-1.65.0-r0.apk",
-			"integrity": "sha256:d2d2064614b5f0bcae66d46a12106feb5dc901f793a7968f79c40d6be776f0f6",
+			"version": "1.68.0-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/nghttp2-libs-1.68.0-r0.apk",
+			"integrity": "sha256:d10466a776458a49790db68f72155bdf63472b572645bf1d6982f0175c81eee0",
+			"direct": false
+		},
+		"nghttp3": {
+			"type": "Alpine",
+			"version": "1.13.1-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/nghttp3-1.13.1-r0.apk",
+			"integrity": "sha256:31ba8de2059ba4f4558dd8f90b0f8cd300f26f57eba31c004149fbdb89f4720d",
 			"direct": false
 		},
 		"patch": {
 			"type": "Alpine",
 			"version": "2.8-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/patch-2.8-r0.apk",
-			"integrity": "sha256:f34098dde672a06d7b601c12d2e585bbf473292dd08d7e0a81e9ad27962196a6",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/patch-2.8-r0.apk",
+			"integrity": "sha256:e7104a7dd5c4a8a0e4a1df2ff8ff0fd9a1587d8de791dffc18d8dae1c0e7ec3f",
 			"direct": false
 		},
 		"pcre2": {
 			"type": "Alpine",
-			"version": "10.46-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/pcre2-10.46-r0.apk",
-			"integrity": "sha256:cfb8ad103a101fa6a31769e50e188dab9c60124705682d01b3de268795db58ad",
+			"version": "10.47-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/pcre2-10.47-r0.apk",
+			"integrity": "sha256:7880493ea1a743c97964e2444ef47649e43bc9fee25949c6712a8a03823985d3",
 			"direct": false
 		},
 		"zlib": {
 			"type": "Alpine",
-			"version": "1.3.1-r2",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/zlib-1.3.1-r2.apk",
-			"integrity": "sha256:dd4ea761509945c2791b2de557dac8396946b9d147b5e118a4d4e9e01a17ccfe",
+			"version": "1.3.2-r0",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/zlib-1.3.2-r0.apk",
+			"integrity": "sha256:f56dea63692059bd65854bb179b7551971a441000b0d98c5b031291ca0450b56",
 			"direct": false
 		},
 		"zstd-libs": {
 			"type": "Alpine",
-			"version": "1.5.7-r0",
-			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.22/main/x86_64/zstd-libs-1.5.7-r0.apk",
-			"integrity": "sha256:1bdd6e57cfbfbfd6e8481cad37ddd5d199950715bec1879b3afb600272dbb09e",
+			"version": "1.5.7-r2",
+			"resolved": "https://mirror.aarnet.edu.au/pub/alpine/v3.23/main/x86_64/zstd-libs-1.5.7-r2.apk",
+			"integrity": "sha256:d5fcc58f7f071a5658d97b09838668e4443203217631992915b8e60656904104",
 			"direct": false
 		}
 	}

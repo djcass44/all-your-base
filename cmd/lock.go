@@ -138,7 +138,7 @@ func lock(cmd *cobra.Command, _ []string) error {
 		}
 
 		for _, name := range pkg.Names {
-			packageList, err := keeper.Resolve(cmd.Context(), name)
+			packageList, err := keeper.Resolve(cmd.Context(), name, false)
 			if err != nil {
 				return err
 			}

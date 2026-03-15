@@ -10,5 +10,5 @@ import (
 
 type PackageManager interface {
 	Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) error
-	Resolve(ctx context.Context, pkg string) ([]lockfile.Package, error)
+	Resolve(ctx context.Context, pkg string, write bool) ([]lockfile.Package, error)
 }

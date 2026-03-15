@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	cbev1 "github.com/Snakdy/container-build-engine/pkg/api/v1"
+	"github.com/Snakdy/container-build-engine/pkg/containers"
 	"github.com/Snakdy/container-build-engine/pkg/pipelines"
 	"github.com/Snakdy/container-build-engine/pkg/vfs"
 	"github.com/djcass44/all-your-base/pkg/downloader"
@@ -17,16 +18,20 @@ import (
 
 func TestPackageStatement_Run(t *testing.T) {
 	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
-	pkg, err := debian.NewPackageKeeper(ctx, []string{"https://mirror.aarnet.edu.au/pub/debian bullseye main"})
+
+	rootfs := vfs.NewVFS(t.TempDir())
+
+	baseImage, err := containers.GetImage(ctx, "harbor.dcas.dev/docker.io/library/alpine:3.23")
 	require.NoError(t, err)
 
-	packageNames, err := pkg.Resolve(ctx, "openjdk-17-jdk")
+	pkg, err := debian.NewPackageKeeper(ctx, []string{"https://mirror.aarnet.edu.au/pub/debian bullseye main"}, rootfs, baseImage)
+	require.NoError(t, err)
+
+	packageNames, err := pkg.Resolve(ctx, "openjdk-17-jdk", false)
 	require.NoError(t, err)
 
 	dl, err := downloader.NewDownloader(t.TempDir())
 	require.NoError(t, err)
-
-	rootfs := vfs.NewVFS(t.TempDir())
 
 	bctx := &pipelines.BuildContext{
 		Context:          ctx,
@@ -36,7 +41,7 @@ func TestPackageStatement_Run(t *testing.T) {
 	}
 
 	for _, pkgName := range packageNames {
-		s := NewPackageStatement(nil, pkg, nil, dl)
+		s := NewPackageStatement(nil, pkg, nil, dl, false)
 		s.SetOptions(cbev1.Options{
 			"type":     string(pkgName.Type),
 			"name":     pkgName.Name,

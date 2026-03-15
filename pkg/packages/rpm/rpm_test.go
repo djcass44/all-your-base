@@ -52,7 +52,7 @@ func TestPackageKeeper_Resolve(t *testing.T) {
 	pkg, err := NewPackageKeeper(ctx, []string{"https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/appstream/os"})
 	require.NoError(t, err)
 
-	packageNames, err := pkg.Resolve(ctx, "git")
+	packageNames, err := pkg.Resolve(ctx, "git", false)
 	assert.NoError(t, err)
 	t.Logf("%+v", packageNames)
 }

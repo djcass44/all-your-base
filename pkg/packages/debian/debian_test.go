@@ -21,7 +21,7 @@ func TestPackageKeeper_Unpack(t *testing.T) {
 	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
 
 	tempDir := t.TempDir()
-	out := fs.DirFS(tempDir)
+	out := fs.DirFS(ctx, tempDir)
 
 	pkg := &PackageKeeper{}
 	err := pkg.Unpack(ctx, "./testdata/git-lfs_3.4.0-1+b1_amd64.deb", out)
@@ -35,13 +35,13 @@ func TestPackageKeeper_Resolve(t *testing.T) {
 	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
 	testfs := fs.NewMemFS()
 
-	baseImage, err := containers.Get(ctx, "harbor.dcas.dev/docker.io/library/debian:bullseye")
+	baseImage, err := containers.GetImage(ctx, "harbor.dcas.dev/docker.io/library/debian:bullseye")
 	require.NoError(t, err)
 
 	pkg, err := NewPackageKeeper(ctx, []string{"https://mirror.aarnet.edu.au/pub/debian bullseye main"}, testfs, baseImage)
 	require.NoError(t, err)
 
-	packageNames, err := pkg.Resolve(ctx, "git")
+	packageNames, err := pkg.Resolve(ctx, "git", true)
 	assert.NoError(t, err)
 	t.Logf("%+v", packageNames)
 

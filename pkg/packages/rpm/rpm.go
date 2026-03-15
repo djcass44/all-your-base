@@ -231,7 +231,7 @@ func (p *PackageKeeper) Extract(ctx context.Context, rootfs fs.FullFS, rs io.Rea
 	return nil
 }
 
-func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Package, error) {
+func (p *PackageKeeper) Resolve(ctx context.Context, pkg string, _ bool) ([]lockfile.Package, error) {
 	log := logr.FromContextOrDiscard(ctx).WithValues("pkg", pkg)
 	// dedupe packages
 	packages := map[string]lockfile.Package{}

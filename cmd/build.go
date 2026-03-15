@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -69,7 +70,7 @@ func init() {
 	buildCmd.Flags().String(flagUsername, defaultUsername, "username of the non-root user to create")
 
 	buildCmd.Flags().String(flagCacheDir, "", "cache directory (defaults to user cache dir)")
-	buildCmd.Flags().String(flagPlatform, "linux/amd64", "build platform")
+	buildCmd.Flags().String(flagPlatform, "", "build platform")
 
 	buildCmd.Flags().Bool(flagSkipCACerts, false, "skip running update-ca-certificates")
 	buildCmd.Flags().Bool(flagSkipPackageRecording, true, "skip package recording")
@@ -99,6 +100,15 @@ func build(cmd *cobra.Command, _ []string) error {
 	forceUsername, _ := cmd.Flags().GetString(flagUsername)
 	forceUid, _ := cmd.Flags().GetInt(flagUid)
 
+	skipPackageRecording, _ := cmd.Flags().GetBool(flagSkipPackageRecording)
+
+	// if the platform value exists, then we should
+	// treat it as a multi-arch build
+	var platformUnset bool
+	if platform == "" {
+		platformUnset = true
+		platform = fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH)
+	}
 	imgPlatform, err := v1.ParsePlatform(platform)
 	if err != nil {
 		log.Error(err, "failed to parse platform")
@@ -179,7 +189,7 @@ func build(cmd *cobra.Command, _ []string) error {
 
 	// pull the base image
 	pullStart := time.Now()
-	baseImg, err := containers.Get(cmd.Context(), baseImage)
+	baseImg, err := containers.GetImage(cmd.Context(), baseImage)
 	if err != nil {
 		return err
 	}
@@ -214,7 +224,7 @@ func build(cmd *cobra.Command, _ []string) error {
 	var pipelineStatements []pipelines.OrderedPipelineStatement
 
 	// collect a list of all the package statements in case
-	// something should be run after files are in place
+	// something should run after files are in place
 	var pkgDeps []string
 
 	// install packages
@@ -230,6 +240,7 @@ func build(cmd *cobra.Command, _ []string) error {
 				"version":  p.Version,
 				"resolved": p.Resolved,
 				"checksum": p.Integrity,
+				"record":   !skipPackageRecording,
 			},
 			Statement: statements.NewPackageStatement(alpineKeeper, debianKeeper, yumKeeper, dl, lockFile.LockfileVersion > 1),
 			DependsOn: []string{statements.StatementEnv},
@@ -259,13 +270,13 @@ func build(cmd *cobra.Command, _ []string) error {
 	})
 
 	// collect a list of all the file statements in case
-	// something should be run after files are in place
+	// something should run after files are in place
 	var fileDeps []string
 
 	// download files
 	for i, file := range cfg.Spec.Files {
 		// take note of if the path has a / suffix, indicating
-		// that the path should be treated as a folder. filepath.Clean
+		// that the path should treat as a folder. filepath.Clean
 		// wipes the trailing slash
 		hasDirMarker := strings.HasSuffix(file.Path, "/")
 		// expand paths using environment variables
@@ -345,6 +356,7 @@ func build(cmd *cobra.Command, _ []string) error {
 		Command:         cfg.Spec.Command,
 		ForceEntrypoint: true,
 		FS:              filesystem,
+		GenerateIndex:   !platformUnset,
 		Metadata: builder.MetadataOptions{
 			CreatedBy: "all-your-base",
 		},
@@ -358,7 +370,11 @@ func build(cmd *cobra.Command, _ []string) error {
 	}
 
 	if localPath != "" {
-		return containers.Save(cmd.Context(), img, cfg.Name, localPath)
+		image, ok := img.(v1.Image)
+		if !ok {
+			return fmt.Errorf("cannot save %T to a local file", img)
+		}
+		return containers.Save(cmd.Context(), image, cfg.Name, localPath)
 	}
 	// push all tags
 	for _, t := range tags {

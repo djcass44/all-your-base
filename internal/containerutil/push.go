@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Snakdy/container-build-engine/pkg/containers"
 	"github.com/Snakdy/container-build-engine/pkg/oci/auth"
 	"github.com/go-logr/logr"
 	"github.com/google/go-containerregistry/pkg/crane"
@@ -17,11 +18,18 @@ import (
 
 // Push is a minor modification of the container-build-engine containers.Push function
 // that allows for custom certificates.
-func Push(ctx context.Context, img v1.Image, dst string, certPool *x509.CertPool) error {
+func Push(ctx context.Context, img containers.Result, dst string, certPool *x509.CertPool) error {
 	log := logr.FromContextOrDiscard(ctx).WithValues("ref", dst)
-	log.Info("pushing image")
+	log.Info("pushing image", "type", fmt.Sprintf("%T", img))
 
 	start := time.Now()
+
+	// parse what we just pushed
+	ref, err := name.ParseReference(dst)
+	if err != nil {
+		log.Error(err, "failed to parse reference")
+		return err
+	}
 
 	// tweak the default transport so that we
 	// can provide a custom certPool
@@ -30,14 +38,16 @@ func Push(ctx context.Context, img v1.Image, dst string, certPool *x509.CertPool
 	transport.TLSClientConfig.ClientCAs = certPool
 
 	// push the image
-	if err := crane.Push(img, dst, crane.WithContext(ctx), crane.WithAuthFromKeychain(auth.KeyChain(auth.Auth{})), crane.WithTransport(transport)); err != nil {
-		log.Error(err, "failed to push image")
-		return err
+	switch v := img.(type) {
+	case v1.Image:
+		log.V(3).Info("pushing image")
+		err = crane.Push(v, dst, crane.WithContext(ctx), crane.WithAuthFromKeychain(auth.KeyChain(auth.Auth{})), crane.WithTransport(transport))
+	case v1.ImageIndex:
+		log.V(3).Info("pushing index")
+		err = remote.WriteIndex(ref, v, remote.WithContext(ctx), remote.WithAuthFromKeychain(auth.KeyChain(auth.Auth{})), remote.WithTransport(transport))
 	}
-	// parse what we just pushed
-	ref, err := name.ParseReference(dst)
 	if err != nil {
-		log.Error(err, "failed to parse reference")
+		log.Error(err, "failed to push image")
 		return err
 	}
 	d, err := img.Digest()

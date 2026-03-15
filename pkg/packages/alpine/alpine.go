@@ -51,7 +51,7 @@ func (*PackageKeeper) Unpack(ctx context.Context, pkg string, rootfs fs.FullFS) 
 	return nil
 }
 
-func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Package, error) {
+func (p *PackageKeeper) Resolve(ctx context.Context, pkg string, write bool) ([]lockfile.Package, error) {
 	resolver := apk.NewPkgResolver(ctx, p.indices)
 
 	// resolve the package
@@ -61,8 +61,10 @@ func (p *PackageKeeper) Resolve(ctx context.Context, pkg string) ([]lockfile.Pac
 		return nil, err
 	}
 
-	if err := p.writeInstalled(ctx, append(repoPkgDeps, repoPkg), p.rootfs); err != nil {
-		return nil, err
+	if write {
+		if err := p.writeInstalled(ctx, append(repoPkgDeps, repoPkg), p.rootfs); err != nil {
+			return nil, err
+		}
 	}
 
 	// collect the urls for each package
